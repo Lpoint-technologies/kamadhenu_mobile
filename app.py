@@ -26,7 +26,6 @@ from urllib.parse import urlparse
 from psycopg2 import extras
 from gtts import gTTS
 from flask import send_file
-from psycopg2.extras import RealDictCursor
 translator = GoogleTranslator(source='auto', target='en')
 print(translator.translate("ನಮಸ್ಕಾರ"))  # Kannada → English
 
@@ -37,24 +36,25 @@ print(translator.translate("ನಮಸ್ಕಾರ"))  # Kannada → English
 load_dotenv()
 
 # Get API key from .env
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+genai.configure(api_key=os.getenv("api_key"))
 
 app = Flask(__name__)
 app.secret_key = "kamadhenu_secret"
 
 
 
+
+
+# Database URL format (works locally and on Render)
 import os
+from urllib.parse import urlparse
 
-DATABASE_URL = os.getenv("DATABASE_URL")
+# Get database URL from environment variable or use local default
+DATABASE_URL = os.environ.get('DATABASE_URL', 'postgresql://kamadhenu_db_user:QoVh8puq19y4a08uvKDmHXYefE40DWqx@dpg-d6rv77fgi27c73cql7mg-a/kamadhenu_db')
 
-if DATABASE_URL.startswith("postgres://"):
-    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
-
-app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-
+# Fix for Render's postgres:// vs postgresql://
+if DATABASE_URL.startswith('postgres://'):
+    DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
 COW_UPLOAD_FOLDER = os.path.join("static", "uploads", "cow")
 VET_UPLOAD_FOLDER = os.path.join("static", "uploads", "vets")
 
@@ -195,7 +195,7 @@ IDENTIFICATION_THRESHOLD = 0.6
 # ================= SMS Sending Function ==================
 def send_sms(phone, message):
     """Send SMS using Fast2SMS API"""
-    api_key = "CELR3Zg21VMUIiWy4rzqnS6fYBaxNdsHlOhpJ7DQ0GFKAbTPtkNKUbiwAG0YaTfsIBxmyV4nlqJugeCR"
+    
     url = "https://www.fast2sms.com/dev/bulkV2"
 
     # Clean phone number - remove any non-digit characters
@@ -227,227 +227,20 @@ def send_sms(phone, message):
         print(f"❌ SMS Error: {str(e)}")
         return {'success': False, 'error': str(e)}
 
-# ---------------- Database Setup ----------------
-def init_db():
-    if not os.path.exists(DB_NAME):
-        conn = sqlite3.connect(DB_NAME)
-        cursor = conn.cursor()
 
-        cursor.execute("""CREATE TABLE farmers (
-            farmer_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            phone TEXT UNIQUE NOT NULL,
-            state TEXT NOT NULL,
-            city TEXT NOT NULL,
-            address TEXT,
-            password TEXT NOT NULL,
-            photo TEXT, 
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )""")
-
-        # In your init_db() function, update the cows table creation:
-        cursor.execute("""CREATE TABLE IF NOT EXISTS cows (
-            cow_id TEXT PRIMARY KEY,
-            farmer_id INTEGER,
-            cattle_type TEXT NOT NULL,
-            breed TEXT,
-            date_of_birth DATE,  -- NEW: Date of birth
-            age INTEGER,
-            weight REAL,
-            color TEXT,
-            health_records TEXT,
-            vaccination_history TEXT,
-            milk_yield REAL,
-            special_notes TEXT,
-            photo TEXT,
-            muzzle_id TEXT,
-            muzzle_photo TEXT,
-            father_id TEXT,
-            mother_id TEXT,
-            insurance_by TEXT,  -- NEW: Insurance company name
-            insurance_policy_number TEXT,  -- NEW: Policy number
-            insurance_valid_upto DATE,  -- NEW: Insurance expiry date
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (farmer_id) REFERENCES farmers(farmer_id),
-            FOREIGN KEY (father_id) REFERENCES cows(cow_id),
-            FOREIGN KEY (mother_id) REFERENCES cows(cow_id)
-        )""")
-
-
-        # Add this to your init_db() function
-        cursor.execute("""CREATE TABLE IF NOT EXISTS breeds (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            breed_name TEXT UNIQUE NOT NULL,
-            cattle_type TEXT NOT NULL,
-            description TEXT
-        )""")
-# Add OTP table for password reset
-        cursor.execute("""CREATE TABLE IF NOT EXISTS password_reset_otp (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            phone TEXT NOT NULL,
-            otp TEXT NOT NULL,
-            expires_at TIMESTAMP NOT NULL,
-            verified BOOLEAN DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )""")
-        # Insert some sample breeds
-        # In your init_db() function, replace the sample_breeds section with this:
-
-        # Insert comprehensive sample breeds
-        sample_breeds = [
-            # Cow breeds
-            ('Holstein Friesian', 'cow', 'High milk yielding breed'),
-            ('Jersey', 'cow', 'Known for rich milk'),
-            ('Sahiwal', 'cow', 'Drought resistant breed'),
-            ('Gir', 'cow', 'Indian breed from Gujarat'),
-            ('Red Sindhi', 'cow', 'Dual purpose breed'),
-            ('Tharparkar', 'cow', 'Drought resistant milch breed'),
-            
-            # Buffalo breeds
-            ('Murrah', 'buffalo', 'Popular buffalo breed'),
-            ('Surti', 'buffalo', 'Good milk yielder'),
-            ('Nili Ravi', 'buffalo', 'River buffalo breed'),
-            ('Jaffrabadi', 'buffalo', 'Heavy milk yielder'),
-            ('Bhadawari', 'buffalo', 'High fat content milk'),
-            
-            # Male Buffalo breeds (same as buffalo but for male_buffalo type)
-            ('Murrah', 'male_buffalo', 'Popular buffalo breed'),
-            ('Surti', 'male_buffalo', 'Good breed for draught'),
-            ('Nili Ravi', 'male_buffalo', 'River buffalo breed'),
-            ('Jaffrabadi', 'male_buffalo', 'Strong draught breed'),
-            ('Bhadawari', 'male_buffalo', 'Local buffalo breed'),
-            
-            # Bull breeds
-            ('Ongole', 'bull', 'Strong draught breed'),
-            ('Kankrej', 'bull', 'Drought resistant bull'),
-            ('Hariana', 'bull', 'Dual purpose breed'),
-            ('Khillari', 'bull', 'Drought resistant'),
-            ('Amritmahal', 'bull', 'Karnataka origin breed'),
-            
-            # Calf breeds
-            ('Local Calf', 'calf', 'Young cattle'),
-            ('Crossbred Calf', 'calf', 'Mixed breed calf'),
-            ('Purebred Calf', 'calf', 'Pure breed calf')
-        ]
-
-        for breed in sample_breeds:
-            try:
-                cursor.execute("INSERT OR IGNORE INTO breeds (breed_name, cattle_type, description) VALUES (%s, %s, %s)", breed)
-            except:
-                pass
-
-
-        # MODIFY the appointments table to add status
-        cursor.execute("""CREATE TABLE IF NOT EXISTS appointments (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            farmer_id INTEGER NOT NULL,
-            vet_id INTEGER NOT NULL,
-            date TEXT NOT NULL,
-            time TEXT NOT NULL,
-            status TEXT DEFAULT 'scheduled',  -- scheduled, completed, cancelled
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )""")
-
-        # ADD treatments table
-        # In your init_db() function, update the treatments table:
-        cursor.execute("""CREATE TABLE IF NOT EXISTS treatments (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            appointment_id INTEGER,
-            cow_id TEXT,
-            vet_id INTEGER,
-            farmer_id INTEGER,
-            diagnosis TEXT,
-            medicines TEXT,
-            vaccination_details TEXT,
-            instructions TEXT,
-            treatment_date TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (appointment_id) REFERENCES appointments(id),
-            FOREIGN KEY (cow_id) REFERENCES cows(cow_id),
-            FOREIGN KEY (vet_id) REFERENCES veterinarians(vet_id),
-            FOREIGN KEY (farmer_id) REFERENCES farmers(farmer_id)
-        )""")
-
-        cursor.execute("""CREATE TABLE IF NOT EXISTS veterinarians (
-            vet_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            phone TEXT UNIQUE NOT NULL,
-            clinic TEXT,
-            education TEXT NOT NULL,
-            experience REAL NOT NULL,
-            specialization TEXT NOT NULL,
-            password TEXT NOT NULL,
-            photo TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )""")        
-                              
-        cursor.execute("""CREATE TABLE IF NOT EXISTS geofence (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            cow_id TEXT,
-            farmer_id INTEGER,
-            coordinates TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (cow_id) REFERENCES cows(cow_id),
-            FOREIGN KEY (farmer_id) REFERENCES farmers(farmer_id)
-        )""")
-
-        cursor.execute("""CREATE TABLE IF NOT EXISTS milk_yield (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            cow_id TEXT,
-            date DATE,
-            morning REAL DEFAULT 0,
-            afternoon REAL DEFAULT 0,
-            evening REAL DEFAULT 0,
-            total REAL DEFAULT 0,
-            FOREIGN KEY (cow_id) REFERENCES cows(cow_id)
-        )""")
-        cursor.execute("""CREATE TABLE IF NOT EXISTS sold_cows (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            cow_id TEXT,
-            farmer_id INTEGER,
-            breed TEXT,
-            age INTEGER,
-            weight REAL,
-            price REAL,
-            photo TEXT,
-            sold_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (cow_id) REFERENCES cows(cow_id),
-            FOREIGN KEY (farmer_id) REFERENCES farmers(farmer_id)
-        )""")
-
-        cursor.execute("""CREATE TABLE IF NOT EXISTS cows_for_sale (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            cow_id TEXT,
-            farmer_id INTEGER,
-            breed TEXT,
-            age INTEGER,
-            weight REAL,
-            price REAL,
-            photo TEXT,
-            listed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            is_sold BOOLEAN DEFAULT FALSE,
-            FOREIGN KEY (cow_id) REFERENCES cows(cow_id),
-            FOREIGN KEY (farmer_id) REFERENCES farmers(farmer_id)
-        )""")
-
-
-
-        conn.commit()
-        conn.close()
 def get_db():
-    DATABASE_URL = os.getenv("DATABASE_URL")
-
-    if DATABASE_URL.startswith("postgres://"):
-        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
-
-    conn = psycopg2.connect(
-        DATABASE_URL,
-        sslmode='require',
-        cursor_factory=RealDictCursor
-    )
-    return conn
+    """Return a PostgreSQL database connection with dictionary cursor"""
+    import psycopg2
+    from psycopg2 import extras
+    
+    try:
+        conn = psycopg2.connect(DATABASE_URL)
+        # This makes all cursors return dictionaries
+        conn.cursor_factory = extras.RealDictCursor
+        return conn
+    except Exception as e:
+        print(f"❌ Database connection error: {e}")
+        raise e
 
 import random
 from datetime import datetime, timedelta
@@ -699,10 +492,10 @@ def admin_dashboard():
             milk_chart_data.append(0)
 
     # System status
-    import os
-    # Note: This still checks SQLite file - you might want to update this
-    db_size = os.path.getsize(DB_NAME) if os.path.exists(DB_NAME) else 0
-    storage_usage = min(round((db_size / (1024 * 1024)) / 10 * 100, 1), 100)
+    storage_usage = 0  # Placeholder value
+    active_sessions = 1
+    system_uptime = "Just started"
+    current_date = dt_date.today().strftime("%B %d, %Y")
     
     active_sessions = 1
     system_uptime = "Just started"
@@ -3816,7 +3609,6 @@ def confirm_appointment(vet_id):
 
 from flask import Flask, request, redirect, url_for, flash
  # import your existing send_sms function
-import sqlite3
 
 @app.route("/vet/confirm_appointment/<int:appointment_id>", methods=["POST"])
 def confirm_appointment_vet(appointment_id):
@@ -4767,5 +4559,4 @@ def admin_logout():
 
 # ---------------- Run ----------------
 if __name__ == "__main__":
-    init_db()
     app.run(debug=True)
