@@ -436,20 +436,12 @@ def init_db():
         conn.commit()
         conn.close()
 def get_db():
-    """Return a PostgreSQL database connection with dictionary cursor"""
-    import psycopg2
-    from psycopg2 import extras
-    
-    conn = psycopg2.connect(
-        dbname=DB_NAME,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        host=DB_HOST,
-        port=DB_PORT
-    )
-    
-    # This is the key line - it makes all cursors return dictionaries
-    conn.cursor_factory = extras.RealDictCursor
+    DATABASE_URL = os.getenv("DATABASE_URL")
+
+    if DATABASE_URL.startswith("postgres://"):
+        DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
     return conn
 
 import random
