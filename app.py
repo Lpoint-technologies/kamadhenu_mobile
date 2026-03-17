@@ -26,6 +26,7 @@ from urllib.parse import urlparse
 from psycopg2 import extras
 from gtts import gTTS
 from flask import send_file
+from psycopg2.extras import RealDictCursor
 translator = GoogleTranslator(source='auto', target='en')
 print(translator.translate("ನಮಸ್ಕಾರ"))  # Kannada → English
 
