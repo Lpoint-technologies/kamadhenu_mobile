@@ -43,13 +43,17 @@ app.secret_key = "kamadhenu_secret"
 
 
 
+import os
+
+DATABASE_URL = os.getenv("DATABASE_URL")
+
+if DATABASE_URL.startswith("postgres://"):
+    DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
+
+app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URL
+app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 
-DB_NAME = "kamadhenu_db"
-DB_USER = "postgres"
-DB_PASSWORD = "postgres123"
-DB_HOST = "localhost"
-DB_PORT = "5432"
 COW_UPLOAD_FOLDER = os.path.join("static", "uploads", "cow")
 VET_UPLOAD_FOLDER = os.path.join("static", "uploads", "vets")
 
