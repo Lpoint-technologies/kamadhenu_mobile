@@ -441,7 +441,11 @@ def get_db():
     if DATABASE_URL.startswith("postgres://"):
         DATABASE_URL = DATABASE_URL.replace("postgres://", "postgresql://", 1)
 
-    conn = psycopg2.connect(DATABASE_URL, sslmode='require')
+    conn = psycopg2.connect(
+        DATABASE_URL,
+        sslmode='require',
+        cursor_factory=RealDictCursor
+    )
     return conn
 
 import random
