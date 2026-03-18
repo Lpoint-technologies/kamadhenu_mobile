@@ -3173,7 +3173,7 @@ def chatbot():
     if "bye" in user_text.lower() or "ವಿದಾಯ" in user_text:
         bot_response_kn = "ವಿದಾಯ! 👋"
     elif user_text in greetings_kn:
-        bot_response_kn = "ನಮಸ್ತೆ! ನಿಮಗೆ ಸಹಾಯ ಬೇಕೇ%s"
+        bot_response_kn = "ನಮಸ್ತೆ! ನಿಮಗೆ ಸಹಾಯ ಬೇಕೇ"
     else:
         # If input is in Kannada, translate to English for Gemini
         if lang == "kn":
