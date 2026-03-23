@@ -1,39 +1,453 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>Geo-Fencing for Child Safety</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <!-- Mobile viewport settings for WebView -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#043c07">
+  
+  <title>Geo-Fencing - Kamadhenu</title>
+  
+  <!-- Optimized fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <style>
-    #map { height: 90vh; width: 100%; }
-    body { font-family: Arial; margin: 0; padding: 0; }
-    button { margin: 10px; padding: 10px; }
-    #debug-info { margin: 10px; padding: 10px; background: #f0f0f0; display: none; }
+    /* Mobile-First Design System */
+    :root {
+      --primary: #043c07;
+      --primary-light: #1b5e20;
+      --secondary: #ffc107;
+      --danger: #dc3545;
+      --success: #28a745;
+      --info: #17a2b8;
+      --light: #f8f9fa;
+      --dark: #343a40;
+      --gray: #6c757d;
+      --border: #e9ecef;
+      --safe-area-top: env(safe-area-inset-top, 0px);
+      --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+      --header-height: 70px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f5f9f5;
+      color: var(--dark);
+      overflow-x: hidden;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .header-title{
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
+
+    /* ==================== App Header ==================== */
+    .app-header {
+      height: var(--header-height);
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      padding-top: var(--safe-area-top);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+    }
+
+    .app-header .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+    }
+
+    .app-header .logo i {
+      font-size: 1.8rem;
+      margin-right: 8px;
+    }
+
+    .back-btn {
+      color: white;
+      font-size: 1.5rem;
+      text-decoration: none;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    /* ==================== Cow Info Bar ==================== */
+    .cow-info-bar {
+      background: white;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+
+    .cow-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cow-info i {
+      color: var(--primary);
+      font-size: 1.2rem;
+    }
+
+    .cow-id {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 1rem;
+    }
+
+    .cow-badge {
+      background: var(--primary);
+      color: white;
+      padding: 4px 12px;
+      border-radius: 30px;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    /* ==================== Map Container ==================== */
+    .map-container {
+      flex: 1;
+      position: relative;
+      background: #e9ecef;
+    }
+
+    #map {
+      height: 100%;
+      width: 100%;
+    }
+
+    /* ==================== Instructions Card ==================== */
+    .instructions-card {
+      background: white;
+      border-radius: 24px 24px 0 0;
+      padding: 20px;
+      box-shadow: 0 -4px 20px rgba(0,0,0,0.1);
+      flex-shrink: 0;
+    }
+
+    .instructions-title {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .step-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 0.9rem;
+    }
+
+    .step-dot {
+      width: 24px;
+      height: 24px;
+      border-radius: 12px;
+      background: rgba(4, 60, 7, 0.1);
+      color: var(--primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+    }
+
+    .step-text {
+      color: var(--dark);
+    }
+
+    /* ==================== Action Button ==================== */
+    .action-btn {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      border: none;
+      border-radius: 30px;
+      padding: 16px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .action-btn:active {
+      transform: scale(0.98);
+      opacity: 0.9;
+    }
+
+    .action-btn i {
+      font-size: 1.2rem;
+    }
+
+    .action-btn:disabled {
+      opacity: 0.5;
+      transform: none;
+    }
+
+    /* ==================== Drawing Controls ==================== */
+    .drawing-controls {
+      position: absolute;
+      top: 16px;
+      left: 16px;
+      right: 16px;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .drawing-hint {
+      background: white;
+      border-radius: 30px;
+      padding: 12px 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      color: var(--dark);
+      pointer-events: none;
+    }
+
+    .drawing-hint i {
+      color: var(--primary);
+      font-size: 1rem;
+    }
+
+    /* ==================== Success Overlay ==================== */
+    .success-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(40, 167, 69, 0.9);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 20;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .success-overlay.active {
+      display: flex;
+    }
+
+    .success-content {
+      text-align: center;
+      color: white;
+    }
+
+    .success-content i {
+      font-size: 4rem;
+      margin-bottom: 16px;
+    }
+
+    .success-content h3 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    /* ==================== Debug Info (hidden by default) ==================== */
+    #debug-info {
+      display: none;
+    }
+
+    /* ==================== Mobile Optimizations ==================== */
+    @media (max-width: 480px) {
+      .instructions-card {
+        padding: 16px;
+      }
+      
+      .step-item {
+        font-size: 0.85rem;
+      }
+      
+      .action-btn {
+        padding: 14px;
+        font-size: 1rem;
+      }
+    }
+
+    /* Override Google Maps default controls for mobile */
+    .gm-style .gm-control-active {
+      width: 40px !important;
+      height: 40px !important;
+      border-radius: 20px !important;
+    }
+
+    .gm-style .gm-fullscreen-control {
+      width: 40px !important;
+      height: 40px !important;
+      border-radius: 20px !important;
+    }
+
+    .gm-style-myc {
+      display: none !important;
+    }
   </style>
+  
+  <!-- Google Maps API -->
   <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB4mPe3FtRIfwj1ETkH3toZV89qUaU_iPc&libraries=drawing"></script>
 </head>
 <body>
-  <h2 style="text-align:center;">Draw Safe Zone for Cow: <span id="cow-id-display">{{ cow['cow_id'] }}</span></h2>
-  <div id="map"></div>
-  <button onclick="saveFence()">Save Fence</button>
+      <input type="hidden" id="currentLang" value="{{ current_lang|default('en') }}">
+
+  <!-- App Header -->
+  <header class="app-header">
+    <a href="{{ url_for('add_geotag') }}" class="back-btn">
+      <i class="fas fa-arrow-left"></i>
+    </a>
+    <span class="header-title">Geo-Fencing</span>
+    <div style="width: 44px;"></div> <!-- Spacer for alignment -->
+  </header>
+
+  <!-- Cow Info Bar -->
+  <div class="cow-info-bar">
+    <div class="cow-info">
+      <i class="fas fa-cow"></i>
+      <span class="cow-id" id="cow-id-display">{{ cow['cow_id'] }}</span>
+    </div>
+    <span class="cow-badge">Draw Safe Zone</span>
+  </div>
+
+  <!-- Map Container -->
+  <div class="map-container">
+    <div id="map"></div>
+    
+    <!-- Drawing Hint (shows when no polygon drawn) -->
+    <div class="drawing-controls" id="drawingHint">
+      <div class="drawing-hint">
+        <i class="fas fa-draw-polygon"></i>
+        <span>Draw a polygon around the safe zone</span>
+      </div>
+    </div>
+
+    <!-- Success Overlay -->
+    <div class="success-overlay" id="successOverlay">
+      <div class="success-content">
+        <i class="fas fa-check-circle"></i>
+        <h3>Geofence Saved!</h3>
+        <p>Safe zone has been created</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Instructions & Action Card -->
+  <div class="instructions-card">
+    <div class="instructions-title">
+      <i class="fas fa-info-circle"></i>
+      <span>How to draw a safe zone</span>
+    </div>
+
+    <div class="step-list">
+      <div class="step-item">
+        <span class="step-dot">1</span>
+        <span class="step-text">Use the drawing tool in the top center of the map</span>
+      </div>
+      <div class="step-item">
+        <span class="step-dot">2</span>
+        <span class="step-text">Click on the map to start drawing a polygon</span>
+      </div>
+      <div class="step-item">
+        <span class="step-dot">3</span>
+        <span class="step-text">Click points around the safe zone area</span>
+      </div>
+      <div class="step-item">
+        <span class="step-dot">4</span>
+        <span class="step-text">Double-click or click the first point to finish</span>
+      </div>
+      <div class="step-item">
+        <span class="step-dot">5</span>
+        <span class="step-text">Tap "Save Fence" button below</span>
+      </div>
+    </div>
+
+    <button class="action-btn" onclick="saveFence()" id="saveBtn">
+      <i class="fas fa-save"></i>
+      Save Geofence
+    </button>
+  </div>
+
+  <!-- Debug Info (hidden) -->
   <div id="debug-info"></div>
 
   <script>
     let map, drawingManager, selectedShape;
     
-    // Debug - check if cow_id is being passed correctly
+    // Get cow ID from template
     const cow_id = "{{ cow['cow_id'] }}";
-    console.log("Cow ID from template:", cow_id);
+    console.log("Cow ID:", cow_id);
     
-    // Display debug info on page
+    // Update display
     document.getElementById('cow-id-display').textContent = cow_id;
 
     function initMap() {
       console.log("Initializing map...");
+      
+      // Initialize map with default center (India)
       map = new google.maps.Map(document.getElementById("map"), {
         center: { lat: 12.9716, lng: 77.5946 },
-        zoom: 13
+        zoom: 13,
+        mapTypeControl: false,
+        streetViewControl: false,
+        fullscreenControl: true,
+        fullscreenControlOptions: {
+          position: google.maps.ControlPosition.RIGHT_BOTTOM
+        },
+        zoomControlOptions: {
+          position: google.maps.ControlPosition.RIGHT_BOTTOM
+        }
       });
 
+      // Initialize drawing manager
       drawingManager = new google.maps.drawing.DrawingManager({
         drawingMode: google.maps.drawing.OverlayType.POLYGON,
         drawingControl: true,
@@ -42,73 +456,141 @@
           drawingModes: ["polygon"]
         },
         polygonOptions: {
-          editable: true
+          editable: true,
+          draggable: true,
+          fillColor: "#043c07",
+          fillOpacity: 0.3,
+          strokeColor: "#043c07",
+          strokeWeight: 3
         }
       });
 
       drawingManager.setMap(map);
 
+      // Hide drawing hint when polygon is drawn
       google.maps.event.addListener(drawingManager, 'overlaycomplete', function(event) {
         console.log("Polygon drawn!");
+        
+        // Hide drawing hint
+        document.getElementById('drawingHint').style.opacity = '0.3';
+        
+        // Remove previous polygon if exists
         if (selectedShape) {
           selectedShape.setMap(null);
         }
+        
         selectedShape = event.overlay;
-        console.log("Shape saved, ready to save fence");
+        
+        // Add listener for edits
+        google.maps.event.addListener(selectedShape.getPath(), 'set_at', function() {
+          console.log("Polygon edited");
+        });
+        
+        google.maps.event.addListener(selectedShape.getPath(), 'insert_at', function() {
+          console.log("Polygon edited");
+        });
+        
+        console.log("Ready to save fence");
       });
+
+      // Try to get user's location
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          (position) => {
+            const pos = {
+              lat: position.coords.latitude,
+              lng: position.coords.longitude
+            };
+            map.setCenter(pos);
+            map.setZoom(15);
+          },
+          () => {
+            console.log("Using default location");
+          }
+        );
+      }
     }
 
     function saveFence() {
-  console.log("Save Fence button clicked");
-  console.log("Current cow_id:", cow_id);
-  
-  if (!cow_id || cow_id === "None" || cow_id === "") {
-    alert("Error: Cow ID is missing!");
-    return;
-  }
-  
-  if (!selectedShape) {
-    alert("Please draw a geofence first.");
-    return;
-  }
+      console.log("Save Fence clicked");
+      
+      // Validate
+      if (!cow_id || cow_id === "None" || cow_id === "") {
+        alert("Error: Cow ID is missing!");
+        return;
+      }
+      
+      if (!selectedShape) {
+        alert("Please draw a geofence first using the drawing tool.");
+        return;
+      }
 
-  const path = selectedShape.getPath();
-  const coordinates = [];
+      // Get coordinates
+      const path = selectedShape.getPath();
+      const coordinates = [];
 
-  for (let i = 0; i < path.getLength(); i++) {
-    const point = path.getAt(i);
-    coordinates.push([point.lat(), point.lng()]);
-  }
-  
-  console.log("Coordinates collected:", coordinates);
-  console.log("Sending to server...");
+      for (let i = 0; i < path.getLength(); i++) {
+        const point = path.getAt(i);
+        coordinates.push([point.lat(), point.lng()]);
+      }
+      
+      if (coordinates.length < 3) {
+        alert("Please draw a valid polygon with at least 3 points.");
+        return;
+      }
 
-  fetch('/save-fence', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ 
-      cow_id: cow_id, 
-      coordinates: coordinates 
-    })
-  })
-  .then(response => {
-    console.log("Response status:", response.status);
-    return response.json();
-  })
-  .then(data => {
-    console.log("Response data:", data);
-    if (data.status === "success") {
-      alert("✅ " + data.message);
-    } else {
-      alert("❌ Error: " + (data.message || "Unknown error"));
+      // Disable save button during request
+      const saveBtn = document.getElementById('saveBtn');
+      const originalText = saveBtn.innerHTML;
+      saveBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Saving...';
+      saveBtn.disabled = true;
+
+      // Send to server
+      fetch('/save-fence', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          cow_id: cow_id, 
+          coordinates: coordinates 
+        })
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log("Response:", data);
+        
+        if (data.status === "success") {
+          // Show success overlay
+          const overlay = document.getElementById('successOverlay');
+          overlay.classList.add('active');
+          
+          // Hide after 2 seconds
+          setTimeout(() => {
+            overlay.classList.remove('active');
+          }, 2000);
+          
+          // Also show alert for immediate feedback
+          alert("✅ Geofence saved successfully!");
+          
+          // Optionally return to previous page after success
+          setTimeout(() => {
+            window.location.href = '/add_geotag';
+          }, 2000);
+        } else {
+          alert("❌ Error: " + (data.message || "Unknown error"));
+        }
+      })
+      .catch(error => {
+        console.error("Error:", error);
+        alert("Error saving fence: " + error.message);
+      })
+      .finally(() => {
+        // Re-enable button
+        saveBtn.innerHTML = originalText;
+        saveBtn.disabled = false;
+      });
     }
-  })
-  .catch(error => {
-    console.error("Fetch error:", error);
-    alert("Error saving fence: " + error.message);
-  });
-}
 
+    // Initialize map when page loads
     window.onload = initMap;
   </script>
 </body>

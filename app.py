@@ -26,6 +26,7 @@ from urllib.parse import urlparse
 from psycopg2 import extras
 from gtts import gTTS
 from flask import send_file
+
 translator = GoogleTranslator(source='auto', target='en')
 print(translator.translate("ನಮಸ್ಕಾರ"))  # Kannada → English
 
@@ -36,7 +37,7 @@ print(translator.translate("ನಮಸ್ಕಾರ"))  # Kannada → English
 load_dotenv()
 
 # Get API key from .env
-genai.configure(api_key=os.getenv("GEMINI_API_KEY"))
+genai.configure(api_key=os.getenv("api_key"))
 
 app = Flask(__name__)
 app.secret_key = "kamadhenu_secret"
@@ -45,11 +46,16 @@ app.secret_key = "kamadhenu_secret"
 
 
 
-DB_NAME = "kamadhenu_db"
-DB_USER = "postgres"
-DB_PASSWORD = "postgres123"
-DB_HOST = "localhost"
-DB_PORT = "5432"
+# Database URL format (works locally and on Render)
+import os
+from urllib.parse import urlparse
+
+# Get database URL from environment variable or use local default
+DATABASE_URL = os.environ.get('DATABASE_URL', 'postgresql://postgres:postgres123@localhost:5432/kamadhenu_db')
+
+# Fix for Render's postgres:// vs postgresql://
+if DATABASE_URL.startswith('postgres://'):
+    DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
 COW_UPLOAD_FOLDER = os.path.join("static", "uploads", "cow")
 VET_UPLOAD_FOLDER = os.path.join("static", "uploads", "vets")
 
@@ -190,7 +196,7 @@ IDENTIFICATION_THRESHOLD = 0.6
 # ================= SMS Sending Function ==================
 def send_sms(phone, message):
     """Send SMS using Fast2SMS API"""
-    api_key = "CELR3Zg21VMUIiWy4rzqnS6fYBaxNdsHlOhpJ7DQ0GFKAbTPtkNKUbiwAG0YaTfsIBxmyV4nlqJugeCR"
+    
     url = "https://www.fast2sms.com/dev/bulkV2"
 
     # Clean phone number - remove any non-digit characters
@@ -222,231 +228,20 @@ def send_sms(phone, message):
         print(f"❌ SMS Error: {str(e)}")
         return {'success': False, 'error': str(e)}
 
-# ---------------- Database Setup ----------------
-def init_db():
-    if not os.path.exists(DB_NAME):
-        conn = sqlite3.connect(DB_NAME)
-        cursor = conn.cursor()
 
-        cursor.execute("""CREATE TABLE farmers (
-            farmer_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            phone TEXT UNIQUE NOT NULL,
-            state TEXT NOT NULL,
-            city TEXT NOT NULL,
-            address TEXT,
-            password TEXT NOT NULL,
-            photo TEXT, 
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )""")
-
-        # In your init_db() function, update the cows table creation:
-        cursor.execute("""CREATE TABLE IF NOT EXISTS cows (
-            cow_id TEXT PRIMARY KEY,
-            farmer_id INTEGER,
-            cattle_type TEXT NOT NULL,
-            breed TEXT,
-            date_of_birth DATE,  -- NEW: Date of birth
-            age INTEGER,
-            weight REAL,
-            color TEXT,
-            health_records TEXT,
-            vaccination_history TEXT,
-            milk_yield REAL,
-            special_notes TEXT,
-            photo TEXT,
-            muzzle_id TEXT,
-            muzzle_photo TEXT,
-            father_id TEXT,
-            mother_id TEXT,
-            insurance_by TEXT,  -- NEW: Insurance company name
-            insurance_policy_number TEXT,  -- NEW: Policy number
-            insurance_valid_upto DATE,  -- NEW: Insurance expiry date
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (farmer_id) REFERENCES farmers(farmer_id),
-            FOREIGN KEY (father_id) REFERENCES cows(cow_id),
-            FOREIGN KEY (mother_id) REFERENCES cows(cow_id)
-        )""")
-
-
-        # Add this to your init_db() function
-        cursor.execute("""CREATE TABLE IF NOT EXISTS breeds (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            breed_name TEXT UNIQUE NOT NULL,
-            cattle_type TEXT NOT NULL,
-            description TEXT
-        )""")
-# Add OTP table for password reset
-        cursor.execute("""CREATE TABLE IF NOT EXISTS password_reset_otp (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            phone TEXT NOT NULL,
-            otp TEXT NOT NULL,
-            expires_at TIMESTAMP NOT NULL,
-            verified BOOLEAN DEFAULT 0,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )""")
-        # Insert some sample breeds
-        # In your init_db() function, replace the sample_breeds section with this:
-
-        # Insert comprehensive sample breeds
-        sample_breeds = [
-            # Cow breeds
-            ('Holstein Friesian', 'cow', 'High milk yielding breed'),
-            ('Jersey', 'cow', 'Known for rich milk'),
-            ('Sahiwal', 'cow', 'Drought resistant breed'),
-            ('Gir', 'cow', 'Indian breed from Gujarat'),
-            ('Red Sindhi', 'cow', 'Dual purpose breed'),
-            ('Tharparkar', 'cow', 'Drought resistant milch breed'),
-            
-            # Buffalo breeds
-            ('Murrah', 'buffalo', 'Popular buffalo breed'),
-            ('Surti', 'buffalo', 'Good milk yielder'),
-            ('Nili Ravi', 'buffalo', 'River buffalo breed'),
-            ('Jaffrabadi', 'buffalo', 'Heavy milk yielder'),
-            ('Bhadawari', 'buffalo', 'High fat content milk'),
-            
-            # Male Buffalo breeds (same as buffalo but for male_buffalo type)
-            ('Murrah', 'male_buffalo', 'Popular buffalo breed'),
-            ('Surti', 'male_buffalo', 'Good breed for draught'),
-            ('Nili Ravi', 'male_buffalo', 'River buffalo breed'),
-            ('Jaffrabadi', 'male_buffalo', 'Strong draught breed'),
-            ('Bhadawari', 'male_buffalo', 'Local buffalo breed'),
-            
-            # Bull breeds
-            ('Ongole', 'bull', 'Strong draught breed'),
-            ('Kankrej', 'bull', 'Drought resistant bull'),
-            ('Hariana', 'bull', 'Dual purpose breed'),
-            ('Khillari', 'bull', 'Drought resistant'),
-            ('Amritmahal', 'bull', 'Karnataka origin breed'),
-            
-            # Calf breeds
-            ('Local Calf', 'calf', 'Young cattle'),
-            ('Crossbred Calf', 'calf', 'Mixed breed calf'),
-            ('Purebred Calf', 'calf', 'Pure breed calf')
-        ]
-
-        for breed in sample_breeds:
-            try:
-                cursor.execute("INSERT OR IGNORE INTO breeds (breed_name, cattle_type, description) VALUES (%s, %s, %s)", breed)
-            except:
-                pass
-
-
-        # MODIFY the appointments table to add status
-        cursor.execute("""CREATE TABLE IF NOT EXISTS appointments (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            farmer_id INTEGER NOT NULL,
-            vet_id INTEGER NOT NULL,
-            date TEXT NOT NULL,
-            time TEXT NOT NULL,
-            status TEXT DEFAULT 'scheduled',  -- scheduled, completed, cancelled
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )""")
-
-        # ADD treatments table
-        # In your init_db() function, update the treatments table:
-        cursor.execute("""CREATE TABLE IF NOT EXISTS treatments (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            appointment_id INTEGER,
-            cow_id TEXT,
-            vet_id INTEGER,
-            farmer_id INTEGER,
-            diagnosis TEXT,
-            medicines TEXT,
-            vaccination_details TEXT,
-            instructions TEXT,
-            treatment_date TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (appointment_id) REFERENCES appointments(id),
-            FOREIGN KEY (cow_id) REFERENCES cows(cow_id),
-            FOREIGN KEY (vet_id) REFERENCES veterinarians(vet_id),
-            FOREIGN KEY (farmer_id) REFERENCES farmers(farmer_id)
-        )""")
-
-        cursor.execute("""CREATE TABLE IF NOT EXISTS veterinarians (
-            vet_id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT NOT NULL,
-            email TEXT UNIQUE NOT NULL,
-            phone TEXT UNIQUE NOT NULL,
-            clinic TEXT,
-            education TEXT NOT NULL,
-            experience REAL NOT NULL,
-            specialization TEXT NOT NULL,
-            password TEXT NOT NULL,
-            photo TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        )""")        
-                              
-        cursor.execute("""CREATE TABLE IF NOT EXISTS geofence (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            cow_id TEXT,
-            farmer_id INTEGER,
-            coordinates TEXT,
-            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (cow_id) REFERENCES cows(cow_id),
-            FOREIGN KEY (farmer_id) REFERENCES farmers(farmer_id)
-        )""")
-
-        cursor.execute("""CREATE TABLE IF NOT EXISTS milk_yield (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            cow_id TEXT,
-            date DATE,
-            morning REAL DEFAULT 0,
-            afternoon REAL DEFAULT 0,
-            evening REAL DEFAULT 0,
-            total REAL DEFAULT 0,
-            FOREIGN KEY (cow_id) REFERENCES cows(cow_id)
-        )""")
-        cursor.execute("""CREATE TABLE IF NOT EXISTS sold_cows (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            cow_id TEXT,
-            farmer_id INTEGER,
-            breed TEXT,
-            age INTEGER,
-            weight REAL,
-            price REAL,
-            photo TEXT,
-            sold_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            FOREIGN KEY (cow_id) REFERENCES cows(cow_id),
-            FOREIGN KEY (farmer_id) REFERENCES farmers(farmer_id)
-        )""")
-
-        cursor.execute("""CREATE TABLE IF NOT EXISTS cows_for_sale (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            cow_id TEXT,
-            farmer_id INTEGER,
-            breed TEXT,
-            age INTEGER,
-            weight REAL,
-            price REAL,
-            photo TEXT,
-            listed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            is_sold BOOLEAN DEFAULT FALSE,
-            FOREIGN KEY (cow_id) REFERENCES cows(cow_id),
-            FOREIGN KEY (farmer_id) REFERENCES farmers(farmer_id)
-        )""")
-
-
-
-        conn.commit()
-        conn.close()
 def get_db():
     """Return a PostgreSQL database connection with dictionary cursor"""
     import psycopg2
     from psycopg2 import extras
     
-    conn = psycopg2.connect(
-        dbname=DB_NAME,
-        user=DB_USER,
-        password=DB_PASSWORD,
-        host=DB_HOST,
-        port=DB_PORT
-    )
-    
-    # This is the key line - it makes all cursors return dictionaries
-    conn.cursor_factory = extras.RealDictCursor
-    return conn
+    try:
+        conn = psycopg2.connect(DATABASE_URL)
+        # This makes all cursors return dictionaries
+        conn.cursor_factory = extras.RealDictCursor
+        return conn
+    except Exception as e:
+        print(f"❌ Database connection error: {e}")
+        raise e
 
 import random
 from datetime import datetime, timedelta
@@ -519,19 +314,39 @@ def inject_lang():
     """Make current language available to all templates"""
     return {'current_lang': session.get('language', 'en')}
 
-@app.route('/set_language/<lang>')
-def set_language(lang):
-    """Route to change language"""
-    if lang in ['en', 'kn']:
+@app.route('/set_language', methods=['POST'])
+def set_language_route():
+    """Set language in session and return success"""
+    try:
+        data = request.get_json()
+        lang = data.get('lang', 'en')
+        
+        # Validate language
+        if lang not in ['en', 'kn']:
+            lang = 'en'
+        
+        # Store in session
         session['language'] = lang
-    return redirect(request.referrer or url_for('home'))
+        session.permanent = True  # Make session persistent
+        
+        # Also set cookie for JavaScript
+        response = jsonify({"success": True, "lang": lang})
+        response.set_cookie('user_language', lang, max_age=31536000, path='/')
+        
+        print(f"✅ Language set to: {lang}")
+        return response
+        
+    except Exception as e:
+        print(f"❌ Error setting language: {e}")
+        return jsonify({"success": False, "error": str(e)})
 
 @app.route("/")
 def home():
     lang = request.args.get('lang', 'en')
     if lang in ['en', 'kn']:
         session['language'] = lang
-    return render_template("main.html")
+    # Redirect to login page
+    return redirect(url_for('login'))
 
 
 
@@ -698,10 +513,10 @@ def admin_dashboard():
             milk_chart_data.append(0)
 
     # System status
-    import os
-    # Note: This still checks SQLite file - you might want to update this
-    db_size = os.path.getsize(DB_NAME) if os.path.exists(DB_NAME) else 0
-    storage_usage = min(round((db_size / (1024 * 1024)) / 10 * 100, 1), 100)
+    storage_usage = 0  # Placeholder value
+    active_sessions = 1
+    system_uptime = "Just started"
+    current_date = dt_date.today().strftime("%B %d, %Y")
     
     active_sessions = 1
     system_uptime = "Just started"
@@ -1577,10 +1392,6 @@ def export_report(report_type):
         headers={"Content-Disposition": f"attachment;filename={filename}"}
     )
 
-from gtts import gTTS
-import os
-import uuid
-from flask import send_file
 
 @app.route("/text_to_speech", methods=["POST"])
 def text_to_speech():
@@ -1620,8 +1431,7 @@ def text_to_speech():
     except Exception as e:
         print(f"❌ TTS error: {e}")
         return jsonify({"success": False, "error": str(e)})
-
-# Optional: Clean up old audio files to save space
+# Add this function for cleanup (optional but recommended)
 def cleanup_old_audio_files():
     """Delete audio files older than 1 hour"""
     audio_dir = os.path.join("static", "audio")
@@ -1629,23 +1439,20 @@ def cleanup_old_audio_files():
         current_time = time.time()
         for filename in os.listdir(audio_dir):
             filepath = os.path.join(audio_dir, filename)
-            # Delete files older than 1 hour (3600 seconds)
             if os.path.isfile(filepath) and (current_time - os.path.getmtime(filepath)) > 3600:
                 try:
                     os.remove(filepath)
-                    print(f"🧹 Deleted old audio: {filename}")
                 except:
                     pass
-
 @app.route("/speak", methods=["POST"])
 def speak():
-    """Convert Kannada text to speech"""
+    """Convert Kannada text to speech and return audio URL"""
     try:
         text = request.json.get("text", "")
         if not text:
             return jsonify({"success": False, "error": "No text provided"})
         
-        # Create static/audio folder if it doesn't exist
+        # Create audio directory if it doesn't exist
         audio_folder = os.path.join("static", "audio")
         os.makedirs(audio_folder, exist_ok=True)
         
@@ -1653,18 +1460,21 @@ def speak():
         filename = f"speak_{uuid.uuid4().hex}.mp3"
         filepath = os.path.join(audio_folder, filename)
         
-        # Generate speech
+        # Generate speech using gTTS (supports Kannada)
         print(f"🔊 Generating speech for: {text[:50]}...")
         tts = gTTS(text=text, lang='kn', slow=False)
         tts.save(filepath)
         print(f"✅ Audio saved: {filepath}")
         
-        # Return the URL
+        # Clean up old files (optional)
+        cleanup_old_audio_files()
+        
+        # Return the audio URL
         audio_url = url_for('static', filename=f'audio/{filename}')
         return jsonify({"success": True, "audio_url": audio_url})
         
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"❌ TTS Error: {e}")
         return jsonify({"success": False, "error": str(e)})
 @app.route('/admin/cows')
 def admin_cows():
@@ -1692,6 +1502,16 @@ def admin_farmers():
     conn.close()
     return render_template("admin_farmers.html", farmers=farmers)
 
+@app.before_request
+def before_request():
+    """Debug: Print language info for every request"""
+    lang_from_session = session.get('language')
+    lang_from_cookie = request.cookies.get('user_language')
+    lang_from_url = request.args.get('lang')
+    print(f"🔍 DEBUG - Request: {request.path}")
+    print(f"   Session lang: {lang_from_session}")
+    print(f"   Cookie lang: {lang_from_cookie}")
+    print(f"   URL lang: {lang_from_url}")
 @app.route("/admin/delete_farmer/<int:farmer_id>", methods=["POST"])
 def delete_farmer(farmer_id):
     if "admin" not in session:
@@ -2134,10 +1954,24 @@ def vet_resend_otp_modal():
 # ---------------- Dashboard ----------------
 @app.route("/dashboard")
 def dashboard():
-    lang = request.args.get('lang', 'en')
     if "farmer_id" not in session:
         return redirect(url_for("login"))
-
+    
+    # Get language from multiple sources
+    lang = session.get('language')
+    
+    if not lang:
+        lang = request.cookies.get('user_language')
+    
+    if not lang:
+        lang = request.args.get('lang')
+    
+    if lang not in ['en', 'kn']:
+        lang = 'en'
+    
+    # Save language back to session for persistence
+    session['language'] = lang
+    
     conn = get_db()
     cursor = conn.cursor()
 
@@ -2176,7 +2010,8 @@ def dashboard():
         farmer_created_at=farmer["created_at"].strftime('%Y-%m-%d') if farmer["created_at"] else None,
         total_cows=total_cows,
         total_milk=total_milk,
-        upcoming_appointments=upcoming_appointments
+        upcoming_appointments=upcoming_appointments,
+        current_lang=lang  # IMPORTANT: Pass language to template
     )
 @app.route("/update_profile", methods=["POST"])
 def update_profile():
@@ -2184,7 +2019,8 @@ def update_profile():
         return jsonify({"success": False, "message": "Please login first!"})
 
     farmer_id = session["farmer_id"]
-    
+    lang = session.get('language', request.cookies.get('user_language', 'en'))
+
     # Get form data
     name = request.form["name"]
     email = request.form["email"]
@@ -2239,7 +2075,7 @@ def add_cow():
 
     conn = get_db()
     cursor = conn.cursor()
-
+    lang = session.get('language', request.cookies.get('user_language', 'en'))
     # Get breeds for dropdown
     cursor.execute("SELECT breed_name, cattle_type FROM breeds ORDER BY breed_name")
     breeds = cursor.fetchall()
@@ -2407,6 +2243,7 @@ def add_cow():
 
 @app.route("/capture_muzzle")
 def capture_muzzle():
+    lang = session.get('language', request.cookies.get('user_language', 'en'))
     """Route to capture muzzle and generate automatic ID"""
     if "farmer_id" not in session:
         flash("Please login first!", "danger")
@@ -2435,6 +2272,7 @@ def capture_muzzle():
 
 @app.route("/clear_muzzle")
 def clear_muzzle():
+    lang = session.get('language', request.cookies.get('user_language', 'en'))
     """Clear pending muzzle registration"""
     session.pop('pending_muzzle', None)
     flash("Muzzle registration cleared. You can register a new one.", "info")
@@ -2599,6 +2437,7 @@ def identify_cow_from_muzzle():
 
 @app.route("/web_identify_cow")
 def web_identify_cow():
+    lang = session.get('language', request.cookies.get('user_language', 'en'))
     """Web-based automatic cow identification page"""
     if "farmer_id" not in session:
         flash("Please login first!", "danger")
@@ -2607,6 +2446,7 @@ def web_identify_cow():
 
 @app.route("/start_automatic_scan", methods=["POST"])
 def start_automatic_scan():
+    lang = session.get('language', request.cookies.get('user_language', 'en'))
     """Start automatic scanning and identification"""
     if "farmer_id" not in session:
         return jsonify({"success": False, "message": "Please login first!"})
@@ -2696,6 +2536,7 @@ def start_automatic_scan():
 
 @app.route("/find_cow")
 def find_cow():
+    lang = session.get('language', request.cookies.get('user_language', 'en'))
     """Find Cow page - Identify cow using muzzle recognition"""
     if "farmer_id" not in session:
         flash("Please login first!", "danger")
@@ -2704,6 +2545,7 @@ def find_cow():
 
 @app.route("/identify_cow")
 def identify_cow():
+    lang = session.get('language', request.cookies.get('user_language', 'en'))
     """Identify cow using muzzle recognition"""
     if "farmer_id" not in session:
         flash("Please login first!", "danger")
@@ -2945,6 +2787,7 @@ def capture_muzzle_web():
 # Disease prediction route
 @app.route("/disease_prediction", methods=["GET", "POST"])
 def disease_prediction():
+    lang = session.get('language', request.cookies.get('user_language', 'en'))
     if "farmer_id" not in session:
         flash("Please login first!", "danger")
         return redirect(url_for("login"))
@@ -3013,6 +2856,7 @@ def disease_prediction():
 
 @app.route("/cow/<cow_id>")
 def cow_details(cow_id):
+    lang = session.get('language', request.cookies.get('user_language', 'en'))
     conn = get_db()
     cursor = conn.cursor()
     
@@ -3046,6 +2890,7 @@ def cow_details(cow_id):
 # ---------------- List Cows ----------------
 @app.route("/cows")
 def list_cows():
+    lang = session.get('language', request.cookies.get('user_language', 'en'))
     if "farmer_id" not in session:
         return redirect(url_for("login"))
 
@@ -3123,6 +2968,7 @@ def delete_cow(cow_id):
 
 @app.route("/buy_cow")
 def buy_cow():
+    lang = session.get('language', request.cookies.get('user_language', 'en'))
     if "farmer_id" not in session:
         flash("Please login first!", "danger")
         return redirect(url_for("login"))
@@ -3190,6 +3036,7 @@ def sell_cow():
 
 @app.route("/sold_cows")
 def sold_cows():
+    lang = session.get('language', request.cookies.get('user_language', 'en'))
     if "farmer_id" not in session:
         flash("Please login first!", "danger")
         return redirect(url_for("login"))
@@ -3217,6 +3064,8 @@ def sold_cows():
 
 @app.route("/purchase_cow/<int:sale_id>", methods=["POST"])
 def purchase_cow(sale_id):
+    lang = session.get('language', request.cookies.get('user_language', 'en'))
+
     if "farmer_id" not in session:
         flash("Please login first!", "danger")
         return redirect(url_for("login"))
@@ -3379,7 +3228,7 @@ def chatbot():
     if "bye" in user_text.lower() or "ವಿದಾಯ" in user_text:
         bot_response_kn = "ವಿದಾಯ! 👋"
     elif user_text in greetings_kn:
-        bot_response_kn = "ನಮಸ್ತೆ! ನಿಮಗೆ ಸಹಾಯ ಬೇಕೇ%s"
+        bot_response_kn = "ನಮಸ್ತೆ! ನಿಮಗೆ ಸಹಾಯ ಬೇಕೇ"
     else:
         # If input is in Kannada, translate to English for Gemini
         if lang == "kn":
@@ -3758,64 +3607,64 @@ def farmer_treatment_details(treatment_id):
 from datetime import date as dt_date  # rename import to avoid conflict
 
 from datetime import date as dt_date
-
 @app.route('/confirm_appointment/<int:vet_id>', methods=['GET', 'POST'])
 def confirm_appointment(vet_id):
     # Ensure farmer is logged in
     farmer_id = session.get("farmer_id")
     if not farmer_id:
+        flash("Please login first!", "danger")
         return redirect(url_for('login'))
 
-    # Fetch vet details
     conn = get_db()
     cursor = conn.cursor()
-    cursor.execute(
-        "SELECT name, phone, clinic FROM veterinarians WHERE vet_id=%s",
-        (vet_id,)
-    )
-    vet = cursor.fetchone()
     
-    # Fetch farmer details (optional: to include farmer name in SMS)
-    cursor.execute(
-        "SELECT name, phone FROM farmers WHERE farmer_id=%s",
-        (farmer_id,)
-    )
-    farmer = cursor.fetchone()
-    
-    if request.method == 'POST':
-        appointment_date = request.form['date']
-        appointment_time = request.form['time']
-
-        # Save appointment
-        cursor.execute(
-            "INSERT INTO appointments (farmer_id, vet_id, date, time) VALUES (%s, %s, %s, %s)",
-            (farmer_id, vet_id, appointment_date, appointment_time)
-        )
-        conn.commit()
+    try:
+        # Fetch vet details
+        cursor.execute("SELECT vet_id, name, email, phone, clinic, specialization FROM veterinarians WHERE vet_id=%s", (vet_id,))
+        vet = cursor.fetchone()
         
-        # Send SMS to veterinarian
-        if vet and vet['phone']:
-            sms_message = f"📅 New Appointment:\nFarmer: {farmer['name']}\nDate: {appointment_date}\nTime: {appointment_time}\nClinic: {vet['clinic']}"
-            sms_result = send_sms(vet['phone'], sms_message)
-            if sms_result['success']:
-                print(f"✅ SMS sent to Vet {vet['name']} ({vet['phone']})")
-            else:
-                print(f"❌ Failed to send SMS to Vet {vet['name']}: {sms_result['error']}")
+        # Fetch farmer details
+        cursor.execute("SELECT name, phone FROM farmers WHERE farmer_id=%s", (farmer_id,))
+        farmer = cursor.fetchone()
         
+        # If vet not found, redirect back
+        if not vet:
+            flash("Veterinarian not found!", "danger")
+            return redirect(url_for('book_appointment'))
+        
+        if request.method == 'POST':
+            appointment_date = request.form['date']
+            appointment_time = request.form['time']
+            reason = request.form.get('reason', '')  # Get the reason from form
+            
+            # Insert into appointments table WITH reason column
+            cursor.execute(
+                "INSERT INTO appointments (farmer_id, vet_id, date, time, reason, status) VALUES (%s, %s, %s, %s, %s, %s)",
+                (farmer_id, vet_id, appointment_date, appointment_time, reason, 'scheduled')
+            )
+            conn.commit()
+            
+            # Send SMS to vet (optional)
+            if vet and vet['phone']:
+                sms_message = f"📅 New Appointment:\nFarmer: {farmer['name']}\nDate: {appointment_date}\nTime: {appointment_time}\nReason: {reason[:50] if reason else 'Not specified'}"
+                send_sms(vet['phone'], sms_message)
+            
+            flash('✅ Appointment booked successfully! Vet has been notified.', 'success')
+            return redirect(url_for('book_appointment'))
+        
+    except Exception as e:
+        conn.rollback()
+        flash(f"Error booking appointment: {str(e)}", "danger")
+        print(f"Appointment error: {e}")
+    finally:
         conn.close()
-        flash('✅ Appointment booked successfully! Vet has been notified via SMS.', 'success')
-        return redirect(url_for('book_appointment'))
-
-    conn.close()
-    # Minimum date for date picker
+    
     today = dt_date.today().isoformat()
-
     return render_template("confirm_appointment.html", vet=vet, vet_id=vet_id, today=today)
 
 
 from flask import Flask, request, redirect, url_for, flash
  # import your existing send_sms function
-import sqlite3
 
 @app.route("/vet/confirm_appointment/<int:appointment_id>", methods=["POST"])
 def confirm_appointment_vet(appointment_id):
@@ -4457,6 +4306,11 @@ def analytics():
         current_sales = current_sales_data["current_sales"] if current_sales_data else 0
         current_revenue = current_sales_data["current_revenue"] if current_sales_data else 0
 
+        # ADD THIS - Get total cows count
+        cursor.execute("SELECT COUNT(*) as total FROM cows WHERE farmer_id = %s", (farmer_id,))
+        total_cows_result = cursor.fetchone()
+        total_cows = total_cows_result["total"] if total_cows_result else 0
+
     except Exception as e:
         flash(f"Error loading analytics: {str(e)}", "danger")
         # Set default empty values on error
@@ -4468,6 +4322,9 @@ def analytics():
         current_sales = 0
         current_revenue = 0
         current_month = dt_date.today().strftime('%Y-%m')
+        start_date = (dt_date.today() - timedelta(days=30)).isoformat()
+        end_date = dt_date.today().isoformat()
+        total_cows = 0  # ADD THIS IN ERROR HANDLING AS WELL
         
     finally:
         conn.close()
@@ -4483,7 +4340,8 @@ def analytics():
         current_revenue=current_revenue,
         current_month=current_month,
         start_date=start_date,
-        end_date=end_date
+        end_date=end_date,
+        total_cows=total_cows  # ADD THIS LINE
     )
 @app.route("/admin/milk_production")
 def admin_milk_production():
@@ -4766,5 +4624,4 @@ def admin_logout():
 
 # ---------------- Run ----------------
 if __name__ == "__main__":
-    init_db()
     app.run(debug=True)

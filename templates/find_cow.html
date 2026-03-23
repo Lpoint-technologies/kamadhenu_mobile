@@ -2,883 +2,763 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Find Cow - Kamadhenu</title>
+  <!-- Mobile viewport settings for WebView -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#043c07">
+  
+  <title>Find Cow - Biometric Identification</title>
+  
+  <!-- Optimized Bootstrap for mobile -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
+    /* Mobile-First Design System */
     :root {
       --primary: #043c07;
+      --primary-light: #1b5e20;
       --secondary: #ffc107;
+      --danger: #dc3545;
+      --success: #28a745;
+      --info: #17a2b8;
+      --purple: #667eea;
+      --dark-purple: #764ba2;
       --light: #f8f9fa;
       --dark: #343a40;
-      --light-green: #e8f5e9;
+      --gray: #6c757d;
+      --border: #e9ecef;
+      --safe-area-top: env(safe-area-inset-top, 0px);
+      --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+      --header-height: 70px;
+      --bottom-nav-height: 75px;
     }
-    
-    body {
-      background-color: #f5f9f5;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      overflow-x: hidden;
-    }
-    
-    .dashboard-container {
-      width: 100%;
+
+    * {
       margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    .sidebar {
-      background: linear-gradient(to bottom, var(--primary), #1b5e20);
-      color: white;
-      height: 100vh;
-      position: fixed;
-      width: 260px;
-      padding-top: 20px;
-      box-shadow: 3px 0 10px rgba(0,0,0,0.1);
-      overflow-y: auto;
-      z-index: 1000;
-      transition: all 0.3s ease;
-    }
-    
-    .main-content { 
-      margin-left: 250px; 
-      padding: 20px;
-      transition: all 0.3s ease;
-    }
-    
-    .header {
-      background-color: white;
-      padding: 15px 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .welcome-text { 
-      color: var(--primary); 
-      font-weight: 600; 
-    }
-
-    .form-card {
-      background: white;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    }
-
-    .btn-primary {
-      background-color: var(--primary);
-      border: none;
-    }
-
-    .btn-primary:hover {
-      background-color: #256728;
-    }
-
-    .btn-identify {
-      background-color: #17a2b8;
-      color: white;
-      border: none;
-      padding: 15px 30px;
-      font-size: 1.1rem;
-      border-radius: 10px;
-    }
-
-    .btn-identify:hover {
-      background-color: #138496;
-      transform: translateY(-2px);
-    }
-
-    .identification-card {
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      border-radius: 15px;
-      padding: 40px;
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    .steps-container {
-      background: white;
-      border-radius: 10px;
-      padding: 25px;
-      margin-bottom: 30px;
-    }
-
-    .step {
-      display: flex;
-      align-items: center;
-      margin-bottom: 20px;
-      padding: 15px;
-      border-radius: 8px;
-      background-color: #f8f9fa;
-    }
-
-    .step-number {
-      background-color: var(--primary);
-      color: white;
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      margin-right: 15px;
-    }
-
-    .step-content {
-      flex: 1;
-    }
-
-    .feature-icon {
-      font-size: 3rem;
-      margin-bottom: 20px;
-      color: var(--primary);
-    }
-
-    .info-box {
-      background: #e8f5e9;
-      border-left: 4px solid var(--primary);
-      padding: 15px;
-      margin: 15px 0;
-      border-radius: 5px;
-    }
-
-    .cow-details-card {
-      background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
-      color: white;
-      border-radius: 15px;
-      padding: 30px;
-      margin-bottom: 30px;
-      animation: slideIn 0.5s ease-out;
-    }
-
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(-20px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .detail-row {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 10px;
-      padding: 8px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-
-    .detail-label {
-      font-weight: 600;
-    }
-
-    .detail-value {
-      text-align: right;
-    }
-
-    .cow-photo {
-      max-width: 200px;
-      border-radius: 10px;
-      border: 3px solid white;
-    }
-
-    .success-badge {
-      background-color: rgba(255,255,255,0.2);
-      padding: 5px 15px;
-      border-radius: 20px;
-      font-size: 0.9rem;
-    }
-
-    .logo {
-      text-align: center;
-      padding: 20px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
-      margin-bottom: 30px;
-    }
-    
-    .nav-item { 
-      margin: 10px 0; 
-    }
-
-    .nav-link {
-      color: rgba(255,255,255,0.8);
-      padding: 8px 16px;
-      border-radius: 5px;
-      margin: 5px 15px;
-      transition: all 0.3s;
-    }
-
-    .nav-link:hover, .nav-link.active { 
-      background-color: rgba(255,255,255,0.1); 
-      color: white; 
-    }
-
-    .nav-link i { 
-      margin-right: 10px; 
-      width: 20px; 
-      text-align: center; 
-    }
-
-    .logout-btn {
-      background-color: var(--secondary);
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f5f9f5;
       color: var(--dark);
-      border: none;
-      padding: 8px 15px;
-      border-radius: 5px;
-      font-weight: 500;
-      transition: all 0.3s;
+      overflow-x: hidden;
+      overflow-y: hidden;
+      height: 100vh;
+      padding-top: var(--header-height);
+      padding-bottom: calc(var(--bottom-nav-height) + var(--safe-area-bottom));
+      -webkit-font-smoothing: antialiased;
     }
 
-    .logout-btn:hover { 
-      background-color: #e0a800; 
-      transform: translateY(-2px); 
-    }
-
-    .cow-background {
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path fill="%232e7d32" fill-opacity="0.05" d="M50,10A40,40 0 1,1 50,90A40,40 0 1,1 50,10z M30,30 Q50,15 70,30 Q65,50 70,70 Q50,85 30,70 Q35,50 30,30 z"></path></svg>');
-      background-repeat: repeat;
-      background-size: 200px;
-    }
-
-    /* Submenu styles */
-    .submenu {
-      list-style: none;
-      padding-left: 30px;
-      display: none;
-    }
-    
-    .submenu .nav-link {
-      font-size: 14px;
-      padding: 6px 14px;
-      color: rgba(255,255,255,0.7);
-    }
-    
-    .submenu .nav-link:hover {
-      color: #fff;
-    }
-
-    /* Mobile menu toggle button */
-    .menu-toggle {
-      display: none;
-      position: fixed;
-      top: 15px;
-      left: 15px;
-      z-index: 1100;
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 5px;
-      width: 40px;
-      height: 40px;
-      font-size: 20px;
-      cursor: pointer;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-
-    /* Overlay for mobile when sidebar is open */
-    .overlay {
-      display: none;
+    /* ==================== App Header ==================== */
+    .app-header {
       position: fixed;
       top: 0;
       left: 0;
+      right: 0;
+      height: var(--header-height);
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      padding-top: var(--safe-area-top);
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    .menu-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.8rem;
+      cursor: pointer;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .menu-btn:active {
+      opacity: 0.7;
+    }
+
+    .header-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    /* ==================== Bottom Navigation ==================== */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--bottom-nav-height);
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding-bottom: var(--safe-area-bottom);
+      box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+      z-index: 1000;
+      border-top: 1px solid var(--border);
+    }
+
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray);
+      text-decoration: none;
+      font-size: 0.7rem;
+      font-weight: 500;
+      padding: 8px 0;
+    }
+
+    .nav-item i {
+      font-size: 1.4rem;
+      margin-bottom: 2px;
+    }
+
+    .nav-item.active {
+      color: var(--primary);
+    }
+
+    /* ==================== Main Content ==================== */
+    .app-content {
+      padding: 12px;
+      height: calc(100vh - var(--header-height) - var(--bottom-nav-height));
+      overflow-y: auto;
+    }
+
+    /* Hide scrollbar but keep functionality */
+    .app-content::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Identification Card */
+    .ident-card {
+      background: linear-gradient(135deg, var(--purple), var(--dark-purple));
+      color: white;
+      border-radius: 20px;
+      padding: 20px;
+      margin-bottom: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .ident-card h3 {
+      font-size: 1.2rem;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+
+    .ident-card p {
+      font-size: 0.85rem;
+      opacity: 0.9;
+      margin-bottom: 16px;
+    }
+
+    .scan-btn {
+      background: white;
+      color: var(--purple);
+      border: none;
+      border-radius: 30px;
+      padding: 12px;
+      font-weight: 700;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
       width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.5);
-      z-index: 999;
-    }
-    
-    .overlay.active {
-      display: block;
+      justify-content: center;
     }
 
-    /* Responsive styles */
-    @media (max-width: 768px) {
-      .sidebar {
-        transform: translateX(-100%);
-        width: 70%;
-        max-width: 250px;
-      }
-      
-      .sidebar.active {
-        transform: translateX(0);
-      }
-      
-      .main-content {
-        margin-left: 0;
-        width: 100%;
-      }
-      
-      .menu-toggle {
-        display: block;
-      }
-      
-      .header {
-        padding: 15px 15px 15px 50px;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
-      
-      .identification-card {
-        padding: 25px;
-      }
-      
-      .form-card {
-        padding: 20px;
-      }
-      
-      .cow-details-card {
-        padding: 20px;
-      }
+    .scan-btn:active {
+      transform: scale(0.98);
     }
 
-    @media (max-width: 576px) {
-      .main-content {
-        padding: 10px;
-      }
-      
-      .form-card {
-        padding: 15px;
-      }
-      
-      .identification-card {
-        padding: 20px;
-      }
-      
-      .logo h2 {
-        font-size: 1.5rem;
-      }
-      
-      .step {
-        flex-direction: column;
-        text-align: center;
-      }
-      
-      .step-number {
-        margin-right: 0;
-        margin-bottom: 10px;
-      }
-    }
-     /* Language Selector Styles - BOTTOM */
-    .language-selector {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 10000;
-        background: white;
-        padding: 10px 15px;
-        border-radius: 25px;
-        box-shadow: 0 -4px 15px rgba(0,0,0,0.2);
-        display: flex;
-        gap: 10px;
-        border: 2px solid #27ae60;
+    /* Steps Container - Compact */
+    .steps-card {
+      background: white;
+      border-radius: 20px;
+      padding: 12px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border);
     }
 
-    .lang-btn {
-        padding: 8px 20px;
-        border: none;
-        border-radius: 20px;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 14px;
-        transition: all 0.3s ease;
+    .steps-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
 
-    .lang-btn.english {
-        background: #007bff;
-        color: white;
+    .steps-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
     }
 
-    .lang-btn.kannada {
-        background: #ff9800;
-        color: white;
+    .step-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 0;
     }
 
-    .lang-btn.active {
-        transform: scale(1.05);
-        box-shadow: 0 0 0 2px white, 0 0 0 4px currentColor;
+    .step-number {
+      width: 28px;
+      height: 28px;
+      border-radius: 14px;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.8rem;
+      flex-shrink: 0;
     }
 
-    /* Hide Google banner */
-    .goog-te-banner-frame { display: none !important; }
-    body { top: 0 !important; }
-
-    /* Mobile responsive */
-    @media (max-width: 768px) {
-        .language-selector {
-            bottom: 10px;
-            right: 10px;
-            padding: 6px 10px;
-        }
-        
-        .lang-btn {
-            padding: 5px 10px;
-            font-size: 12px;
-        }
+    .step-content h5 {
+      font-size: 0.8rem;
+      font-weight: 600;
+      margin-bottom: 0;
     }
-    /* Completely hide ALL Google Translate elements */
+
+    .step-content p {
+      font-size: 0.7rem;
+      color: var(--gray);
+      margin: 0;
+    }
+
+    /* Features Grid - Compact */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .feature-card {
+      background: white;
+      border-radius: 16px;
+      padding: 12px 8px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+
+    .feature-icon {
+      font-size: 1.5rem;
+      color: var(--primary);
+      margin-bottom: 6px;
+    }
+
+    .feature-card h5 {
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .feature-card p {
+      font-size: 0.6rem;
+      color: var(--gray);
+      margin: 0;
+    }
+
+    /* Info Box - Compact */
+    .info-box {
+      background: #e8f5e9;
+      border-radius: 16px;
+      padding: 12px;
+      border-left: 3px solid var(--primary);
+    }
+
+    .info-box h6 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .info-box p {
+      font-size: 0.75rem;
+      color: var(--dark);
+      margin: 0;
+      line-height: 1.4;
+    }
+
+    /* Cow Details Card (when identified) */
+    .result-card {
+      background: linear-gradient(135deg, var(--success), #20c997);
+      color: white;
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 12px;
+      animation: slideIn 0.5s ease;
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .result-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .result-header i {
+      font-size: 1.5rem;
+    }
+
+    .result-header h3 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      margin: 0;
+    }
+
+    .match-badge {
+      background: rgba(255,255,255,0.2);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.7rem;
+    }
+
+    .result-detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+      font-size: 0.8rem;
+    }
+
+    .result-photo {
+      width: 80px;
+      height: 80px;
+      border-radius: 40px;
+      border: 3px solid white;
+      object-fit: cover;
+      margin: 0 auto 10px;
+    }
+
+    .result-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .result-btn {
+      flex: 1;
+      background: white;
+      color: var(--success);
+      border: none;
+      border-radius: 25px;
+      padding: 10px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+    }
+
+    .result-btn-outline {
+      background: transparent;
+      border: 2px solid white;
+      color: white;
+    }
+
+    .additional-details {
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,0.2);
+    }
+
+    .additional-details h6 {
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .additional-details p {
+      font-size: 0.7rem;
+      margin: 0;
+    }
+
+    /* Drawer */
+    .drawer-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 2000;
+      display: none;
+    }
+    .drawer-overlay.active { display: block; }
+    .drawer {
+      position: fixed;
+      top: 0;
+      left: -260px;
+      width: 260px;
+      height: 100vh;
+      background: white;
+      z-index: 2001;
+      transition: left 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .drawer.active { left: 0; }
+    .drawer-header {
+      padding: 16px;
+      padding-top: calc(16px + var(--safe-area-top));
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+    }
+    .drawer-header h3 { font-size: 1.1rem; font-weight: 700; }
+    .drawer-header p { font-size: 0.65rem; opacity: 0.9; }
+    .drawer-content { flex: 1; overflow-y: auto; padding: 8px 0; }
+    .drawer-section { margin-bottom: 12px; }
+    .drawer-section-title {
+      padding: 5px 16px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+    .drawer-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      color: var(--dark);
+      text-decoration: none;
+    }
+    .drawer-item i { width: 20px; color: var(--primary); font-size: 0.9rem; }
+    .drawer-item span { font-size: 0.8rem; font-weight: 500; }
+    .language-submenu {
+      background: #f8f9fa;
+      margin-top: 8px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .lang-option {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 14px 20px 14px 44px;
+      color: var(--dark);
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Google Translate Hide */
     .goog-te-banner-frame,
     .goog-te-banner,
-    .goog-te-banner-wrapper,
     .skiptranslate,
-    #goog-gt-tt,
-    .goog-te-balloon-frame,
-    .goog-tooltip,
-    .goog-tooltip:hover,
-    .goog-text-highlight {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        height: 0 !important;
-        width: 0 !important;
-        position: absolute !important;
+    #google_translate_element {
+      display: none !important;
     }
-    
-    /* Prevent body shift */
+
     body {
-        top: 0px !important;
-        position: static !important;
-    }
-    
-    /* Hide the translation menu if it appears */
-    .goog-te-menu-frame {
-        display: none !important;
+      top: 0 !important;
     }
   </style>
 </head>
-<body class="cow-background">
-  <!-- Mobile menu toggle -->
-  <button class="menu-toggle" id="menuToggle">
-    <i class="fas fa-bars"></i>
-  </button>
-  
-  <!-- Overlay for mobile -->
-  <div class="overlay" id="overlay"></div>
+<body>
+      <input type="hidden" id="currentLang" value="{{ current_lang|default('en') }}">
 
-  <div class="dashboard-container">
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-      <div class="logo">
-        <h2><i class="fas fa-cow"></i> Kamadhenu</h2>
-        <p class="mb-0">Cow Management System</p>
-      </div>
-      
-      <ul class="nav flex-column">
-        <li class="nav-item">
-          <a class="nav-link" href="/dashboard">
-            <i class="fas fa-tachometer-alt"></i> Dashboard
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/add_cow">
-            <i class="fas fa-plus-circle"></i> Add New Cow
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/cows">
-            <i class="fas fa-list"></i> View My Cows
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="/find_cow">
-            <i class="fas fa-search"></i> Find Cow
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/milk_yield">
-            <i class="fas fa-tint"></i> Milk Yield
-          </a>
-        </li>
-           <li class="nav-item">
-                    <a class="nav-link " href="/disease_prediction">
-                        <i class="fas fa-stethoscope"></i> Disease Detection
-                    </a>
-                </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/book_appointment">
-            <i class="fas fa-syringe"></i> Book Appointment
-          </a>
-        </li>
-         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('farmer_treatments') }}">
-            <i class="fas fa-syringe"></i> Treatment History
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('add_geotag') }}">
-            <i class="fas fa-map-marker-alt"></i> Add Geo Tag
-          </a>
-        </li>
-      
-        <li class="nav-item">
-  <a class="nav-link" href="{{ url_for('analytics') }}">
-   <i class="fas fa-chart-bar"></i> Analytics
-  </a>
-</li>
+  <!-- Drawer Overlay -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
 
-        <li class="nav-item">
-          <a class="nav-link" href="#" onclick="toggleSubmenu(event)">
-            <i class="fas fa-chart-line"></i> Market Place <i class="fas fa-caret-down float-end"></i>
-          </a>
-          <ul class="submenu">
-            <li><a class="nav-link" href="/buy_cow"><i class="fas fa-shopping-cart"></i> Buy Cows</a></li>
-            <li><a class="nav-link" href="/sell_cow"><i class="fas fa-hand-holding-usd"></i> Sell Cows</a></li>
-          </ul>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/sold_cows">
-            <i class="fas fa-check-circle"></i> Sale History
-          </a>
-        </li>
-      </ul>
+  <!-- Side Drawer -->
+  <div class="drawer" id="drawer">
+    <div class="drawer-header">
+      <h3>Kamadhenu</h3>
+      <p>Smart Farm Management</p>
     </div>
 
-    <!-- Main Content -->
-    <div class="main-content" id="mainContent">
-      <!-- Header -->
-      <div class="header">
-        <div>
-          <h2 class="welcome-text">Find Cow by Muzzle</h2>
-          <p class="mb-0 text-muted">Identify cows using biometric muzzle recognition</p>
-        </div>
-        <a href="{{ url_for('farmer_logout') }}" class="btn btn-danger">Logout</a>
+    <div class="drawer-content">
+      <!-- Main Menu Section -->
+      <div class="drawer-section">
+        <div class="drawer-section-title">Main Menu</div>
+        <a href="/dashboard" class="drawer-item"><i class="fas fa-home"></i><span>Dashboard</span></a>
+        <a href="/add_cow" class="drawer-item"><i class="fas fa-plus-circle"></i><span>Add New Cow</span></a>
+        <a href="/cows" class="drawer-item"><i class="fas fa-list"></i><span>View My Cows</span></a>
+        <a href="/find_cow" class="drawer-item"><i class="fas fa-search"></i><span>Find Cow</span></a>
       </div>
 
-      <!-- Cow Details Card (Shown when cow is identified) -->
-      {% if identified_cow %}
-      <div class="cow-details-card">
-        <div class="row align-items-center">
-          <div class="col-md-8">
-            <div class="d-flex align-items-center mb-3">
-              <h3 class="mb-0 me-3"><i class="fas fa-check-circle"></i> Cow Identified!</h3>
-              <span class="success-badge">Biometric Match</span>
-            </div>
-            
-            <div class="detail-row">
-              <span class="detail-label">Cow ID:</span>
-              <span class="detail-value">{{ identified_cow.cow_id }}</span>
-            </div>
-            <div class="detail-row">
-              <span class="detail-label">Breed:</span>
-              <span class="detail-value">{{ identified_cow.breed }}</span>
-            </div>
-            <div class="detail-row">
-              <span class="detail-label">Age:</span>
-              <span class="detail-value">{{ identified_cow.age }} years</span>
-            </div>
-            <div class="detail-row">
-              <span class="detail-label">Weight:</span>
-              <span class="detail-value">{{ identified_cow.weight }} kg</span>
-            </div>
-            <div class="detail-row">
-              <span class="detail-label">Color:</span>
-              <span class="detail-value">{{ identified_cow.color or 'Not specified' }}</span>
-            </div>
-            <div class="detail-row">
-              <span class="detail-label">Milk Yield:</span>
-              <span class="detail-value">{{ identified_cow.milk_yield or '0' }} L/day</span>
-            </div>
-          </div>
-          <div class="col-md-4 text-center">
-            {% if identified_cow.photo %}
-              <img src="{{ url_for('static', filename='uploads/cows/' + identified_cow.photo) }}" 
-                   alt="Cow Photo" class="cow-photo mb-3">
-            {% else %}
-              <div class="cow-photo d-flex align-items-center justify-content-center bg-light text-dark mb-3">
-                <i class="fas fa-cow" style="font-size: 3rem;"></i>
-              </div>
-            {% endif %}
-            <div class="mt-2">
-              <a href="/cows" class="btn btn-light me-2">
-                <i class="fas fa-list"></i> View All Cows
-              </a>
-              <button onclick="hideCowDetails()" class="btn btn-outline-light">
-                <i class="fas fa-times"></i> Close
-              </button>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Additional Details -->
-        <div class="row mt-4">
-          {% if identified_cow.health_records %}
-          <div class="col-md-6">
-            <h6><i class="fas fa-heartbeat"></i> Health Records</h6>
-            <p class="mb-0 small">{{ identified_cow.health_records }}</p>
-          </div>
-          {% endif %}
-          
-          {% if identified_cow.vaccination_history %}
-          <div class="col-md-6">
-            <h6><i class="fas fa-syringe"></i> Vaccination History</h6>
-            <p class="mb-0 small">{{ identified_cow.vaccination_history }}</p>
-          </div>
-          {% endif %}
-        </div>
-        
-        {% if identified_cow.special_notes %}
-        <div class="row mt-3">
-          <div class="col-12">
-            <h6><i class="fas fa-sticky-note"></i> Special Notes</h6>
-            <p class="mb-0 small">{{ identified_cow.special_notes }}</p>
-          </div>
-        </div>
-        {% endif %}
+      <!-- Farm Operations Section -->
+      <div class="drawer-section">
+        <div class="drawer-section-title">Farm Operations</div>
+        <a href="/milk_yield" class="drawer-item"><i class="fas fa-tint"></i><span>Milk Yield</span></a>
+        <a href="/disease_prediction" class="drawer-item"><i class="fas fa-stethoscope"></i><span>Disease Detection</span></a>
+        <a href="/book_appointment" class="drawer-item"><i class="fas fa-syringe"></i><span>Book Appointment</span></a>
+        <a href="/farmer/treatments" class="drawer-item"><i class="fas fa-history"></i><span>Treatment History</span></a>
+        <a href="/add_geotag" class="drawer-item"><i class="fas fa-map-marker-alt"></i><span>Add Geo Tag</span></a>
+        <a href="/analytics" class="drawer-item"><i class="fas fa-chart-bar"></i><span>Analytics</span></a>
       </div>
-      {% endif %}
 
-      <!-- Identification Card -->
-    <!-- Identification Card -->
-<div class="identification-card">
-    <div class="row align-items-center">
-        <div class="col-md-8">
-            <h3><i class="fas fa-robot"></i> Automatic Cow Identification</h3>
-            <p class="mb-0">System automatically scans and identifies cows using muzzle patterns in real-time</p>
+      <!-- Marketplace Section -->
+      <div class="drawer-section">
+        <div class="drawer-section-title">Marketplace</div>
+        <a href="/buy_cow" class="drawer-item"><i class="fas fa-shopping-cart"></i><span>Buy Cows</span></a>
+        <a href="/sell_cow" class="drawer-item"><i class="fas fa-hand-holding-usd"></i><span>Sell Cows</span></a>
+        <a href="/sold_cows" class="drawer-item"><i class="fas fa-check-circle"></i><span>Sale History</span></a>
+      </div>
+
+      <!-- Preferences Section -->
+      <div class="drawer-section">
+        <div class="drawer-section-title">Preferences</div>
+        <div class="drawer-item" onclick="toggleLanguageMenu()" style="cursor: pointer;">
+          <i class="fas fa-globe"></i><span>Language</span>
+          <i class="fas fa-chevron-down" id="langArrow" style="font-size: 0.8rem;"></i>
         </div>
-        <div class="col-md-4 text-end">
-            <a href="/web_identify_cow" class="btn btn-identify">
-                <i class="fas fa-camera"></i> Start Web Camera Scan
+        <div id="languageMenu" style="display: none;">
+          <div class="language-submenu">
+            <a href="#" class="lang-option" onclick="setLanguageFromDrawer('en'); return false;">
+              <i class="fas fa-check-circle" id="enCheck" style="opacity: 0;"></i><span>English</span>
             </a>
-        </div>
-    </div>
-</div>
-
-     <!-- Steps Container -->
-<div class="steps-container">
-    <h4><i class="fas fa-list-ol"></i> How Automatic Identification Works</h4>
-    
-    <div class="step">
-        <div class="step-number">1</div>
-        <div class="step-content">
-            <h5>Start Web Camera</h5>
-            <p class="mb-0">Click "Start Web Camera Scan" to open the camera interface</p>
-        </div>
-    </div>
-
-    <div class="step">
-        <div class="step-number">2</div>
-        <div class="step-content">
-            <h5>Automatic Scanning</h5>
-            <p class="mb-0">System automatically scans frames for muzzle patterns</p>
-        </div>
-    </div>
-
-    <div class="step">
-        <div class="step-number">3</div>
-        <div class="step-content">
-            <h5>Instant Identification</h5>
-            <p class="mb-0">AI matches muzzle patterns and identifies cows automatically</p>
-        </div>
-    </div>
-
-    <div class="step">
-        <div class="step-number">4</div>
-        <div class="step-content">
-            <h5>View Results</h5>
-            <p class="mb-0">See identified cow details appear automatically on screen</p>
-        </div>
-    </div>
-</div>
-
-      <!-- Features -->
-      <div class="row">
-        <div class="col-md-4 mb-4">
-          <div class="form-card text-center">
-            <div class="feature-icon">
-              <i class="fas fa-bolt"></i>
-            </div>
-            <h5>Instant Recognition</h5>
-            <p>Identify cows in real-time using advanced AI technology</p>
-          </div>
-        </div>
-
-        <div class="col-md-4 mb-4">
-          <div class="form-card text-center">
-            <div class="feature-icon">
-              <i class="fas fa-shield-alt"></i>
-            </div>
-            <h5>100% Accurate</h5>
-            <p>Muzzle patterns are unique like fingerprints for precise identification</p>
-          </div>
-        </div>
-
-        <div class="col-md-4 mb-4">
-          <div class="form-card text-center">
-            <div class="feature-icon">
-              <i class="fas fa-database"></i>
-            </div>
-            <h5>Smart Database</h5>
-            <p>Automatically retrieves complete cow profile after identification</p>
+            <a href="#" class="lang-option" onclick="setLanguageFromDrawer('kn'); return false;">
+              <i class="fas fa-check-circle" id="knCheck" style="opacity: 0;"></i><span>ಕನ್ನಡ</span>
+            </a>
           </div>
         </div>
       </div>
 
-      <!-- Info Box -->
-      <div class="info-box">
-        <h6><i class="fas fa-lightbulb"></i> Pro Tip</h6>
-        <p class="mb-0">Ensure the cow's muzzle is clean and well-lit for best identification results. The system works best in natural daylight conditions.</p>
+      <!-- Account Section -->
+      <div class="drawer-section">
+        <div class="drawer-section-title">Account</div>
+        <a href="#" class="drawer-item" onclick="closeDrawer(); return false;"><i class="fas fa-user-circle"></i><span>Profile</span></a>
+        <a href="{{ url_for('farmer_logout') }}" class="drawer-item"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
       </div>
     </div>
   </div>
 
+  <!-- App Header -->
+  <header class="app-header">
+    <button class="menu-btn" onclick="toggleDrawer()">
+      <i class="fas fa-bars"></i>
+    </button>
+    <span class="header-title">Find Cow</span>
+    <div style="width: 44px;"></div>
+  </header>
+
+  <!-- Main Content (No Scroll) -->
+  <main class="app-content">
+    {% if identified_cow %}
+    <!-- Cow Details Card -->
+    <div class="result-card">
+      <div class="result-header">
+        <i class="fas fa-check-circle"></i>
+        <div>
+          <h3>Cow Identified!</h3>
+          <span class="match-badge">Biometric Match</span>
+        </div>
+      </div>
+
+      <div class="row align-items-center">
+        <div class="col-4">
+          {% if identified_cow.photo %}
+            <img src="{{ url_for('static', filename='uploads/cows/' + identified_cow.photo) }}" class="result-photo">
+          {% else %}
+            <div class="result-photo d-flex align-items-center justify-content-center" style="background: rgba(255,255,255,0.2);">
+              <i class="fas fa-cow" style="font-size: 2rem;"></i>
+            </div>
+          {% endif %}
+        </div>
+        <div class="col-8">
+          <div class="result-detail-row"><span class="result-label">Cow ID:</span><span class="result-value">{{ identified_cow.cow_id }}</span></div>
+          <div class="result-detail-row"><span class="result-label">Breed:</span><span class="result-value">{{ identified_cow.breed }}</span></div>
+          <div class="result-detail-row"><span class="result-label">Age:</span><span class="result-value">{{ identified_cow.age }} years</span></div>
+          <div class="result-detail-row"><span class="result-label">Weight:</span><span class="result-value">{{ identified_cow.weight }} kg</span></div>
+        </div>
+      </div>
+
+      {% if identified_cow.health_records or identified_cow.vaccination_history or identified_cow.special_notes %}
+      <div class="additional-details">
+        {% if identified_cow.health_records %}<h6><i class="fas fa-heartbeat"></i> Health</h6><p class="small">{{ identified_cow.health_records|truncate(60) }}</p>{% endif %}
+        {% if identified_cow.vaccination_history %}<h6><i class="fas fa-syringe"></i> Vaccination</h6><p class="small">{{ identified_cow.vaccination_history|truncate(60) }}</p>{% endif %}
+      </div>
+      {% endif %}
+
+      <div class="result-actions">
+        <a href="/cows" class="result-btn"><i class="fas fa-list"></i> View All</a>
+        <button onclick="hideCowDetails()" class="result-btn result-btn-outline"><i class="fas fa-times"></i> Close</button>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Identification Card -->
+    <div class="ident-card">
+      <h3><i class="fas fa-robot"></i> AI Cow Identification</h3>
+      <p>Muzzle recognition for instant ID</p>
+      <a href="/web_identify_cow" class="scan-btn">
+        <i class="fas fa-camera"></i> Start Scan
+      </a>
+    </div>
+
+    <!-- Steps - Compact 2x2 Grid -->
+    <div class="steps-card">
+      <div class="steps-title"><i class="fas fa-list-ol"></i> How It Works</div>
+      <div class="steps-grid">
+        <div class="step-item">
+          <div class="step-number">1</div>
+          <div class="step-content"><h5>Start Camera</h5><p>Open camera</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-number">2</div>
+          <div class="step-content"><h5>Auto Scan</h5><p>Detects muzzle</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-number">3</div>
+          <div class="step-content"><h5>AI Match</h5><p>Identifies cow</p></div>
+        </div>
+        <div class="step-item">
+          <div class="step-number">4</div>
+          <div class="step-content"><h5>View Results</h5><p>Profile appears</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Features - 3 Column -->
+    <div class="features-grid">
+      <div class="feature-card"><div class="feature-icon"><i class="fas fa-bolt"></i></div><h5>Instant</h5><p>Real-time AI</p></div>
+      <div class="feature-card"><div class="feature-icon"><i class="fas fa-shield-alt"></i></div><h5>Accurate</h5><p>Unique patterns</p></div>
+      <div class="feature-card"><div class="feature-icon"><i class="fas fa-database"></i></div><h5>Smart</h5><p>Auto profile</p></div>
+    </div>
+
+    <!-- Pro Tip -->
+    <div class="info-box">
+      <h6><i class="fas fa-lightbulb"></i> Pro Tip</h6>
+      <p>Clean muzzle & good lighting for best results</p>
+    </div>
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="/dashboard" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+    <a href="/cows" class="nav-item"><i class="fas fa-cow"></i><span>My Cows</span></a>
+    <a href="/add_cow" class="nav-item"><i class="fas fa-plus-circle"></i><span>Add</span></a>
+    <a href="/milk_yield" class="nav-item"><i class="fas fa-tint"></i><span>Milk</span></a>
+    <a href="/find_cow" class="nav-item active"><i class="fas fa-search"></i><span>Find</span></a>
+  </nav>
+
+  <div id="google_translate_element" style="display:none;"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
   <script>
-    function toggleSubmenu(event) {
-      event.preventDefault();
-      const submenu = event.target.closest("li").querySelector(".submenu");
-      submenu.style.display = submenu.style.display === "block" ? "none" : "block";
-    }
-
-    // Toggle mobile sidebar
-    const menuToggle = document.getElementById('menuToggle');
-    const sidebar = document.getElementById('sidebar');
-    const mainContent = document.getElementById('mainContent');
-    const overlay = document.getElementById('overlay');
-    
-    menuToggle.addEventListener('click', function() {
-      sidebar.classList.toggle('active');
-      overlay.classList.toggle('active');
-      
-      // Change icon based on sidebar state
-      const icon = menuToggle.querySelector('i');
-      if (sidebar.classList.contains('active')) {
-        icon.classList.remove('fa-bars');
-        icon.classList.add('fa-times');
-      } else {
-        icon.classList.remove('fa-times');
-        icon.classList.add('fa-bars');
-      }
-    });
-    
-    // Close sidebar when clicking on overlay
-    overlay.addEventListener('click', function() {
-      sidebar.classList.remove('active');
-      overlay.classList.remove('active');
-      const icon = menuToggle.querySelector('i');
-      icon.classList.remove('fa-times');
-      icon.classList.add('fa-bars');
-    });
-    
-    // Close sidebar when clicking on a nav link (mobile)
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach(link => {
-      link.addEventListener('click', function() {
-        if (window.innerWidth <= 768) {
-          sidebar.classList.remove('active');
-          overlay.classList.remove('active');
-          const icon = menuToggle.querySelector('i');
-          icon.classList.remove('fa-times');
-          icon.classList.add('fa-bars');
-        }
-      });
-    });
-
     function hideCowDetails() {
-      // Reload the page without the identified cow
       window.location.href = '/find_cow';
     }
 
-    // Auto-hide flash messages after 5 seconds
-    setTimeout(function() {
-      const alerts = document.querySelectorAll('.alert');
-      alerts.forEach(alert => {
-        const bsAlert = new bootstrap.Alert(alert);
-        bsAlert.close();
-      });
-    }, 5000);
-  </script>
+    // ==================== Drawer Functions ====================
+    function toggleDrawer() {
+      const drawer = document.getElementById('drawer');
+      const overlay = document.getElementById('drawerOverlay');
+      drawer.classList.toggle('active');
+      overlay.classList.toggle('active');
+    }
 
-  <!-- Bootstrap JS -->
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    // Language translation functions
+    function closeDrawer() {
+      const drawer = document.getElementById('drawer');
+      const overlay = document.getElementById('drawerOverlay');
+      drawer.classList.remove('active');
+      overlay.classList.remove('active');
+      document.getElementById('languageMenu').style.display = 'none';
+      document.getElementById('langArrow').classList.remove('fa-chevron-up');
+      document.getElementById('langArrow').classList.add('fa-chevron-down');
+    }
+
+    // ==================== Language Menu Functions ====================
+    function toggleLanguageMenu() {
+      const menu = document.getElementById('languageMenu');
+      const arrow = document.getElementById('langArrow');
+      if (menu.style.display === 'none') {
+        menu.style.display = 'block';
+        arrow.classList.remove('fa-chevron-down');
+        arrow.classList.add('fa-chevron-up');
+      } else {
+        menu.style.display = 'none';
+        arrow.classList.remove('fa-chevron-up');
+        arrow.classList.add('fa-chevron-down');
+      }
+    }
+
+    function setLanguageFromDrawer(lang) {
+      document.getElementById('enCheck').style.opacity = lang === 'en' ? '1' : '0';
+      document.getElementById('knCheck').style.opacity = lang === 'kn' ? '1' : '0';
+      saveLanguagePreference(lang);
+      applyLanguage(lang);
+      document.getElementById('languageMenu').style.display = 'none';
+      document.getElementById('langArrow').classList.remove('fa-chevron-up');
+      document.getElementById('langArrow').classList.add('fa-chevron-down');
+      setTimeout(closeDrawer, 300);
+    }
+
+    // ==================== Language Functions ====================
+    function saveLanguagePreference(lang) {
+      localStorage.setItem('selectedLanguage', lang);
+      document.cookie = `user_language=${lang}; path=/; max-age=31536000`;
+    }
+
+    function applyLanguage(lang) {
+      if (lang === 'kn') {
+        window.location.hash = '#googtrans(kn|en)';
+      } else {
+        window.location.hash = '#googtrans(en)';
+      }
+    }
+
     function googleTranslateElementInit() {
-        if (typeof google !== 'undefined' && google.translate) {
-            new google.translate.TranslateElement({
-                pageLanguage: 'en',
-                includedLanguages: 'en,kn',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                autoDisplay: false
-            }, 'google_translate_element');
-            
-            const savedLang = localStorage.getItem('selectedLanguage');
-            if(savedLang === 'kn') {
-                setTimeout(() => applyKannada(), 1000);
-            }
-        }
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,kn',
+        autoDisplay: false
+      }, 'google_translate_element');
     }
 
-    window.onload = function() {
-        if (typeof google !== 'undefined' && google.translate) {
-            googleTranslateElementInit();
-        } else {
-            var script = document.createElement('script');
-            script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-            document.body.appendChild(script);
-        }
-        
-        const savedLang = localStorage.getItem('selectedLanguage');
-        if(savedLang === 'kn') {
-            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector('.lang-btn.kannada').classList.add('active');
-            setTimeout(() => applyKannada(), 2000);
-        }
-    };
-
-    function applyKannada() {
-        var iframe = document.querySelector('.goog-te-menu-frame');
-        if(iframe && iframe.contentDocument) {
-            var select = iframe.contentDocument.querySelector('.goog-te-menu2-select');
-            if(select) {
-                select.value = 'kn';
-                select.dispatchEvent(new Event('change'));
-                return true;
-            }
-        }
-        
-        var elements = document.querySelectorAll('.goog-te-menu2-select');
-        if(elements.length > 0) {
-            elements[0].value = 'kn';
-            elements[0].dispatchEvent(new Event('change'));
-            return true;
-        }
-        
-        return false;
+    function loadGoogleTranslate() {
+      if (window.google && google.translate) {
+        googleTranslateElementInit();
+        return;
+      }
+      var script = document.createElement('script');
+      script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+      document.head.appendChild(script);
     }
 
-    function setLanguage(lang) {
-        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-        localStorage.setItem('selectedLanguage', lang);
-        
-        if(lang === 'kn') {
-            window.location.hash = '#googtrans(kn)';
-            if(applyKannada()) {
-                console.log('ಭಾಷೆ ಕನ್ನಡಕ್ಕೆ ಬದಲಾಯಿಸಲಾಗಿದೆ');
-            } else {
-                setTimeout(() => location.reload(), 500);
-            }
-        } else {
-            window.location.hash = '#googtrans(en)';
-            var iframe = document.querySelector('.goog-te-menu-frame');
-            if(iframe && iframe.contentDocument) {
-                var select = iframe.contentDocument.querySelector('.goog-te-menu2-select');
-                if(select) {
-                    select.value = 'en';
-                    select.dispatchEvent(new Event('change'));
-                    console.log('Language changed to English');
-                    return;
-                }
-            }
-            setTimeout(() => location.reload(), 500);
-        }
-    }
-</script>
+    // ==================== Initialize ====================
+    document.addEventListener('DOMContentLoaded', function() {
+      loadGoogleTranslate();
+      const savedLang = localStorage.getItem('selectedLanguage') || 'en';
+      setTimeout(() => applyLanguage(savedLang), 1000);
+    });
+  </script>
 </body>
 </html>

@@ -2,596 +2,677 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kamadhenu - Cow Management System</title>
+  <!-- Mobile viewport settings for WebView -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#135d16">
+  
+  <title>Kamadhenu - Smart Farm Management</title>
+  
+  <!-- Optimized Bootstrap for mobile -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Roboto+Slab:wght@400;500;600&display=swap');
-    
+    /* Mobile-First Design System */
     :root {
       --primary: #135d16;
+      --primary-light: #1b7a1f;
       --secondary: #ffc107;
-      --light: #f8f9fa;
       --dark: #343a40;
+      --gray: #6c757d;
+      --light: #f8f9fa;
+      --border: #e9ecef;
+      --safe-area-top: env(safe-area-inset-top, 0px);
+      --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+      --header-height: 70px;
     }
-    
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     body {
-      font-family: 'Nunito', sans-serif;
-      overflow-x: hidden;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: #f0f7f0;
+      color: var(--dark);
+      overflow-x: hidden;
+      padding-top: var(--header-height);
+      -webkit-font-smoothing: antialiased;
     }
-    
-    h1, h2, h3, h4, h5 {
-      font-family: 'Roboto Slab', serif;
-    }
-    
-    /* Background Images */
-    .cow-background {
-      background: url('https://plus.unsplash.com/premium_photo-1661931727314-a0b62e77b22e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Y2F0dGxlJTIwZmFybXxlbnwwfHwwfHx8MA%3D%3D') no-repeat center center;
-      background-size: cover;
-      position: relative;
-    }
-    
-    
-    .hero-section {
-      position: relative;
-      height: 100vh;
-      overflow: hidden;
-    }
-    
-    .overlay {
-      position: absolute;
+
+    /* ==================== App Header ==================== */
+    .app-header {
+      position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.4);
-      z-index: 0;
-    }
-    
-    .hero-content {
-      position: relative;
-      z-index: 1;
+      right: 0;
+      height: var(--header-height);
+      background: var(--primary);
       color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      padding-top: var(--safe-area-top);
+      z-index: 1000;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     }
-    
-    /* Feature Cards */
-    .feature-card {
-      transition: transform 0.3s, box-shadow 0.3s;
-      border-radius: 15px;
-      overflow: hidden;
-      height: 100%;
+
+    .app-header .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+    }
+
+    .app-header .logo i {
+      font-size: 1.8rem;
+      margin-right: 8px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-header {
+      background: rgba(255,255,255,0.2);
+      color: white;
       border: none;
+      border-radius: 30px;
+      padding: 8px 16px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-decoration: none;
     }
-    
-    .feature-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+
+    .btn-header:active {
+      background: rgba(255,255,255,0.3);
     }
-    
-    /* Cow Pattern Background */
-    .cow-pattern-bg {
-      background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%232e7d32' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+
+    /* ==================== Main Content ==================== */
+    .app-content {
+      padding: 0;
     }
-    
-    /* Stats Section */
-    .stats-section {
-      background: linear-gradient(rgba(46, 125, 50, 0.9), rgba(46, 125, 50, 0.9)), url('https://images.unsplash.com/photo-1570042225831-d98fa7577f1e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1500&q=80');
+
+    /* Hero Section - Mobile Optimized */
+    .hero-section {
+      background: linear-gradient(rgba(19, 93, 22, 0.8), rgba(19, 93, 22, 0.9)), 
+                  url('https://plus.unsplash.com/premium_photo-1661931727314-a0b62e77b22e?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&auto=format&fit=crop&w=1200&q=80') no-repeat center center;
       background-size: cover;
-      background-attachment: fixed;
+      padding: 60px 20px;
+      text-align: center;
       color: white;
     }
-    
-    /* Testimonial Cards */
-    .testimonial-card {
-      border-radius: 15px;
-      overflow: hidden;
-      border: none;
+    .header-title{
+      font-size: 1.5rem;
+      font-weight: 500;
     }
-    
-    .testimonial-img {
-      width: 70px;
-      height: 70px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 4px solid var(--secondary);
+
+    .hero-title {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 16px;
     }
-    
-    /* Animations */
-    @keyframes float {
-      0% { transform: translateY(0px); }
-      50% { transform: translateY(-15px); }
-      100% { transform: translateY(0px); }
+
+    .hero-title i {
+      font-size: 2.2rem;
     }
-    
-    .floating {
-      animation: float 5s ease-in-out infinite;
+
+    .hero-subtitle {
+      font-size: 1.1rem;
+      line-height: 1.6;
+      margin-bottom: 32px;
+      opacity: 0.95;
     }
-    
-    /* Button Styles */
-    .btn-success {
-      background-color: var(--primary);
-      border-color: var(--primary);
+
+    .hero-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 300px;
+      margin: 0 auto;
     }
-    
-    .btn-warning {
-      background-color: var(--secondary);
-      border-color: var(--secondary);
+
+    .btn-hero {
+      padding: 16px 24px;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 1rem;
+      text-decoration: none;
+      display: block;
+    }
+
+    .btn-hero-primary {
+      background: var(--secondary);
       color: var(--dark);
     }
-    
-    /* Navbar Styles */
-    .navbar {
-  background: rgba(10, 92, 54, 0.9);
-  backdrop-filter: blur(10px);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  padding: 1rem 0;
-  transition: all 0.3s;
-}
 
-.navbar-scrolled {
-  padding: 0.5rem 0;
-  background-color: #032c1a !important;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-
-.navbar-brand {
-  font-family: 'Merriweather', serif;
-  font-weight: 700;
-  font-size: 2rem;
-  color: #ffffff !important;
-  display: flex;
-  align-items: center;
-}
-
-.navbar-brand i {
-  color: #ffffff;
-  margin-right: 10px;
-  font-size: 2rem;
-}
-
-.nav-link {
-  font-size: 1rem;
-  font-weight: 500;
-  color: #ffffff !important;
-  margin-left: 15px;
-  transition: color 0.3s ease;
-}
-
-.nav-link:hover {
-  color: #ffd700 !important; /* gold hover effect */
-}
-
-.navbar .btn {
-  font-size: 1rem;
-  font-weight: 600;
-  border-radius: 25px;
-  padding: 8px 20px;
-  margin-left: 10px;
-}
-
-    
-    /* Cow Silhouette Divider */
-    .cow-divider {
-      height: 100px;
-      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path fill="%23f0f7f0" d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="shape-fill"></path><path fill="%23f0f7f0" d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="shape-fill"></path><path fill="%23f0f7f0" d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="shape-fill"></path></svg>');
-      background-size: cover;
-      background-position: center;
-      transform: rotate(180deg);
-      margin-bottom: -1px;
+    .btn-hero-secondary {
+      background: transparent;
+      border: 2px solid white;
+      color: white;
     }
-    
-    .cow-divider-bottom {
-      height: 100px;
-      background: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120" preserveAspectRatio="none"><path fill="%232e7d32" d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25" class="shape-fill"></path><path fill="%232e7d32" d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z" opacity=".5" class="shape-fill"></path><path fill="%232e7d32" d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z" class="shape-fill"></path></svg>');
-      background-size: cover;
-      background-position: center;
-      margin-top: -1px;
+
+    .btn-hero:active {
+      transform: scale(0.98);
     }
-     /* Language Selector Styles - BOTTOM */
+
+    /* Section Styles */
+    .section {
+      padding: 48px 20px;
+    }
+
+    .section-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: var(--primary);
+      text-align: center;
+      margin-bottom: 16px;
+    }
+
+    .section-subtitle {
+      font-size: 1rem;
+      color: var(--gray);
+      text-align: center;
+      margin-bottom: 32px;
+    }
+
+    /* Features Grid */
+    .features-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    @media (min-width: 480px) {
+      .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .feature-card {
+      background: white;
+      border-radius: 24px;
+      padding: 24px 20px;
+      text-align: center;
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .feature-icon {
+      width: 70px;
+      height: 70px;
+      border-radius: 35px;
+      background: rgba(19, 93, 22, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      color: var(--primary);
+      font-size: 2rem;
+    }
+
+    .feature-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 8px;
+    }
+
+    .feature-description {
+      font-size: 0.9rem;
+      color: var(--gray);
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    /* Stats Grid */
+    .stats-section {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      padding: 48px 20px;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .stat-card {
+      text-align: center;
+      color: white;
+    }
+
+    .stat-icon {
+      font-size: 2.2rem;
+      margin-bottom: 8px;
+    }
+
+    .stat-number {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .stat-label {
+      font-size: 0.9rem;
+      opacity: 0.9;
+    }
+
+    /* Testimonials */
+    .testimonials-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 20px;
+    }
+
+    @media (min-width: 480px) {
+      .testimonials-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    @media (min-width: 768px) {
+      .testimonials-grid {
+        grid-template-columns: repeat(3, 1fr);
+      }
+    }
+
+    .testimonial-card {
+      background: white;
+      border-radius: 24px;
+      padding: 24px;
+      border: 1px solid var(--border);
+    }
+
+    .testimonial-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .testimonial-img {
+      width: 50px;
+      height: 50px;
+      border-radius: 25px;
+      object-fit: cover;
+      border: 2px solid var(--primary);
+    }
+
+    .testimonial-name {
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .testimonial-role {
+      font-size: 0.8rem;
+      color: var(--gray);
+    }
+
+    .testimonial-text {
+      font-size: 0.95rem;
+      line-height: 1.6;
+      color: var(--dark);
+      margin: 0;
+      font-style: italic;
+    }
+
+    /* CTA Section */
+    .cta-section {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      padding: 60px 20px;
+      text-align: center;
+      color: white;
+    }
+
+    .cta-title {
+      font-size: 1.8rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .cta-text {
+      font-size: 1rem;
+      margin-bottom: 32px;
+      opacity: 0.95;
+    }
+
+    .cta-buttons {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+
+    .btn-cta-primary {
+      background: var(--secondary);
+      color: var(--dark);
+      padding: 16px 24px;
+      border-radius: 30px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    .btn-cta-secondary {
+      background: transparent;
+      border: 2px solid white;
+      color: white;
+      padding: 16px 24px;
+      border-radius: 30px;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    /* Footer */
+    .footer {
+      background: var(--primary);
+      color: white;
+      padding: 32px 20px;
+      padding-bottom: calc(32px + var(--safe-area-bottom));
+    }
+
+    .footer-text {
+      text-align: center;
+      font-size: 0.9rem;
+      opacity: 0.9;
+      margin-bottom: 20px;
+    }
+
+    .social-links {
+      display: flex;
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .social-link {
+      color: white;
+      font-size: 1.3rem;
+      opacity: 0.8;
+      text-decoration: none;
+    }
+
+    .social-link:active {
+      opacity: 1;
+    }
+
+    /* Language Selector */
     .language-selector {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 10000;
-        background: white;
-        padding: 10px 15px;
-        border-radius: 25px;
-        box-shadow: 0 -4px 15px rgba(0,0,0,0.2);
-        display: flex;
-        gap: 10px;
-        border: 2px solid #27ae60;
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 9999;
+      background: white;
+      padding: 8px 12px;
+      border-radius: 30px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+      display: flex;
+      gap: 8px;
+      border: 2px solid var(--primary);
     }
 
     .lang-btn {
-        padding: 8px 20px;
-        border: none;
-        border-radius: 20px;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 14px;
-        transition: all 0.3s ease;
+      padding: 6px 12px;
+      border: none;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 0.8rem;
+      cursor: pointer;
     }
 
     .lang-btn.english {
-        background: #007bff;
-        color: white;
+      background: var(--primary);
+      color: white;
     }
 
     .lang-btn.kannada {
-        background: #ff9800;
-        color: white;
+      background: var(--secondary);
+      color: var(--primary);
     }
 
     .lang-btn.active {
-        transform: scale(1.05);
-        box-shadow: 0 0 0 2px white, 0 0 0 4px currentColor;
+      transform: scale(0.95);
     }
 
-    /* Hide Google banner */
-    .goog-te-banner-frame { display: none !important; }
-    body { top: 0 !important; }
-
-    /* Mobile responsive */
-    @media (max-width: 768px) {
-        .language-selector {
-            bottom: 10px;
-            right: 10px;
-            padding: 6px 10px;
-        }
-        
-        .lang-btn {
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-    }
-    /* Completely hide ALL Google Translate elements */
+    /* Hide Google Translate elements */
     .goog-te-banner-frame,
     .goog-te-banner,
-    .goog-te-banner-wrapper,
     .skiptranslate,
-    #goog-gt-tt,
-    .goog-te-balloon-frame,
-    .goog-tooltip,
-    .goog-tooltip:hover,
-    .goog-text-highlight {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        height: 0 !important;
-        width: 0 !important;
-        position: absolute !important;
-    }
-    
-    /* Prevent body shift */
-    body {
-        top: 0px !important;
-        position: static !important;
-    }
-    
-    /* Hide the translation menu if it appears */
+    #google_translate_element,
+    .goog-te-gadget,
     .goog-te-menu-frame {
-        display: none !important;
+      display: none !important;
+    }
+
+    body {
+      top: 0 !important;
     }
   </style>
 </head>
 <body>
-  <!-- Navbar -->
- <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #032c1a;">
+      <input type="hidden" id="currentLang" value="{{ current_lang|default('en') }}">
 
-    <div class="container">
-      <a class="navbar-brand fw-bold" href="/">
-        <i class="fas fa-cow me-2"></i>Kamadhenu
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="btn btn-light me-2" href="{{ url_for('register') }}">Register</a>
-          </li>
-          <li class="nav-item">
-            <a class="btn btn-light" href="{{ url_for('login') }}">Login</a>
-          </li>
-        </ul>
-      </div>
+  <!-- App Header -->
+  <header class="app-header">
+    <div class="logo">
+      <i class="fas fa-cow"></i>
+      <span>Kamadhenu</span>
     </div>
-  </nav>
+    <div class="header-actions">
+      <a href="{{ url_for('login') }}" class="btn-header">Login</a>
+      <a href="{{ url_for('register') }}" class="btn-header">Register</a>
+    </div>
+  </header>
 
-  <!-- Hero Section with Background Image -->
-  <section class="hero-section cow-background">
-    <div class="overlay"></div>
-    <div class="grass-overlay"></div>
-    <div class="container h-100">
-      <div class="row h-100 align-items-center">
-        <div class="col-12 text-center hero-content">
-          <h1 class="display-3 fw-bold mb-4">Welcome to Kamadhenu <i class="fas fa-cow"></i></h1>
-          <p class="lead fs-3 mb-5">Your smart cow profiling & farm management solution</p>
-          <div class="mt-4">
-            <a href="{{ url_for('register') }}" class="btn btn-success btn-lg me-3 px-4 py-2">Get Started</a>
-            <a href="{{ url_for('login') }}" class="btn btn-outline-warning btn-lg px-4 py-2">Login</a>
+  <!-- Main Content -->
+  <main class="app-content">
+    <!-- Hero Section -->
+    <section class="hero-section">
+      <h1 class="hero-title">
+        Welcome to Kamadhenu <i class="fas fa-cow"></i>
+      </h1>
+      <p class="hero-subtitle">
+        Your smart cow profiling & farm management solution
+      </p>
+      <div class="hero-buttons">
+        <a href="{{ url_for('register') }}" class="btn-hero btn-hero-primary">Get Started</a>
+        <a href="{{ url_for('login') }}" class="btn-hero btn-hero-secondary">Login</a>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="section">
+      <h2 class="section-title">Powerful Features</h2>
+      <p class="section-subtitle">Everything you need to manage your cattle efficiently</p>
+      
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-id-card"></i>
           </div>
+          <h3 class="feature-title">Cow Profiling</h3>
+          <p class="feature-description">Detailed profiles for each animal including health records, lineage, and production metrics.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-heartbeat"></i>
+          </div>
+          <h3 class="feature-title">Health Monitoring</h3>
+          <p class="feature-description">Track vaccinations, treatments, and health issues to keep your herd in optimal condition.</p>
+        </div>
+
+        <div class="feature-card">
+          <div class="feature-icon">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <h3 class="feature-title">Production Analytics</h3>
+          <p class="feature-description">Monitor milk production, breeding cycles, and productivity trends with detailed reports.</p>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-
-
-  <!-- Features Section -->
-  <section class="py-5 cow-pattern-bg bg-light">
-    <div class="container py-5">
-      <div class="text-center mb-5">
-        <h2 class="fw-bold">Powerful Features</h2>
-        <p class="lead">Everything you need to manage your cattle efficiently</p>
+    <!-- Stats Section -->
+    <section class="stats-section">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-cow"></i></div>
+          <div class="stat-number">5,000+</div>
+          <div class="stat-label">Cows Managed</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-users"></i></div>
+          <div class="stat-number">250+</div>
+          <div class="stat-label">Happy Farmers</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-tint"></i></div>
+          <div class="stat-number">1.2M L</div>
+          <div class="stat-label">Milk Tracked</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-icon"><i class="fas fa-map-marker-alt"></i></div>
+          <div class="stat-number">15</div>
+          <div class="stat-label">Countries</div>
+        </div>
       </div>
-      <div class="row g-4">
-        <div class="col-md-4">
-          <div class="card feature-card h-100 border-0 shadow-sm">
-            <div class="card-body text-center p-4">
-              <div class="bg-success bg-opacity-10 p-3 rounded-circle d-inline-block mb-3">
-                <i class="fas fa-id-card fa-2x text-success"></i>
-              </div>
-              <h4 class="fw-bold">Cow Profiling</h4>
-              <p>Detailed profiles for each animal including health records, lineage, and production metrics.</p>
+    </section>
+
+    <!-- Testimonials -->
+    <section class="section">
+      <h2 class="section-title">What Farmers Say</h2>
+      <p class="section-subtitle">Real stories from our community</p>
+      
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-header">
+            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Farmer" class="testimonial-img">
+            <div>
+              <div class="testimonial-name">Rajesh Kumar</div>
+              <div class="testimonial-role">Dairy Farmer</div>
             </div>
           </div>
+          <p class="testimonial-text">"Kamadhenu has transformed how I manage my dairy. I've increased milk production by 22% while reducing costs."</p>
         </div>
-        <div class="col-md-4">
-          <div class="card feature-card h-100 border-0 shadow-sm">
-            <div class="card-body text-center p-4">
-              <div class="bg-success bg-opacity-10 p-3 rounded-circle d-inline-block mb-3">
-                <i class="fas fa-heartbeat fa-2x text-success"></i>
-              </div>
-              <h4 class="fw-bold">Health Monitoring</h4>
-              <p>Track vaccinations, treatments, and health issues to keep your herd in optimal condition.</p>
+
+        <div class="testimonial-card">
+          <div class="testimonial-header">
+            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Farmer" class="testimonial-img">
+            <div>
+              <div class="testimonial-name">Priya Sharma</div>
+              <div class="testimonial-role">Cattle Breeder</div>
             </div>
           </div>
+          <p class="testimonial-text">"The health monitoring features helped me detect illness early and save three of my best cows. Incredible tool!"</p>
         </div>
-        <div class="col-md-4">
-          <div class="card feature-card h-100 border-0 shadow-sm">
-            <div class="card-body text-center p-4">
-              <div class="bg-success bg-opacity-10 p-3 rounded-circle d-inline-block mb-3">
-                <i class="fas fa-chart-line fa-2x text-success"></i>
-              </div>
-              <h4 class="fw-bold">Production Analytics</h4>
-              <p>Monitor milk production, breeding cycles, and productivity trends with detailed reports.</p>
+
+        <div class="testimonial-card">
+          <div class="testimonial-header">
+            <img src="https://randomuser.me/api/portraits/men/62.jpg" alt="Farmer" class="testimonial-img">
+            <div>
+              <div class="testimonial-name">Vikram Singh</div>
+              <div class="testimonial-role">Organic Farm Owner</div>
             </div>
           </div>
+          <p class="testimonial-text">"The analytics helped me optimize feeding schedules and breed selection. My farm's productivity has never been better!"</p>
         </div>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <!-- Stats Section -->
-  <section class="stats-section py-5">
-    <div class="container py-5">
-      <div class="row text-center">
-        <div class="col-md-3 col-6 mb-4">
-          <div class="floating">
-            <i class="fas fa-cow fa-3x mb-3"></i>
-            <h2 class="fw-bold">5,000+</h2>
-            <p>Cows Managed</p>
-          </div>
-        </div>
-        <div class="col-md-3 col-6 mb-4">
-          <div class="floating" style="animation-delay: 0.5s;">
-            <i class="fas fa-users fa-3x mb-3"></i>
-            <h2 class="fw-bold">250+</h2>
-            <p>Happy Farmers</p>
-          </div>
-        </div>
-        <div class="col-md-3 col-6 mb-4">
-          <div class="floating" style="animation-delay: 1s;">
-            <i class="fas fa-glass-milk fa-3x mb-3"></i>
-            <h2 class="fw-bold">1.2M L</h2>
-            <p>Milk Tracked</p>
-          </div>
-        </div>
-        <div class="col-md-3 col-6 mb-4">
-          <div class="floating" style="animation-delay: 1.5s;">
-            <i class="fas fa-map-marked fa-3x mb-3"></i>
-            <h2 class="fw-bold">15</h2>
-            <p>Countries</p>
-          </div>
-        </div>
+    <!-- CTA Section -->
+    <section class="cta-section">
+      <h2 class="cta-title">Ready to Transform Your Farm?</h2>
+      <p class="cta-text">Join thousands of farmers using Kamadhenu to optimize their operations</p>
+      <div class="cta-buttons">
+        <a href="{{ url_for('register') }}" class="btn-cta-primary">Start Free Trial</a>
+        <a href="{{ url_for('login') }}" class="btn-cta-secondary">Schedule Demo</a>
       </div>
-    </div>
-  </section>
+    </section>
 
-  <div class="cow-divider-bottom"></div>
-
-  <!-- Testimonials -->
-  <section class="py-5 bg-light">
-    <div class="container py-5">
-      <div class="text-center mb-5">
-        <h2 class="fw-bold">What Farmers Say</h2>
-        <p class="lead">Real stories from our community</p>
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="footer-text">
+        © 2026 Kamadhenu | Smart Farming for Everyone
       </div>
-      <div class="row g-4">
-        <div class="col-md-4">
-          <div class="card testimonial-card h-100 border-0 shadow-sm">
-            <div class="card-body p-4">
-              <div class="d-flex align-items-center mb-3">
-                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Farmer" class="testimonial-img me-3">
-                <div>
-                  <h5 class="fw-bold mb-0">Rajesh Kumar</h5>
-                  <small class="text-muted">Dairy Farmer</small>
-                </div>
-              </div>
-              <p class="mb-0">"Kamadhenu has transformed how I manage my dairy. I've increased milk production by 22% while reducing costs."</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card testimonial-card h-100 border-0 shadow-sm">
-            <div class="card-body p-4">
-              <div class="d-flex align-items-center mb-3">
-                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Farmer" class="testimonial-img me-3">
-                <div>
-                  <h5 class="fw-bold mb-0">Priya Sharma</h5>
-                  <small class="text-muted">Cattle Breeder</small>
-                </div>
-              </div>
-              <p class="mb-0">"The health monitoring features helped me detect illness early and save three of my best cows. Incredible tool!"</p>
-            </div>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card testimonial-card h-100 border-0 shadow-sm">
-            <div class="card-body p-4">
-              <div class="d-flex align-items-center mb-3">
-                <img src="https://randomuser.me/api/portraits/men/62.jpg" alt="Farmer" class="testimonial-img me-3">
-                <div>
-                  <h5 class="fw-bold mb-0">Vikram Singh</h5>
-                  <small class="text-muted">Organic Farm Owner</small>
-                </div>
-              </div>
-              <p class="mb-0">"The analytics helped me optimize feeding schedules and breed selection. My farm's productivity has never been better!"</p>
-            </div>
-          </div>
-        </div>
+      <div class="social-links">
+        <a href="#" class="social-link"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+        <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+        <a href="#" class="social-link"><i class="fab fa-linkedin-in"></i></a>
       </div>
-    </div>
-  </section>
+    </footer>
+  </main>
 
-  <!-- CTA Section -->
-  <section class="py-5 bg-success text-white">
-    <div class="container py-5 text-center">
-      <h2 class="fw-bold mb-3">Ready to Transform Your Farm Management?</h2>
-      <p class="lead mb-4">Join thousands of farmers using Kamadhenu to optimize their operations</p>
-      <a href="{{ url_for('register') }}" class="btn btn-warning btn-lg px-5 py-3 me-3">Start Free Trial</a>
-      <a href="{{ url_for('login') }}" class="btn btn-light btn-lg px-5 py-3">Schedule Demo</a>
-    </div>
-  </section>
 
-  <!-- Footer -->
-  <footer class="bg-dark text-white py-4">
-    <div class="container">
-      <div class="row align-items-center">
-        <div class="col-md-6">
-          <p class="mb-0">© 2026 Kamadhenu Project | Smart Farming for Everyone</p>
-        </div>
-        <div class="col-md-6 text-md-end">
-          <a href="#" class="text-white me-3"><i class="fab fa-facebook-f"></i></a>
-          <a href="#" class="text-white me-3"><i class="fab fa-twitter"></i></a>
-          <a href="#" class="text-white me-3"><i class="fab fa-instagram"></i></a>
-          <a href="#" class="text-white"><i class="fab fa-linkedin-in"></i></a>
-        </div>
-      </div>
-    </div>
-  </footer>
-<!-- Language Selector Buttons -->
-<div class="language-selector">
-    <button class="lang-btn english active" onclick="setLanguage('en')">
-        <i class="fas fa-globe-americas"></i> English
-    </button>
-    <button class="lang-btn kannada" onclick="setLanguage('kn')">
-        <i class="fas fa-globe-asia"></i> ಕನ್ನಡ
-    </button>
-</div>
 
-<!-- Google Translate Widget (comment if not needed) -->
-<!-- <div id="google_translate_element"></div> -->
+  <!-- Hidden Google Translate -->
+  <div id="google_translate_element" style="display:none;"></div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  
   <script>
-    // Navbar scroll effect
-    window.addEventListener('scroll', function() {
-      const navbar = document.querySelector('.navbar');
-      if (window.scrollY > 50) {
-        navbar.classList.add('navbar-scrolled');
-      } else {
-        navbar.classList.remove('navbar-scrolled');
-      }
-    });
-  </script>
-  <script>
-    // Language translation functions
-    function googleTranslateElementInit() {
-        if (typeof google !== 'undefined' && google.translate) {
-            new google.translate.TranslateElement({
-                pageLanguage: 'en',
-                includedLanguages: 'en,kn',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                autoDisplay: false
-            }, 'google_translate_element');
-            
-            const savedLang = localStorage.getItem('selectedLanguage');
-            if(savedLang === 'kn') {
-                setTimeout(() => applyKannada(), 1000);
-            }
-        }
+    // ==================== Language Functions ====================
+    function saveLanguagePreference(lang) {
+      localStorage.setItem('selectedLanguage', lang);
+      document.cookie = `user_language=${lang}; path=/; max-age=31536000`;
     }
 
-    window.onload = function() {
-        if (typeof google !== 'undefined' && google.translate) {
-            googleTranslateElementInit();
-        } else {
-            var script = document.createElement('script');
-            script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-            document.body.appendChild(script);
-        }
-        
-        const savedLang = localStorage.getItem('selectedLanguage');
-        if(savedLang === 'kn') {
-            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector('.lang-btn.kannada').classList.add('active');
-            setTimeout(() => applyKannada(), 2000);
-        }
-    };
-
-    function applyKannada() {
-        var iframe = document.querySelector('.goog-te-menu-frame');
-        if(iframe && iframe.contentDocument) {
-            var select = iframe.contentDocument.querySelector('.goog-te-menu2-select');
-            if(select) {
-                select.value = 'kn';
-                select.dispatchEvent(new Event('change'));
-                return true;
-            }
-        }
-        
-        var elements = document.querySelectorAll('.goog-te-menu2-select');
-        if(elements.length > 0) {
-            elements[0].value = 'kn';
-            elements[0].dispatchEvent(new Event('change'));
-            return true;
-        }
-        
-        return false;
+    function applyLanguage(lang) {
+      if (lang === 'kn') {
+        window.location.hash = '#googtrans(kn|en)';
+      } else {
+        window.location.hash = '#googtrans(en)';
+      }
     }
 
     function setLanguage(lang) {
-        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-        localStorage.setItem('selectedLanguage', lang);
-        
-        if(lang === 'kn') {
-            window.location.hash = '#googtrans(kn)';
-            if(applyKannada()) {
-                console.log('ಭಾಷೆ ಕನ್ನಡಕ್ಕೆ ಬದಲಾಯಿಸಲಾಗಿದೆ');
-            } else {
-                setTimeout(() => location.reload(), 500);
-            }
-        } else {
-            window.location.hash = '#googtrans(en)';
-            var iframe = document.querySelector('.goog-te-menu-frame');
-            if(iframe && iframe.contentDocument) {
-                var select = iframe.contentDocument.querySelector('.goog-te-menu2-select');
-                if(select) {
-                    select.value = 'en';
-                    select.dispatchEvent(new Event('change'));
-                    console.log('Language changed to English');
-                    return;
-                }
-            }
-            setTimeout(() => location.reload(), 500);
-        }
+      document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+      event.target.classList.add('active');
+      saveLanguagePreference(lang);
+      applyLanguage(lang);
     }
-</script>
-</body>
 
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,kn',
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
+
+    function loadGoogleTranslate() {
+      if (window.google && google.translate) {
+        googleTranslateElementInit();
+        return;
+      }
+      var script = document.createElement('script');
+      script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+      document.head.appendChild(script);
+    }
+
+    // ==================== Initialize ====================
+    document.addEventListener('DOMContentLoaded', function() {
+      loadGoogleTranslate();
+      
+      const savedLang = localStorage.getItem('selectedLanguage') || 'en';
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if ((savedLang === 'en' && btn.classList.contains('english')) || 
+            (savedLang === 'kn' && btn.classList.contains('kannada'))) {
+          btn.classList.add('active');
+        }
+      });
+      
+      setTimeout(() => applyLanguage(savedLang), 1000);
+    });
+  </script>
+</body>
 </html>

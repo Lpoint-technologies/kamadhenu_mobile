@@ -2,696 +2,748 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Mobile viewport settings for WebView -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#043c07">
+    
     <title>Treatment Details - Kamadhenu</title>
+    
+    <!-- Optimized Bootstrap for mobile -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
+        /* Mobile-First Design System */
         :root {
             --primary: #043c07;
+            --primary-light: #1b5e20;
             --secondary: #ffc107;
+            --danger: #dc3545;
+            --success: #28a745;
+            --info: #17a2b8;
+            --purple: #6f42c1;
+            --warning: #ffc107;
             --light: #f8f9fa;
             --dark: #343a40;
-            --light-green: #e8f5e9;
+            --gray: #6c757d;
+            --border: #e9ecef;
+            --safe-area-top: env(safe-area-inset-top, 0px);
+            --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+            --header-height: 70px;
+            --bottom-nav-height: 75px;
         }
-        
-        body {
-            background-color: #f5f9f5;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow-x: hidden;
-        }
-        
-        .dashboard-container {
-            width: 100%;
+
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .sidebar {
-            background: linear-gradient(to bottom, var(--primary), #1b5e20);
-            color: white;
-            height: 100vh;
-            position: fixed;
-            width: 260px;
-            padding-top: 20px;
-            box-shadow: 3px 0 10px rgba(0,0,0,0.1);
-            overflow-y: auto;
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-        
-        .main-content { 
-            margin-left: 250px; 
-            padding: 20px;
-            transition: all 0.3s ease;
-        }
-        
-        .header {
-            background-color: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .welcome-text { 
-            color: var(--primary); 
-            font-weight: 600; 
-        }
-
-        .card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-        }
-
-        .treatment-header {
-            background: linear-gradient(135deg, var(--primary), #406515);
-            color: white;
-            padding: 2rem;
-            border-radius: 10px;
-            margin-bottom: 2rem;
-        }
-        
-        .detail-card {
-            border-left: 4px solid var(--primary);
-            margin-bottom: 1rem;
-        }
-        
-        .vet-card {
-            background: rgba(139, 195, 74, 0.1);
-            border-radius: 10px;
-        }
-
-        .logo {
-            text-align: center;
-            padding: 20px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            margin-bottom: 30px;
-        }
-        
-        .nav-item { 
-            margin: 10px 0; 
-        }
-
-        .nav-link {
-            color: rgba(255,255,255,0.8);
-            padding: 8px 16px;
-            border-radius: 5px;
-            margin: 5px 15px;
-            transition: all 0.3s;
-        }
-
-        .nav-link:hover, .nav-link.active { 
-            background-color: rgba(255,255,255,0.1); 
-            color: white; 
-        }
-
-        .nav-link i { 
-            margin-right: 10px; 
-            width: 20px; 
-            text-align: center; 
-        }
-
-        .logout-btn {
-            background-color: var(--secondary);
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f5f9f5;
             color: var(--dark);
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            font-weight: 500;
-            transition: all 0.3s;
+            overflow-x: hidden;
+            padding-top: var(--header-height);
+            padding-bottom: calc(var(--bottom-nav-height) + var(--safe-area-bottom));
+            min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
         }
 
-        .logout-btn:hover { 
-            background-color: #e0a800; 
-            transform: translateY(-2px); 
-        }
-
-        .cow-background {
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path fill="%232e7d32" fill-opacity="0.05" d="M50,10A40,40 0 1,1 50,90A40,40 0 1,1 50,10z M30,30 Q50,15 70,30 Q65,50 70,70 Q50,85 30,70 Q35,50 30,30 z"></path></svg>');
-            background-repeat: repeat;
-            background-size: 200px;
-        }
-
-        /* Submenu styles */
-        .submenu {
-            list-style: none;
-            padding-left: 30px;
-            display: none;
-        }
-        
-        .submenu .nav-link {
-            font-size: 14px;
-            padding: 6px 14px;
-            color: rgba(255,255,255,0.7);
-        }
-        
-        .submenu .nav-link:hover {
-            color: #fff;
-        }
-
-        /* Mobile menu toggle button */
-        .menu-toggle {
-            display: none;
-            position: fixed;
-            top: 15px;
-            left: 15px;
-            z-index: 1100;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            width: 40px;
-            height: 40px;
-            font-size: 20px;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        /* Overlay for mobile when sidebar is open */
-        .overlay {
-            display: none;
+        /* ==================== App Header ==================== */
+        .app-header {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 999;
-        }
-        
-        .overlay.active {
-            display: block;
+            right: 0;
+            height: var(--header-height);
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            padding-top: var(--safe-area-top);
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
 
-        /* Responsive styles */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                width: 70%;
-                max-width: 250px;
+        .app-header .logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+
+        .app-header .logo i {
+            font-size: 1.8rem;
+            margin-right: 8px;
+        }
+
+        .back-btn {
+            color: white;
+            font-size: 1.5rem;
+            text-decoration: none;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        /* ==================== Bottom Navigation ==================== */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: var(--bottom-nav-height);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding-bottom: var(--safe-area-bottom);
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+            z-index: 1000;
+            border-top: 1px solid var(--border);
+        }
+
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 0.7rem;
+            font-weight: 500;
+            padding: 8px 0;
+        }
+
+        .nav-item i {
+            font-size: 1.4rem;
+            margin-bottom: 2px;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        /* ==================== Main Content ==================== */
+        .app-content {
+            padding: 16px;
+        }
+
+        /* Treatment Header Card */
+        .treatment-header-card {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            border-radius: 24px;
+            padding: 24px;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .treatment-header-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+            transform: rotate(30deg);
+        }
+
+        .treatment-header-card h2 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            position: relative;
+        }
+
+        .treatment-header-card p {
+            font-size: 0.95rem;
+            opacity: 0.9;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .treatment-meta {
+            display: flex;
+            gap: 16px;
+            margin-top: 12px;
+            position: relative;
+        }
+
+        .meta-item {
+            flex: 1;
+            background: rgba(255,255,255,0.15);
+            border-radius: 16px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .meta-label {
+            font-size: 0.7rem;
+            opacity: 0.8;
+            margin-bottom: 4px;
+        }
+
+        .meta-value {
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        /* Info Cards */
+        .info-card {
+            background: white;
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 12px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid var(--primary);
+        }
+
+        .card-title i {
+            font-size: 1.1rem;
+        }
+
+        .info-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px dashed var(--border);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-weight: 500;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .info-value {
+            font-weight: 600;
+            color: var(--dark);
+            text-align: right;
+        }
+
+        /* Vet Card */
+        .vet-card {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            border: none;
+        }
+
+        .vet-card .card-title {
+            color: var(--info);
+            border-bottom-color: var(--info);
+        }
+
+        .vet-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .vet-detail-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .vet-detail-item i {
+            width: 24px;
+            color: var(--info);
+            font-size: 1rem;
+        }
+
+        /* Medical Cards */
+        .medical-card {
+            background: white;
+            border-radius: 20px;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-left: 4px solid;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .medical-card.diagnosis {
+            border-left-color: var(--warning);
+        }
+
+        .medical-card.medicines {
+            border-left-color: var(--danger);
+        }
+        .header-title{
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
+
+        .medical-card.vaccination {
+            border-left-color: var(--success);
+        }
+
+        .medical-card.instructions {
+            border-left-color: var(--gray);
+        }
+
+        .medical-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .medical-header i {
+            font-size: 1.2rem;
+        }
+
+        .medical-header h4 {
+            font-size: 1rem;
+            font-weight: 700;
+            margin: 0;
+        }
+
+        .diagnosis .medical-header i,
+        .diagnosis .medical-header h4 {
+            color: var(--warning);
+        }
+
+        .medicines .medical-header i,
+        .medicines .medical-header h4 {
+            color: var(--danger);
+        }
+
+        .vaccination .medical-header i,
+        .vaccination .medical-header h4 {
+            color: var(--success);
+        }
+
+        .instructions .medical-header i,
+        .instructions .medical-header h4 {
+            color: var(--gray);
+        }
+
+        .medical-content {
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: var(--dark);
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 12px;
+        }
+
+        /* Action Buttons */
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            flex: 1;
+            border: none;
+            border-radius: 30px;
+            padding: 16px;
+            font-weight: 600;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            text-decoration: none;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
+        }
+
+        .btn-secondary {
+            background: white;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-outline {
+            background: white;
+            border: 2px solid var(--gray);
+            color: var(--gray);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-print {
+            background: var(--info);
+            color: white;
+        }
+
+        /* Language Selector */
+        .language-selector {
+            position: fixed;
+            bottom: calc(90px + var(--safe-area-bottom));
+            right: 16px;
+            z-index: 999;
+            background: white;
+            padding: 6px 10px;
+            border-radius: 30px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            display: flex;
+            gap: 6px;
+            border: 2px solid var(--primary);
+        }
+
+        .lang-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+
+        .lang-btn.english {
+            background: var(--primary);
+            color: white;
+        }
+
+        .lang-btn.kannada {
+            background: var(--secondary);
+            color: var(--primary);
+        }
+
+        /* Hide old sidebar elements */
+        .sidebar, .menu-toggle, .overlay, .dashboard-container {
+            display: none !important;
+        }
+
+        /* Google Translate Hide */
+        .goog-te-banner-frame,
+        .goog-te-banner,
+        .skiptranslate,
+        #google_translate_element {
+            display: none !important;
+        }
+
+        body {
+            top: 0 !important;
+        }
+
+        /* Small screen adjustments */
+        @media (max-width: 480px) {
+            .treatment-meta {
+                flex-direction: column;
+                gap: 8px;
             }
             
-            .sidebar.active {
-                transform: translateX(0);
+            .action-buttons {
+                flex-direction: column;
             }
             
-            .main-content {
-                margin-left: 0;
-                width: 100%;
+            .treatment-header-card h2 {
+                font-size: 1.3rem;
+            }
+        }
+
+        @media (max-width: 360px) {
+            .treatment-header-card {
+                padding: 20px;
             }
             
-            .menu-toggle {
-                display: block;
-            }
-            
-            .header {
-                padding: 15px 15px 15px 50px;
+            .info-row {
                 flex-direction: column;
                 align-items: flex-start;
-                gap: 10px;
+                gap: 4px;
             }
             
-            .treatment-header {
-                padding: 1.5rem;
+            .info-value {
+                text-align: left;
             }
         }
-
-        @media (max-width: 576px) {
-            .main-content {
-                padding: 10px;
-            }
-            
-            .logo h2 {
-                font-size: 1.5rem;
-            }
-            
-            .treatment-header {
-                padding: 1rem;
-            }
-        }
-         /* Language Selector Styles - BOTTOM */
-    .language-selector {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 10000;
-        background: white;
-        padding: 10px 15px;
-        border-radius: 25px;
-        box-shadow: 0 -4px 15px rgba(0,0,0,0.2);
-        display: flex;
-        gap: 10px;
-        border: 2px solid #27ae60;
-    }
-
-    .lang-btn {
-        padding: 8px 20px;
-        border: none;
-        border-radius: 20px;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 14px;
-        transition: all 0.3s ease;
-    }
-
-    .lang-btn.english {
-        background: #007bff;
-        color: white;
-    }
-
-    .lang-btn.kannada {
-        background: #ff9800;
-        color: white;
-    }
-
-    .lang-btn.active {
-        transform: scale(1.05);
-        box-shadow: 0 0 0 2px white, 0 0 0 4px currentColor;
-    }
-
-    /* Hide Google banner */
-    .goog-te-banner-frame { display: none !important; }
-    body { top: 0 !important; }
-
-    /* Mobile responsive */
-    @media (max-width: 768px) {
-        .language-selector {
-            bottom: 10px;
-            right: 10px;
-            padding: 6px 10px;
-        }
-        
-        .lang-btn {
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-    }
-    /* Completely hide ALL Google Translate elements */
-    .goog-te-banner-frame,
-    .goog-te-banner,
-    .goog-te-banner-wrapper,
-    .skiptranslate,
-    #goog-gt-tt,
-    .goog-te-balloon-frame,
-    .goog-tooltip,
-    .goog-tooltip:hover,
-    .goog-text-highlight {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        height: 0 !important;
-        width: 0 !important;
-        position: absolute !important;
-    }
-    
-    /* Prevent body shift */
-    body {
-        top: 0px !important;
-        position: static !important;
-    }
-    
-    /* Hide the translation menu if it appears */
-    .goog-te-menu-frame {
-        display: none !important;
-    }
     </style>
 </head>
-<body class="cow-background">
-    <!-- Mobile menu toggle -->
-    <button class="menu-toggle" id="menuToggle">
-        <i class="fas fa-bars"></i>
-    </button>
+<body>
     
-    <!-- Overlay for mobile -->
-    <div class="overlay" id="overlay"></div>
+    <!-- App Header -->
+    <header class="app-header">
+        <a href="{{ url_for('farmer_treatments') }}" class="back-btn">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <span class="header-title">Treatment Details</span>
+        <div style="width: 44px;"></div> <!-- Spacer for alignment -->
+    </header>
 
-    <div class="dashboard-container">
-        <!-- Sidebar -->
-        <div class="sidebar" id="sidebar">
-            <div class="logo">
-                <h2><i class="fas fa-cow"></i> Kamadhenu</h2>
-                <p class="mb-0">Cow Management System</p>
-            </div>
+    <!-- Main Content -->
+    <main class="app-content">
+        <!-- Treatment Header Card -->
+        <div class="treatment-header-card">
+            <h2><i class="fas fa-syringe me-2"></i>Treatment Record</h2>
+            <p>Complete medical details for your animal</p>
             
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link" href="/dashboard">
-                        <i class="fas fa-tachometer-alt"></i> Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/add_cow">
-                        <i class="fas fa-plus-circle"></i> Add New Cow
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/cows">
-                        <i class="fas fa-list"></i> View My Cows
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/find_cow">
-                        <i class="fas fa-search"></i> Find Cow
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/milk_yield">
-                        <i class="fas fa-tint"></i> Milk Yield
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/disease_prediction">
-                        <i class="fas fa-stethoscope"></i> Disease Detection
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/book_appointment">
-                        <i class="fas fa-syringe"></i> Book Appointment
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="/farmer_treatments">
-                        <i class="fas fa-syringe"></i> Treatment History
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('add_geotag') }}">
-                        <i class="fas fa-map-marker-alt"></i> Add Geo Tag
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('analytics') }}">
-                        <i class="fas fa-chart-line"></i> Analytics
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="#" onclick="toggleSubmenu(event)">
-                        <i class="fas fa-chart-line"></i> Market Place <i class="fas fa-caret-down float-end"></i>
-                    </a>
-                    <ul class="submenu">
-                        <li><a class="nav-link" href="/buy_cow"><i class="fas fa-shopping-cart"></i> Buy Cows</a></li>
-                        <li><a class="nav-link" href="/sell_cow"><i class="fas fa-hand-holding-usd"></i> Sell Cows</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/sold_cows">
-                        <i class="fas fa-check-circle"></i> Sale History
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <!-- Main Content -->
-        <div class="main-content" id="mainContent">
-            <!-- Header -->
-            <div class="header">
-                <div>
-                    <h2 class="welcome-text">Treatment Details</h2>
-                    <p class="mb-0 text-muted">Complete medical record for your animal</p>
+            <div class="treatment-meta">
+                <div class="meta-item">
+                    <div class="meta-label">Treatment Date</div>
+                    <div class="meta-value">{{ treatment['treatment_date'] }}</div>
                 </div>
-                <a href="{{ url_for('farmer_logout') }}" class="btn btn-danger">Logout</a>
-            </div>
-
-            <!-- Treatment Header -->
-            <div class="treatment-header">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <h2><i class="fas fa-syringe me-2"></i>Treatment Details</h2>
-                        <p class="mb-0">Complete medical record for your animal</p>
-                    </div>
-                    <a href="{{ url_for('farmer_treatments') }}" class="btn btn-light">
-                        <i class="fas fa-arrow-left me-1"></i> Back to Treatments
-                    </a>
-                </div>
-            </div>
-
-            <div class="row">
-                <!-- Animal Information -->
-                <div class="col-md-6">
-                    <div class="card detail-card">
-                        <div class="card-header" style="background: linear-gradient(to right, var(--primary), #1b5e20); color: white;">
-                            <i class="fas fa-cow me-2"></i>Animal Information
-                        </div>
-                        <div class="card-body">
-                            <p><strong>Breed:</strong> {{ treatment['cow_breed'] }}</p>
-                            <p><strong>Animal ID:</strong> {{ treatment['cow_id'] }}</p>
-                            <p><strong>Age:</strong> {{ treatment['cow_age'] }} months</p>
-                            <p><strong>Color:</strong> {{ treatment['cow_color'] }}</p>
-                            {% if treatment['cow_health_history'] %}
-                            <p><strong>Health History:</strong> {{ treatment['cow_health_history'] }}</p>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Treatment Information -->
-                <div class="col-md-6">
-                    <div class="card detail-card">
-                        <div class="card-header" style="background: linear-gradient(to right, #007bff, #0056b3); color: white;">
-                            <i class="fas fa-calendar me-2"></i>Treatment Information
-                        </div>
-                        <div class="card-body">
-                            <p><strong>Treatment Date:</strong> {{ treatment['treatment_date'] }}</p>
-                            <p><strong>Appointment Date:</strong> {{ treatment['appointment_date'] }}</p>
-                            <p><strong>Appointment Time:</strong> {{ treatment['appointment_time'] }}</p>
-                            <p><strong>Record Created:</strong> {{ treatment['created_at'] }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Veterinarian Information -->
-            <div class="card vet-card mb-4">
-                <div class="card-header" style="background: linear-gradient(to right, #17a2b8, #138496); color: white;">
-                    <i class="fas fa-user-md me-2"></i>Veterinarian Information
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <p><strong>Name:</strong> Dr. {{ treatment['vet_name'] }}</p>
-                            <p><strong>Clinic:</strong> {{ treatment['vet_clinic'] or 'Not specified' }}</p>
-                        </div>
-                        <div class="col-md-6">
-                            <p><strong>Phone:</strong> {{ treatment['vet_phone'] }}</p>
-                            <p><strong>Education:</strong> {{ treatment['vet_education'] }}</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Medical Details -->
-            <div class="row">
-                {% if treatment['diagnosis'] %}
-                <div class="col-md-6 mb-3">
-                    <div class="card h-100">
-                        <div class="card-header" style="background: linear-gradient(to right, #ffc107, #e0a800); color: #212529;">
-                            <i class="fas fa-stethoscope me-2"></i>Diagnosis
-                        </div>
-                        <div class="card-body">
-                            <p>{{ treatment['diagnosis'] }}</p>
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-
-                {% if treatment['medicines'] %}
-                <div class="col-md-6 mb-3">
-                    <div class="card h-100">
-                        <div class="card-header" style="background: linear-gradient(to right, #dc3545, #c82333); color: white;">
-                            <i class="fas fa-pills me-2"></i>Medicines Prescribed
-                        </div>
-                        <div class="card-body">
-                            <p>{{ treatment['medicines'] }}</p>
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-
-                {% if treatment['vaccination_details'] %}
-                <div class="col-md-6 mb-3">
-                    <div class="card h-100">
-                        <div class="card-header" style="background: linear-gradient(to right, var(--primary), #1b5e20); color: white;">
-                            <i class="fas fa-syringe me-2"></i>Vaccination Details
-                        </div>
-                        <div class="card-body">
-                            <p>{{ treatment['vaccination_details'] }}</p>
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-
-                {% if treatment['instructions'] %}
-                <div class="col-md-6 mb-3">
-                    <div class="card h-100">
-                        <div class="card-header" style="background: linear-gradient(to right, #6c757d, #545b62); color: white;">
-                            <i class="fas fa-info-circle me-2"></i>Instructions
-                        </div>
-                        <div class="card-body">
-                            <p>{{ treatment['instructions'] }}</p>
-                        </div>
-                    </div>
-                </div>
-                {% endif %}
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="d-flex justify-content-between mt-4">
-                <a href="{{ url_for('farmer_treatments') }}" class="btn btn-secondary">
-                    <i class="fas fa-arrow-left me-1"></i> Back to All Treatments
-                </a>
-                <div>
-                    <button onclick="window.print()" class="btn btn-outline-primary me-2">
-                        <i class="fas fa-print me-1"></i> Print Record
-                    </button>
-                    <a href="{{ url_for('book_appointment') }}" class="btn btn-success">
-                        <i class="fas fa-calendar-plus me-1"></i> Book New Appointment
-                    </a>
+                <div class="meta-item">
+                    <div class="meta-label">Appointment</div>
+                    <div class="meta-value">{{ treatment['appointment_date'] }}</div>
                 </div>
             </div>
         </div>
+
+        <!-- Animal Information Card -->
+        <div class="info-card">
+            <div class="card-title">
+                <i class="fas fa-cow"></i>
+                <span>Animal Information</span>
+            </div>
+            <div class="info-grid">
+                <div class="info-row">
+                    <span class="info-label">Breed</span>
+                    <span class="info-value">{{ treatment['cow_breed'] }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Animal ID</span>
+                    <span class="info-value">{{ treatment['cow_id'] }}</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Age</span>
+                    <span class="info-value">{{ treatment['cow_age'] }} months</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Color</span>
+                    <span class="info-value">{{ treatment['cow_color'] }}</span>
+                </div>
+                {% if treatment['cow_health_history'] %}
+                <div class="info-row">
+                    <span class="info-label">Health History</span>
+                    <span class="info-value">{{ treatment['cow_health_history'] }}</span>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <!-- Veterinarian Card -->
+        <div class="info-card vet-card">
+            <div class="card-title">
+                <i class="fas fa-user-md"></i>
+                <span>Veterinarian</span>
+            </div>
+            <div class="vet-details">
+                <div class="vet-detail-item">
+                    <i class="fas fa-user"></i>
+                    <span>Dr. {{ treatment['vet_name'] }}</span>
+                </div>
+                <div class="vet-detail-item">
+                    <i class="fas fa-clinic-medical"></i>
+                    <span>{{ treatment['vet_clinic'] or 'Not specified' }}</span>
+                </div>
+                <div class="vet-detail-item">
+                    <i class="fas fa-phone"></i>
+                    <span>{{ treatment['vet_phone'] }}</span>
+                </div>
+                <div class="vet-detail-item">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>{{ treatment['vet_education'] }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Medical Details -->
+        {% if treatment['diagnosis'] %}
+        <div class="medical-card diagnosis">
+            <div class="medical-header">
+                <i class="fas fa-stethoscope"></i>
+                <h4>Diagnosis</h4>
+            </div>
+            <div class="medical-content">
+                {{ treatment['diagnosis'] }}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if treatment['medicines'] %}
+        <div class="medical-card medicines">
+            <div class="medical-header">
+                <i class="fas fa-pills"></i>
+                <h4>Medicines Prescribed</h4>
+            </div>
+            <div class="medical-content">
+                {{ treatment['medicines'] }}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if treatment['vaccination_details'] %}
+        <div class="medical-card vaccination">
+            <div class="medical-header">
+                <i class="fas fa-syringe"></i>
+                <h4>Vaccination Details</h4>
+            </div>
+            <div class="medical-content">
+                {{ treatment['vaccination_details'] }}
+            </div>
+        </div>
+        {% endif %}
+
+        {% if treatment['instructions'] %}
+        <div class="medical-card instructions">
+            <div class="medical-header">
+                <i class="fas fa-info-circle"></i>
+                <h4>Instructions</h4>
+            </div>
+            <div class="medical-content">
+                {{ treatment['instructions'] }}
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <a href="{{ url_for('farmer_treatments') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Back
+            </a>
+            <button onclick="window.print()" class="btn btn-print">
+                <i class="fas fa-print"></i> Print
+            </button>
+            <a href="{{ url_for('book_appointment') }}" class="btn btn-success">
+                <i class="fas fa-calendar-plus"></i> Book
+            </a>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="/dashboard" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </a>
+        <a href="/cows" class="nav-item">
+            <i class="fas fa-cow"></i>
+            <span>My Cows</span>
+        </a>
+        <a href="/add_cow" class="nav-item">
+            <i class="fas fa-plus-circle"></i>
+            <span>Add</span>
+        </a>
+        <a href="/milk_yield" class="nav-item">
+            <i class="fas fa-tint"></i>
+            <span>Milk</span>
+        </a>
+        <a href="/find_cow" class="nav-item active">
+            <i class="fas fa-search"></i>
+            <span>Find</span>
+        </a>
+    </nav>
+
+    <!-- Language Selector -->
+    <div class="language-selector">
+        <button class="lang-btn english active" onclick="setLanguage('en')">EN</button>
+        <button class="lang-btn kannada" onclick="setLanguage('kn')">ಕನ್ನಡ</button>
     </div>
 
+    <!-- Hidden Google Translate -->
+    <div id="google_translate_element" style="display:none;"></div>
+
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
-        function toggleSubmenu(event) {
-            event.preventDefault();
-            const submenu = event.target.closest("li").querySelector(".submenu");
-            submenu.style.display = submenu.style.display === "block" ? "none" : "block";
+        // ==================== Language Functions ====================
+        function saveLanguagePreference(lang) {
+            localStorage.setItem('selectedLanguage', lang);
+            document.cookie = `user_language=${lang}; path=/; max-age=31536000`;
         }
 
-        // Toggle mobile sidebar
-        const menuToggle = document.getElementById('menuToggle');
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('mainContent');
-        const overlay = document.getElementById('overlay');
-        
-        menuToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-            
-            // Change icon based on sidebar state
-            const icon = menuToggle.querySelector('i');
-            if (sidebar.classList.contains('active')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
+        function applyLanguage(lang) {
+            if (lang === 'kn') {
+                window.location.hash = '#googtrans(kn|en)';
             } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
+                window.location.hash = '#googtrans(en)';
             }
-        });
-        
-        // Close sidebar when clicking on overlay
-        overlay.addEventListener('click', function() {
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
-            const icon = menuToggle.querySelector('i');
-            icon.classList.remove('fa-times');
-            icon.classList.add('fa-bars');
-        });
-        
-        // Close sidebar when clicking on a nav link (mobile)
-        const navLinks = document.querySelectorAll('.nav-link');
-        navLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                if (window.innerWidth <= 768) {
-                    sidebar.classList.remove('active');
-                    overlay.classList.remove('active');
-                    const icon = menuToggle.querySelector('i');
-                    icon.classList.remove('fa-times');
-                    icon.classList.add('fa-bars');
-                }
-            });
-        });
-    </script>
-    <script>
-    // Language translation functions
-    function googleTranslateElementInit() {
-        if (typeof google !== 'undefined' && google.translate) {
+        }
+
+        function setLanguage(lang) {
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            saveLanguagePreference(lang);
+            applyLanguage(lang);
+        }
+
+        function googleTranslateElementInit() {
             new google.translate.TranslateElement({
                 pageLanguage: 'en',
                 includedLanguages: 'en,kn',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
                 autoDisplay: false
             }, 'google_translate_element');
-            
-            const savedLang = localStorage.getItem('selectedLanguage');
-            if(savedLang === 'kn') {
-                setTimeout(() => applyKannada(), 1000);
-            }
         }
-    }
 
-    window.onload = function() {
-        if (typeof google !== 'undefined' && google.translate) {
-            googleTranslateElementInit();
-        } else {
+        function loadGoogleTranslate() {
+            if (window.google && google.translate) {
+                googleTranslateElementInit();
+                return;
+            }
             var script = document.createElement('script');
             script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-            document.body.appendChild(script);
+            document.head.appendChild(script);
         }
-        
-        const savedLang = localStorage.getItem('selectedLanguage');
-        if(savedLang === 'kn') {
-            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector('.lang-btn.kannada').classList.add('active');
-            setTimeout(() => applyKannada(), 2000);
-        }
-    };
 
-    function applyKannada() {
-        var iframe = document.querySelector('.goog-te-menu-frame');
-        if(iframe && iframe.contentDocument) {
-            var select = iframe.contentDocument.querySelector('.goog-te-menu2-select');
-            if(select) {
-                select.value = 'kn';
-                select.dispatchEvent(new Event('change'));
-                return true;
-            }
-        }
-        
-        var elements = document.querySelectorAll('.goog-te-menu2-select');
-        if(elements.length > 0) {
-            elements[0].value = 'kn';
-            elements[0].dispatchEvent(new Event('change'));
-            return true;
-        }
-        
-        return false;
-    }
-
-    function setLanguage(lang) {
-        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-        localStorage.setItem('selectedLanguage', lang);
-        
-        if(lang === 'kn') {
-            window.location.hash = '#googtrans(kn)';
-            if(applyKannada()) {
-                console.log('ಭಾಷೆ ಕನ್ನಡಕ್ಕೆ ಬದಲಾಯಿಸಲಾಗಿದೆ');
-            } else {
-                setTimeout(() => location.reload(), 500);
-            }
-        } else {
-            window.location.hash = '#googtrans(en)';
-            var iframe = document.querySelector('.goog-te-menu-frame');
-            if(iframe && iframe.contentDocument) {
-                var select = iframe.contentDocument.querySelector('.goog-te-menu2-select');
-                if(select) {
-                    select.value = 'en';
-                    select.dispatchEvent(new Event('change'));
-                    console.log('Language changed to English');
-                    return;
+        // ==================== Initialize ====================
+        document.addEventListener('DOMContentLoaded', function() {
+            loadGoogleTranslate();
+            
+            const savedLang = localStorage.getItem('selectedLanguage') || 'en';
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if ((savedLang === 'en' && btn.classList.contains('english')) || 
+                    (savedLang === 'kn' && btn.classList.contains('kannada'))) {
+                    btn.classList.add('active');
                 }
-            }
-            setTimeout(() => location.reload(), 500);
-        }
-    }
-</script>
+            });
+            
+            setTimeout(() => applyLanguage(savedLang), 1000);
+        });
+    </script>
 </body>
 </html>

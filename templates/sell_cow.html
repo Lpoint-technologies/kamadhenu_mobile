@@ -2,507 +2,836 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Sell Cows - Kamadhenu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#043c07">
+  <title>Sell Cattle - Kamadhenu Marketplace</title>
+  
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    :root {
-      --primary: #043c07;
-      --secondary: #ffc107;
-      --light: #f8f9fa;
-      --dark: #343a40;
-      --light-green: #e8f5e9;
-    }
-    body {
-      background-color: #f5f9f5;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      overflow-x: hidden;
-    }
-    .dashboard-container { width: 100%; margin: 0; }
-    .sidebar {
-      background: linear-gradient(to bottom, var(--primary), #1b5e20);
-      color: white;
-      height: 100vh;
-      position: fixed;
-      width: 260px;
-      padding-top: 20px;
-      box-shadow: 3px 0 10px rgba(0,0,0,0.1);
-      overflow-y: auto;
-      z-index: 1000;
-      transition: all 0.3s ease;
-    }
-    .main-content { 
-      margin-left: 260px; 
-      padding: 20px; 
-      transition: all 0.3s ease;
-      width: calc(100% - 260px);
-    }
-    .header {
-      background-color: white;
-      padding: 15px 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .welcome-text { color: var(--primary); font-weight: 600; }
-    .card {
-      border: none; border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      transition: transform 0.3s;
-      margin-bottom: 20px;
-    }
-    .card:hover { transform: translateY(-5px); box-shadow: 0 8px 15px rgba(0,0,0,0.1); }
-    .logo { text-align: center; padding: 20px 0; border-bottom: 1px solid rgba(255,255,255,0.2); margin-bottom: 30px; }
-    .nav-item { margin: 10px 0; }
-    .nav-link {
-      color: rgba(255,255,255,0.8);
-      padding: 8px 16px;
-      border-radius: 5px;
-      margin: 5px 15px;
-      transition: all 0.3s;
-      display: block;
-    }
-    .nav-link:hover, .nav-link.active { background-color: rgba(255,255,255,0.1); color: white; }
-    .nav-link i { margin-right: 10px; width: 20px; text-align: center; }
-    .submenu { list-style: none; padding-left: 30px; display: none; }
-    .submenu .nav-link { font-size: 14px; padding: 6px 14px; color: rgba(255,255,255,0.7); }
-    .submenu .nav-link:hover, .submenu .nav-link.active { color: #fff; }
-    
-    /* Mobile menu toggle button */
-    .menu-toggle {
-      display: none;
-      position: fixed;
-      top: 15px;
-      left: 15px;
-      z-index: 1100;
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 5px;
-      width: 40px;
-      height: 40px;
-      font-size: 20px;
-      cursor: pointer;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
 
-    /* Overlay for mobile when sidebar is open */
-    .overlay {
-      display: none;
+    :root {
+      --primary: #043c07;
+      --primary-light: #1b5e20;
+      --secondary: #ffc107;
+      --success: #28a745;
+      --gray: #6c757d;
+      --border: #e9ecef;
+      --safe-area-top: env(safe-area-inset-top, 0px);
+      --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background-color: #f5f9f5;
+      color: #2c3e2f;
+      overflow: hidden;
+      height: 100vh;
+      width: 100vw;
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.5);
-      z-index: 999;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .app-header {
+      flex-shrink: 0;
+      height: 60px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      padding-top: max(0px, var(--safe-area-top));
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      z-index: 100;
+    }
+
+    .menu-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.6rem;
+      cursor: pointer;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    /* Main Content - scrollable only if needed, but compact design */
+    .app-content {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 12px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
     
-    .overlay.active {
+    .app-content::-webkit-scrollbar {
+      width: 3px;
+    }
+    .app-content::-webkit-scrollbar-track {
+      background: #e0e0e0;
+      border-radius: 10px;
+    }
+    .app-content::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 10px;
+    }
+
+    /* Page Header */
+    .page-header {
+      flex-shrink: 0;
+    }
+    .page-header h2 {
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .page-header p {
+      font-size: 0.75rem;
+      color: var(--gray);
+    }
+
+    /* Stats Card */
+    .stats-card {
+      background: white;
+      border-radius: 16px;
+      padding: 10px 16px;
+      border: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .stats-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .stats-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 20px;
+      background: rgba(4, 60, 7, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 1.2rem;
+    }
+    .stats-info h4 {
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--primary);
+      margin: 0;
+      line-height: 1.2;
+    }
+    .stats-info p {
+      font-size: 0.65rem;
+      color: var(--gray);
+      margin: 0;
+    }
+    .stats-badge {
+      background: var(--success);
+      color: white;
+      padding: 4px 10px;
+      border-radius: 30px;
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+
+    /* Form Card */
+    .form-card {
+      background: white;
+      border-radius: 18px;
+      padding: 14px;
+      border: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .form-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Form Elements */
+    .form-group {
+      margin-bottom: 12px;
+    }
+    .form-label {
       display: block;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 6px;
+      font-size: 0.75rem;
     }
-    
-    /* Mobile responsive styles */
-    @media (max-width: 768px) {
-      .sidebar {
-        transform: translateX(-100%);
-        width: 70%;
-        max-width: 250px;
-      }
-      
-      .sidebar.active {
-        transform: translateX(0);
-      }
-      
-      .main-content {
-        margin-left: 0;
-        width: 100%;
-      }
-      
-      .menu-toggle {
-        display: block;
-      }
-      
-      .header {
-        padding: 15px 15px 15px 50px;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
-      
-      .card {
-        padding: 15px;
-      }
+    .form-select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      font-size: 0.8rem;
+      background: white;
+      appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23043c07' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 12px;
+    }
+    .form-select:focus {
+      border-color: var(--primary);
+      outline: none;
     }
 
-    @media (max-width: 576px) {
-      .main-content {
-        padding: 10px;
-      }
-      
-      .logo h2 {
-        font-size: 1.5rem;
-      }
-      
-      .form-control, .form-select {
-        font-size: 0.9rem;
-      }
+    /* Cow Preview Card */
+    .preview-card {
+      background: #f8f9fa;
+      border-radius: 14px;
+      padding: 10px;
+      margin-bottom: 12px;
+      border: 1.5px dashed var(--primary);
     }
-      /* Language Selector Styles - BOTTOM */
+    .preview-header {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 10px;
+      color: var(--primary);
+      font-weight: 600;
+      font-size: 0.7rem;
+    }
+    .preview-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .preview-image {
+      width: 70px;
+      height: 70px;
+      border-radius: 12px;
+      object-fit: cover;
+      border: 2px solid var(--primary);
+    }
+    .preview-image-placeholder {
+      width: 70px;
+      height: 70px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      font-size: 1.8rem;
+      border: 2px solid var(--primary);
+    }
+    .preview-details {
+      flex: 1;
+    }
+    .preview-detail-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 4px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.7rem;
+    }
+    .preview-detail-row:last-child {
+      border-bottom: none;
+    }
+    .preview-label {
+      font-weight: 600;
+      color: var(--gray);
+    }
+    .preview-value {
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    /* Price Input */
+    .price-input-group {
+      display: flex;
+      align-items: center;
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+    }
+    .price-currency {
+      background: rgba(4, 60, 7, 0.08);
+      padding: 10px 14px;
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 0.85rem;
+    }
+    .price-input {
+      flex: 1;
+      padding: 10px 12px;
+      border: none;
+      font-size: 0.85rem;
+    }
+    .price-input:focus {
+      outline: none;
+    }
+
+    /* Submit Button */
+    .submit-btn {
+      background: linear-gradient(135deg, var(--success), #20c997);
+      color: white;
+      border: none;
+      border-radius: 40px;
+      padding: 12px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+    .submit-btn:active {
+      transform: scale(0.97);
+    }
+
+    /* Tips Card */
+    .tips-card {
+      background: #f8f9fa;
+      border-radius: 14px;
+      padding: 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
+    }
+    .tips-card i {
+      color: var(--secondary);
+      font-size: 1.2rem;
+    }
+    .tips-card strong {
+      color: var(--primary);
+      font-size: 0.75rem;
+    }
+    .tips-card p {
+      font-size: 0.65rem;
+      color: var(--gray);
+      margin: 2px 0 0;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 30px 16px;
+      background: white;
+      border-radius: 20px;
+      margin: auto;
+    }
+    .empty-state i {
+      font-size: 2.5rem;
+      color: #dee2e6;
+      margin-bottom: 8px;
+    }
+    .empty-state h4 {
+      font-size: 0.9rem;
+      color: var(--gray);
+    }
+    .empty-state p {
+      font-size: 0.75rem;
+      color: var(--gray);
+      margin-bottom: 12px;
+    }
+    .empty-state .btn {
+      background: var(--primary);
+      color: white;
+      border: none;
+      border-radius: 30px;
+      padding: 8px 16px;
+      font-size: 0.7rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      flex-shrink: 0;
+      height: 62px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding-bottom: max(0px, var(--safe-area-bottom));
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+      border-top: 1px solid var(--border);
+    }
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray);
+      text-decoration: none;
+      font-size: 0.6rem;
+      font-weight: 500;
+    }
+    .nav-item i {
+      font-size: 1.2rem;
+      margin-bottom: 2px;
+    }
+    .nav-item.active {
+      color: var(--primary);
+    }
+
+    /* Drawer */
+    .drawer-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 2000;
+      display: none;
+    }
+    .drawer-overlay.active { display: block; }
+    .drawer {
+      position: fixed;
+      top: 0;
+      left: -260px;
+      width: 260px;
+      height: 100vh;
+      background: white;
+      z-index: 2001;
+      transition: left 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .drawer.active { left: 0; }
+    .drawer-header {
+      padding: 16px;
+      padding-top: calc(16px + var(--safe-area-top));
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+    }
+    .drawer-header h3 { font-size: 1.1rem; font-weight: 700; }
+    .drawer-header p { font-size: 0.65rem; opacity: 0.9; }
+    .drawer-content { flex: 1; overflow-y: auto; padding: 8px 0; }
+    .drawer-section { margin-bottom: 12px; }
+    .drawer-section-title {
+      padding: 5px 16px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+    .drawer-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      color: var(--dark);
+      text-decoration: none;
+    }
+    .drawer-item i { width: 20px; color: var(--primary); font-size: 0.9rem; }
+    .drawer-item span { font-size: 0.8rem; font-weight: 500; }
+    .language-submenu {
+      background: #f8f9fa;
+      margin-top: 8px;
+      border-radius: 12px;
+    }
+    .lang-option {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 20px 12px 44px;
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+    }
+
+    /* Language Selector */
     .language-selector {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 10000;
-        background: white;
-        padding: 10px 15px;
-        border-radius: 25px;
-        box-shadow: 0 -4px 15px rgba(0,0,0,0.2);
-        display: flex;
-        gap: 10px;
-        border: 2px solid #27ae60;
+      position: fixed;
+      bottom: 70px;
+      right: 12px;
+      z-index: 999;
+      background: white;
+      padding: 4px 8px;
+      border-radius: 30px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+      display: flex;
+      gap: 6px;
+      border: 1px solid var(--primary);
     }
-
     .lang-btn {
-        padding: 8px 20px;
-        border: none;
-        border-radius: 20px;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 14px;
-        transition: all 0.3s ease;
+      padding: 4px 10px;
+      border: none;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 0.7rem;
+      cursor: pointer;
     }
+    .lang-btn.english { background: var(--primary); color: white; }
+    .lang-btn.kannada { background: #f0f0f0; color: var(--primary); }
 
-    .lang-btn.english {
-        background: #007bff;
-        color: white;
-    }
-
-    .lang-btn.kannada {
-        background: #ff9800;
-        color: white;
-    }
-
-    .lang-btn.active {
-        transform: scale(1.05);
-        box-shadow: 0 0 0 2px white, 0 0 0 4px currentColor;
-    }
-
-    /* Hide Google banner */
-    .goog-te-banner-frame { display: none !important; }
+    .goog-te-banner-frame, .skiptranslate, #google_translate_element { display: none !important; }
     body { top: 0 !important; }
-
-    /* Mobile responsive */
-    @media (max-width: 768px) {
-        .language-selector {
-            bottom: 10px;
-            right: 10px;
-            padding: 6px 10px;
-        }
-        
-        .lang-btn {
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-    }
-    /* Completely hide ALL Google Translate elements */
-    .goog-te-banner-frame,
-    .goog-te-banner,
-    .goog-te-banner-wrapper,
-    .skiptranslate,
-    #goog-gt-tt,
-    .goog-te-balloon-frame,
-    .goog-tooltip,
-    .goog-tooltip:hover,
-    .goog-text-highlight {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        height: 0 !important;
-        width: 0 !important;
-        position: absolute !important;
-    }
-    
-    /* Prevent body shift */
-    body {
-        top: 0px !important;
-        position: static !important;
-    }
-    
-    /* Hide the translation menu if it appears */
-    .goog-te-menu-frame {
-        display: none !important;
-    }
   </style>
 </head>
-<body class="cow-background">
-  <!-- Mobile menu toggle -->
-  <button class="menu-toggle" id="menuToggle">
-    <i class="fas fa-bars"></i>
-  </button>
-  
-  <!-- Overlay for mobile -->
-  <div class="overlay" id="overlay"></div>
+<body>
+    <input type="hidden" id="currentLang" value="{{ current_lang|default('en') }}">
 
-  <div class="dashboard-container">
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-      <div class="logo">
-        <h2><i class="fas fa-cow"></i> Kamadhenu</h2>
-        <p class="mb-0">Cow Management System</p>
-      </div>
-      <ul class="nav flex-column">
-        <li class="nav-item"><a class="nav-link" href="/dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-        <li class="nav-item"><a class="nav-link" href="/add_cow"><i class="fas fa-plus-circle"></i> Add New Cow</a></li>
-        <li class="nav-item"><a class="nav-link" href="/cows"><i class="fas fa-list"></i> View My Cows</a></li>
-        <li class="nav-item">
-          <a class="nav-link" href="/find_cow">
-            <i class="fas fa-search"></i> Find Cow
-          </a>
-        </li>
-        <li class="nav-item"><a class="nav-link" href="/milk_yield"><i class="fas fa-tint"></i> Milk Yield</a></li>
-        <li class="nav-item">
-          <a class="nav-link" href="/disease_prediction">
-            <i class="fas fa-stethoscope"></i> Disease Detection
-          </a>
-        </li>
-        <li class="nav-item"><a class="nav-link" href="/book_appointment"><i class="fas fa-syringe"></i> Book Appointment</a></li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('farmer_treatments') }}">
-            <i class="fas fa-syringe"></i> Treatment History
-          </a>
-        </li>
-        <li class="nav-item"><a class="nav-link" href="/add_geotag"><i class="fas fa-map-marker-alt"></i> Add Geo Tag</a></li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('analytics') }}">
-            <i class="fas fa-chart-bar"></i> Analytics
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="#" onclick="toggleSubmenu(event)">
-            <i class="fas fa-chart-line"></i> Market Place <i class="fas fa-caret-down float-end"></i>
-          </a>
-          <ul class="submenu" style="display:block;">
-            <li><a class="nav-link" href="/buy_cow"><i class="fas fa-shopping-cart"></i> Buy Cows</a></li>
-            <li><a class="nav-link active" href="/sell_cow"><i class="fas fa-hand-holding-usd"></i> Sell Cows</a></li>
-          </ul>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/sold_cows">
-            <i class="fas fa-check-circle"></i> Sale History
-          </a>
-        </li>
-      </ul>
+    <!-- Drawer -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+    <div class="drawer" id="drawer">
+        <div class="drawer-header"><h3>Kamadhenu</h3><p>Smart Farm Management</p></div>
+        <div class="drawer-content">
+            <div class="drawer-section"><div class="drawer-section-title">Main Menu</div>
+                <a href="/dashboard" class="drawer-item"><i class="fas fa-home"></i><span>Dashboard</span></a>
+                <a href="/add_cow" class="drawer-item"><i class="fas fa-plus-circle"></i><span>Add New Cow</span></a>
+                <a href="/cows" class="drawer-item"><i class="fas fa-list"></i><span>View My Cows</span></a>
+                <a href="/find_cow" class="drawer-item"><i class="fas fa-search"></i><span>Find Cow</span></a>
+            </div>
+            <div class="drawer-section"><div class="drawer-section-title">Farm Operations</div>
+                <a href="/milk_yield" class="drawer-item"><i class="fas fa-tint"></i><span>Milk Yield</span></a>
+                <a href="/disease_prediction" class="drawer-item"><i class="fas fa-stethoscope"></i><span>Disease Detection</span></a>
+                <a href="/book_appointment" class="drawer-item"><i class="fas fa-syringe"></i><span>Book Appointment</span></a>
+                <a href="/farmer/treatments" class="drawer-item"><i class="fas fa-history"></i><span>Treatment History</span></a>
+                <a href="/add_geotag" class="drawer-item"><i class="fas fa-map-marker-alt"></i><span>Add Geo Tag</span></a>
+                <a href="/analytics" class="drawer-item"><i class="fas fa-chart-bar"></i><span>Analytics</span></a>
+            </div>
+            <div class="drawer-section"><div class="drawer-section-title">Marketplace</div>
+                <a href="/buy_cow" class="drawer-item"><i class="fas fa-shopping-cart"></i><span>Buy Cows</span></a>
+                <a href="/sell_cow" class="drawer-item"><i class="fas fa-hand-holding-usd"></i><span>Sell Cows</span></a>
+                <a href="/sold_cows" class="drawer-item"><i class="fas fa-check-circle"></i><span>Sale History</span></a>
+            </div>
+            <div class="drawer-section"><div class="drawer-section-title">Preferences</div>
+                <div class="drawer-item" onclick="toggleLanguageMenu()" style="cursor:pointer;"><i class="fas fa-globe"></i><span>Language</span><i class="fas fa-chevron-down" id="langArrow" style="font-size:0.6rem;"></i></div>
+                <div id="languageMenu" style="display:none;"><div class="language-submenu">
+                    <a href="#" class="lang-option" onclick="setLanguageFromDrawer('en'); return false;"><i class="fas fa-check-circle" id="enCheck" style="opacity:0;"></i><span>English</span></a>
+                    <a href="#" class="lang-option" onclick="setLanguageFromDrawer('kn'); return false;"><i class="fas fa-check-circle" id="knCheck" style="opacity:0;"></i><span>ಕನ್ನಡ</span></a>
+                </div></div>
+            </div>
+            <div class="drawer-section"><div class="drawer-section-title">Account</div>
+                <a href="#" class="drawer-item" onclick="closeDrawer(); return false;"><i class="fas fa-user-circle"></i><span>Profile</span></a>
+                <a href="{{ url_for('farmer_logout') }}" class="drawer-item"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+            </div>
+        </div>
     </div>
 
-    <!-- Main Content -->
-    <div class="main-content" id="mainContent">
-      <div class="header">
-        <div>
-          <h2 class="welcome-text">🐄 Sell Cows</h2>
-          <p class="mb-0 text-muted">List your cows for sale</p>
+<!-- Header -->
+<header class="app-header">
+  <button class="menu-btn" onclick="toggleDrawer()"><i class="fas fa-bars"></i></button>
+  <span class="header-title">Sell Cattle</span>
+  <div style="width:44px;"></div>
+</header>
+
+<!-- Main Content -->
+<main class="app-content">
+  <!-- Page Header -->
+  <div class="page-header">
+    <h2><i class="fas fa-hand-holding-usd"></i> Sell Your Cattle</h2>
+    <p>List your cows for sale in the marketplace</p>
+  </div>
+
+  <!-- Stats Card -->
+  <div class="stats-card">
+    <div class="stats-left">
+      <div class="stats-icon"><i class="fas fa-cow"></i></div>
+      <div class="stats-info">
+        <h4 id="totalCowsCount">0</h4>
+        <p>Cows available to sell</p>
+      </div>
+    </div>
+    <div class="stats-badge"><i class="fas fa-tag"></i> Marketplace</div>
+  </div>
+
+  {% if cows %}
+  <!-- Sell Form Card -->
+  <div class="form-card">
+    <div class="form-title"><i class="fas fa-pen"></i> Listing Details</div>
+    <form method="POST" id="sellForm">
+      <div class="form-group">
+        <label class="form-label">Select Cow to Sell</label>
+        <select class="form-select" id="cow_select" name="cow_id" required>
+          <option value="">-- Choose a cow --</option>
+          {% for cow in cows %}
+          <option value="{{ cow['cow_id'] }}"
+                  data-breed="{{ cow['breed'] }}"
+                  data-age="{{ cow['age'] }}"
+                  data-weight="{{ cow['weight'] }}"
+                  data-photo="{{ cow['photo'] }}">
+            {{ cow['breed'] }} - {{ cow['cow_id'][:8] }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <!-- Cow Preview -->
+      <div id="cow_details" class="preview-card" style="display: none;">
+        <div class="preview-header"><i class="fas fa-eye"></i><span>Selected Cow Preview</span></div>
+        <div class="preview-content">
+          <div>
+            <img id="cow_photo" src="" class="preview-image" style="display: none;">
+            <div id="photo_placeholder" class="preview-image-placeholder"><i class="fas fa-cow"></i></div>
+          </div>
+          <div class="preview-details">
+            <div class="preview-detail-row"><span class="preview-label">Breed</span><span class="preview-value" id="cow_breed">-</span></div>
+            <div class="preview-detail-row"><span class="preview-label">Age</span><span class="preview-value" id="cow_age">- months</span></div>
+            <div class="preview-detail-row"><span class="preview-label">Weight</span><span class="preview-value" id="cow_weight">- kg</span></div>
+          </div>
         </div>
-        <a href="{{ url_for('farmer_logout') }}" class="btn btn-danger">Logout</a>
       </div>
 
-      <div class="card p-4">
-        <h4 class="mb-3">Sell Your Cow</h4>
-        <form method="POST">
-          <div class="mb-3">
-            <label for="cow_select" class="form-label">Select Cow</label>
-            <select class="form-select" id="cow_select" name="cow_id" required>
-              <option value="">-- Select Cow --</option>
-              {% for cow in cows %}
-                <option value="{{ cow['cow_id'] }}"
-                        data-breed="{{ cow['breed'] }}"
-                        data-age="{{ cow['age'] }}"
-                        data-weight="{{ cow['weight'] }}"
-                        data-photo="{{ cow['photo'] }}">
-                  {{ cow['breed'] }} ({{ cow['cow_id'] }})
-                </option>
-              {% endfor %}
-            </select>
-          </div>
-
-          <div id="cow_details" class="mb-3" style="display:none;">
-            <img id="cow_photo" src="" alt="Cow Photo" class="img-thumbnail mb-2" style="width:150px;">
-            <p><strong>Breed:</strong> <span id="cow_breed"></span></p>
-            <p><strong>Age:</strong> <span id="cow_age"></span> Months</p>
-            <p><strong>Weight:</strong> <span id="cow_weight"></span> kg</p>
-          </div>
-
-          <div class="mb-3">
-            <label for="price" class="form-label">Price (₹)</label>
-            <input type="number" class="form-control" name="price" id="price" step="0.01" required>
-          </div>
-
-          <button type="submit" class="btn btn-success">Sell</button>
-        </form>
+      <!-- Price Input -->
+      <div class="form-group">
+        <label class="form-label">Set Your Price</label>
+        <div class="price-input-group">
+          <span class="price-currency">₹ INR</span>
+          <input type="number" class="price-input" name="price" id="price" step="0.01" min="0" placeholder="Enter amount" required>
+        </div>
       </div>
+
+      <button type="submit" class="submit-btn"><i class="fas fa-cloud-upload-alt"></i> List for Sale</button>
+    </form>
+  </div>
+
+  <!-- Tips Card -->
+  <div class="tips-card">
+    <i class="fas fa-lightbulb"></i>
+    <div>
+      <strong>Selling Tips</strong>
+      <p>Include clear photos and accurate details for faster sales.</p>
     </div>
   </div>
 
-  <script>
-    // Mobile sidebar toggle functionality
-    const menuToggle = document.getElementById('menuToggle');
-    const sidebar = document.getElementById('sidebar');
-    const mainContent = document.getElementById('mainContent');
-    const overlay = document.getElementById('overlay');
-    
-    menuToggle.addEventListener('click', function() {
-      sidebar.classList.toggle('active');
-      overlay.classList.toggle('active');
-      
-      // Change icon based on sidebar state
-      const icon = menuToggle.querySelector('i');
-      if (sidebar.classList.contains('active')) {
-        icon.classList.remove('fa-bars');
-        icon.classList.add('fa-times');
-      } else {
-        icon.classList.remove('fa-times');
-        icon.classList.add('fa-bars');
-      }
-    });
-    
-    // Close sidebar when clicking on overlay
-    overlay.addEventListener('click', function() {
-      sidebar.classList.remove('active');
-      overlay.classList.remove('active');
-      const icon = menuToggle.querySelector('i');
-      icon.classList.remove('fa-times');
-      icon.classList.add('fa-bars');
-    });
-    
-    // Close sidebar when clicking on a nav link (mobile)
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach(link => {
-      link.addEventListener('click', function() {
-        if (window.innerWidth <= 768) {
-          sidebar.classList.remove('active');
-          overlay.classList.remove('active');
-          const icon = menuToggle.querySelector('i');
-          icon.classList.remove('fa-times');
-          icon.classList.add('fa-bars');
-        }
-      });
-    });
+  {% else %}
+  <!-- Empty State -->
+  <div class="empty-state">
+    <i class="fas fa-cow"></i>
+    <h4>No Cows Available to Sell</h4>
+    <p>You don't have any cows that can be listed for sale.</p>
+    <div style="display: flex; gap: 10px; justify-content: center;">
+      <a href="/add_cow" class="btn"><i class="fas fa-plus"></i> Add Cow</a>
+      <a href="/buy_cow" class="btn" style="background: var(--secondary); color: var(--primary);"><i class="fas fa-shopping-cart"></i> Buy Cows</a>
+    </div>
+  </div>
+  {% endif %}
+</main>
 
-    // Existing functions from your code
-    function toggleSubmenu(event) {
-      event.preventDefault();
-      const submenu = event.target.closest("li").querySelector(".submenu");
-      submenu.style.display = submenu.style.display === "block" ? "none" : "block";
-    }
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+  <a href="/dashboard" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+  <a href="/cows" class="nav-item"><i class="fas fa-cow"></i><span>My Cows</span></a>
+  <a href="/add_cow" class="nav-item"><i class="fas fa-plus-circle"></i><span>Add</span></a>
+  <a href="/milk_yield" class="nav-item"><i class="fas fa-tint"></i><span>Milk</span></a>
+  <a href="/find_cow" class="nav-item active"><i class="fas fa-search"></i><span>Find</span></a>
+</nav>
 
-    document.getElementById('cow_select').addEventListener('change', function(){
+
+<div id="google_translate_element" style="display:none;"></div>
+
+<script>
+  // Set total cows count
+  const totalCows = {{ cows|length }};
+  document.getElementById('totalCowsCount').innerText = totalCows;
+
+  // ==================== Cow Preview Function ====================
+  const cowSelect = document.getElementById('cow_select');
+  if (cowSelect) {
+    cowSelect.addEventListener('change', function() {
       const option = this.selectedOptions[0];
-      if(option.value === "") {
+      
+      if (!option || option.value === "") {
         document.getElementById('cow_details').style.display = 'none';
         return;
       }
-      document.getElementById('cow_breed').innerText = option.dataset.breed;
-      document.getElementById('cow_age').innerText = option.dataset.age;
-      document.getElementById('cow_weight').innerText = option.dataset.weight;
 
+      const breed = option.dataset.breed;
+      const age = option.dataset.age;
+      const weight = option.dataset.weight;
       const photo = option.dataset.photo;
-      if(photo){
-        document.getElementById('cow_photo').src = '/static/uploads/cow/' + photo;
-        document.getElementById('cow_photo').style.display = 'block';
+
+      document.getElementById('cow_breed').innerText = breed || '-';
+      document.getElementById('cow_age').innerText = (age || '0') + ' months';
+      document.getElementById('cow_weight').innerText = (weight || '0') + ' kg';
+
+      const photoImg = document.getElementById('cow_photo');
+      const photoPlaceholder = document.getElementById('photo_placeholder');
+
+      if (photo && photo !== 'None') {
+        photoImg.src = '/static/uploads/cow/' + photo;
+        photoImg.style.display = 'block';
+        photoPlaceholder.style.display = 'none';
       } else {
-        document.getElementById('cow_photo').style.display = 'none';
+        photoImg.style.display = 'none';
+        photoPlaceholder.style.display = 'flex';
       }
 
       document.getElementById('cow_details').style.display = 'block';
     });
-  </script>
+  }
 
-  <script>
-    // Language translation functions
-    function googleTranslateElementInit() {
-        if (typeof google !== 'undefined' && google.translate) {
-            new google.translate.TranslateElement({
-                pageLanguage: 'en',
-                includedLanguages: 'en,kn',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                autoDisplay: false
-            }, 'google_translate_element');
-            
-            const savedLang = localStorage.getItem('selectedLanguage');
-            if(savedLang === 'kn') {
-                setTimeout(() => applyKannada(), 1000);
-            }
-        }
+  // ==================== Form Validation ====================
+  const sellForm = document.getElementById('sellForm');
+  if (sellForm) {
+    sellForm.addEventListener('submit', function(e) {
+      const price = document.getElementById('price').value;
+      const selectedCow = document.getElementById('cow_select').value;
+
+      if (!selectedCow) {
+        e.preventDefault();
+        alert('Please select a cow to sell');
+        return;
+      }
+
+      if (!price || price <= 0) {
+        e.preventDefault();
+        alert('Please enter a valid price');
+        return;
+      }
+
+      if (!confirm('Are you sure you want to list this cow for sale?')) {
+        e.preventDefault();
+      }
+    });
+  }
+
+  // ==================== Drawer Functions ====================
+  function toggleDrawer() {
+    const drawer = document.getElementById('drawer');
+    const overlay = document.getElementById('drawerOverlay');
+    drawer.classList.toggle('active');
+    overlay.classList.toggle('active');
+  }
+
+  function closeDrawer() {
+    const drawer = document.getElementById('drawer');
+    const overlay = document.getElementById('drawerOverlay');
+    drawer.classList.remove('active');
+    overlay.classList.remove('active');
+    const langMenu = document.getElementById('languageMenu');
+    const langArrow = document.getElementById('langArrow');
+    if (langMenu) langMenu.style.display = 'none';
+    if (langArrow) {
+      langArrow.classList.remove('fa-chevron-up');
+      langArrow.classList.add('fa-chevron-down');
     }
+  }
 
-    window.onload = function() {
-        if (typeof google !== 'undefined' && google.translate) {
-            googleTranslateElementInit();
-        } else {
-            var script = document.createElement('script');
-            script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-            document.body.appendChild(script);
-        }
-        
-        const savedLang = localStorage.getItem('selectedLanguage');
-        if(savedLang === 'kn') {
-            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector('.lang-btn.kannada').classList.add('active');
-            setTimeout(() => applyKannada(), 2000);
-        }
-    };
-
-    function applyKannada() {
-        var iframe = document.querySelector('.goog-te-menu-frame');
-        if(iframe && iframe.contentDocument) {
-            var select = iframe.contentDocument.querySelector('.goog-te-menu2-select');
-            if(select) {
-                select.value = 'kn';
-                select.dispatchEvent(new Event('change'));
-                return true;
-            }
-        }
-        
-        var elements = document.querySelectorAll('.goog-te-menu2-select');
-        if(elements.length > 0) {
-            elements[0].value = 'kn';
-            elements[0].dispatchEvent(new Event('change'));
-            return true;
-        }
-        
-        return false;
+  function toggleLanguageMenu() {
+    const menu = document.getElementById('languageMenu');
+    const arrow = document.getElementById('langArrow');
+    if (menu.style.display === 'none' || menu.style.display === '') {
+      menu.style.display = 'block';
+      arrow.classList.remove('fa-chevron-down');
+      arrow.classList.add('fa-chevron-up');
+    } else {
+      menu.style.display = 'none';
+      arrow.classList.remove('fa-chevron-up');
+      arrow.classList.add('fa-chevron-down');
     }
+  }
 
-    function setLanguage(lang) {
-        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-        localStorage.setItem('selectedLanguage', lang);
-        
-        if(lang === 'kn') {
-            window.location.hash = '#googtrans(kn)';
-            if(applyKannada()) {
-                console.log('ಭಾಷೆ ಕನ್ನಡಕ್ಕೆ ಬದಲಾಯಿಸಲಾಗಿದೆ');
-            } else {
-                setTimeout(() => location.reload(), 500);
-            }
-        } else {
-            window.location.hash = '#googtrans(en)';
-            var iframe = document.querySelector('.goog-te-menu-frame');
-            if(iframe && iframe.contentDocument) {
-                var select = iframe.contentDocument.querySelector('.goog-te-menu2-select');
-                if(select) {
-                    select.value = 'en';
-                    select.dispatchEvent(new Event('change'));
-                    console.log('Language changed to English');
-                    return;
-                }
-            }
-            setTimeout(() => location.reload(), 500);
-        }
+  function setLanguageFromDrawer(lang) {
+    const enCheck = document.getElementById('enCheck');
+    const knCheck = document.getElementById('knCheck');
+    if (enCheck) enCheck.style.opacity = lang === 'en' ? '1' : '0';
+    if (knCheck) knCheck.style.opacity = lang === 'kn' ? '1' : '0';
+    saveLanguagePreference(lang);
+    applyLanguage(lang);
+    const langMenu = document.getElementById('languageMenu');
+    if (langMenu) langMenu.style.display = 'none';
+    const langArrow = document.getElementById('langArrow');
+    if (langArrow) {
+      langArrow.classList.remove('fa-chevron-up');
+      langArrow.classList.add('fa-chevron-down');
     }
+    setTimeout(closeDrawer, 300);
+  }
+
+  function openProfileModal() {
+    alert("Profile section - integrate as needed");
+    closeDrawer();
+  }
+
+  // ==================== Language Functions ====================
+  function saveLanguagePreference(lang) {
+    localStorage.setItem('selectedLanguage', lang);
+    document.cookie = `user_language=${lang}; path=/; max-age=31536000`;
+  }
+
+  function applyLanguage(lang) {
+    if (lang === 'kn') window.location.hash = '#googtrans(kn|en)';
+    else window.location.hash = '#googtrans(en)';
+  }
+
+  function setLanguage(lang) {
+    document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+    if (lang === 'en') document.querySelector('.lang-btn.english').classList.add('active');
+    else document.querySelector('.lang-btn.kannada').classList.add('active');
+    saveLanguagePreference(lang);
+    applyLanguage(lang);
+  }
+
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'en,kn', autoDisplay: false }, 'google_translate_element');
+  }
+
+  function loadGoogleTranslate() {
+    if (window.google && google.translate) { googleTranslateElementInit(); return; }
+    const script = document.createElement('script');
+    script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+    document.head.appendChild(script);
+  }
+
+  // ==================== Initialize ====================
+  document.addEventListener('DOMContentLoaded', function() {
+    loadGoogleTranslate();
+    
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    
+    const savedLang = localStorage.getItem('selectedLanguage') || 'en';
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.remove('active');
+      if ((savedLang === 'en' && btn.classList.contains('english')) || 
+          (savedLang === 'kn' && btn.classList.contains('kannada'))) {
+        btn.classList.add('active');
+      }
+    });
+    setTimeout(() => applyLanguage(savedLang), 500);
+  });
 </script>
 </body>
 </html>

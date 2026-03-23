@@ -2,542 +2,555 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#043c07">
   <title>Farmer Registration - Kamadhenu</title>
+  
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
- <script src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
- <style>
-    :root {
-      --primary-green: #0a5c36;
-      --dark-green: #064027;
-      --light-green: #4caf50;
-      --pastoral-green: #8bc34a;
-      --cream: #fff9e6;
-      --white: #ffffff;
-    }
-    
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
     }
-    
+
+    :root {
+      --primary: #043c07;
+      --primary-light: #1b5e20;
+      --secondary: #ffc107;
+      --success: #28a745;
+      --danger: #dc3545;
+      --gray: #6c757d;
+      --border: #e0e0e0;
+      --safe-area-top: env(safe-area-inset-top, 0px);
+      --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+    }
+
     body {
-      font-family: 'Poppins', sans-serif;
-      background: url("https://plus.unsplash.com/premium_photo-1661810446470-8987822f9fb2?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OXx8Y2F0dGxlJTIwZmFybXxlbnwwfHwwfHx8MA%3D%3D") no-repeat center center fixed;
-      background-size: cover;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      overflow: hidden;
       height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    
-    h1, h2, h3, h4, h5 {
-      font-family: 'Merriweather', serif;
-    }
-    
-    /* Navbar Styles */
-    .navbar {
-      background: rgba(10, 92, 54, 0.9);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-      padding: 1rem 0;
-      transition: all 0.3s;
-    }
-    
-    .navbar-scrolled {
-      padding: 0.5rem 0;
-      background-color: var(--dark-green) !important;
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-    }
-    
-    .navbar-brand {
-      font-family: 'Merriweather', serif;
-      font-weight: 700;
-      font-size: 1.8rem;
-      color: var(--white) !important;
-      display: flex;
-      align-items: center;
-    }
-    
-    .navbar-brand i {
-      color: var(--white);
-      margin-right: 10px;
-      font-size: 2rem;
-    }
-    
-    .navbar-nav .nav-link {
-      color: rgba(255, 255, 255, 0.9) !important;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      margin: 0 5px;
-    }
-    
-    .navbar-nav .nav-link:hover {
-      color: var(--white) !important;
-      transform: translateY(-2px);
-    }
-    
-    .navbar-nav .nav-link.active {
-      color: var(--white) !important;
-      font-weight: 600;
-    }
-    
-    /* Registration Container */
-    .register-container {
-      flex: 1;
+      width: 100vw;
+      position: fixed;
+      top: 0;
+      left: 0;
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 2rem;
     }
-    
-    .register-box {
-      background: rgba(255, 255, 255, 0.95);
-      padding: 40px;
-      border-radius: 20px;
+
+    /* Main Container - fits exactly in viewport */
+    .register-container {
       width: 100%;
-      max-width: 500px;
-      box-shadow: 0 15px 30px rgba(0,0,0,0.2);
-      border-top: 5px solid var(--primary-green);
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .register-box::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 5px;
-      background: linear-gradient(to right, var(--primary-green), var(--pastoral-green));
-    }
-    
-    .register-box h2 {
-      margin-bottom: 25px;
-      font-weight: bold;
-      text-align: center;
-      color: var(--primary-green);
-      position: relative;
-      display: inline-block;
-      width: 100%;
-    }
-    
-    .register-box h2::after {
-      content: '';
-      position: absolute;
-      bottom: -10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80px;
-      height: 3px;
-      background: var(--primary-green);
-      border-radius: 2px;
-    }
-    
-    .form-control {
-      border-radius: 10px;
-      border: 1px solid #ddd;
-      padding: 12px 15px;
-      transition: all 0.3s ease;
-    }
-    
-    .form-control:focus {
-      border-color: var(--primary-green);
-      box-shadow: 0 0 0 0.25rem rgba(10, 92, 54, 0.25);
-    }
-    
-    .form-label {
-      font-weight: 500;
-      color: #555;
-      margin-bottom: 8px;
-    }
-    
-    .btn-custom {
-      background: linear-gradient(to right, var(--primary-green), var(--pastoral-green));
-      color: white;
-      border-radius: 10px;
+      max-width: 400px;
+      height: 100%;
+      max-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
       padding: 12px;
-      font-weight: 600;
-      border: none;
-      transition: all 0.3s ease;
-      width: 100%;
+      overflow-y: auto;
     }
     
-    .btn-custom:hover {
-      background: linear-gradient(to right, var(--dark-green), var(--primary-green));
-      color: white;
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    .register-container::-webkit-scrollbar {
+      width: 3px;
     }
-    
-    .extra-links {
-      text-align: center;
-      margin-top: 20px;
-    }
-    
-    .extra-links a {
-      color: var(--primary-green);
-      text-decoration: none;
-      font-weight: 500;
-      transition: all 0.3s ease;
-    }
-    
-    .extra-links a:hover {
-      color: var(--dark-green);
-      text-decoration: underline;
-    }
-    
-    .photo-preview {
-      width: 120px;
-      height: 120px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 3px solid var(--primary-green);
-      display: none;
-      margin: 10px auto;
-    }
-    
-    .photo-upload-area {
-      border: 2px dashed #ddd;
+    .register-container::-webkit-scrollbar-track {
+      background: #e0e0e0;
       border-radius: 10px;
-      padding: 20px;
+    }
+    .register-container::-webkit-scrollbar-thumb {
+      background: var(--primary);
+      border-radius: 10px;
+    }
+
+    /* Logo Section - compact */
+    .logo-section {
       text-align: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin-bottom: 15px;
+      margin-bottom: 12px;
+      flex-shrink: 0;
     }
-    
-    .photo-upload-area:hover {
-      border-color: var(--primary-green);
-      background-color: rgba(10, 92, 54, 0.05);
+
+    .app-icon {
+      width: 50px;
+      height: 50px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 6px;
+      box-shadow: 0 4px 12px rgba(4, 60, 7, 0.2);
     }
-    
-    .photo-upload-area i {
-      font-size: 2rem;
-      color: var(--primary-green);
+
+    .app-icon i {
+      font-size: 1.6rem;
+      color: white;
+    }
+
+    .app-name {
+      font-size: 1.4rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 2px;
+    }
+
+    /* Registration Card - compact */
+    .register-card {
+      background: white;
+      border-radius: 20px;
+      padding: 16px 18px;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+      flex-shrink: 0;
+    }
+
+    .register-title {
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: #333;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    /* Form Elements - compact */
+    .form-group {
       margin-bottom: 10px;
     }
-    
-    .floating-cow {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      font-size: 2.5rem;
-      animation: float 6s ease-in-out infinite;
-      z-index: 9999;
-    }
 
-    /* popup message style */
-    .popup-message {
-      position: absolute;
-      bottom: 60px; /* above the cow */
-      right: 0;
-      background: #ffffff;
-      color: #0a5c36; /* green text */
-      padding: 10px 15px;
-      border-radius: 10px;
-      font-size: 1rem;
+    .form-label {
+      display: block;
       font-weight: 600;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      white-space: nowrap;
-      opacity: 0;
-      transform: translateY(20px);
-      animation: popupFade 1s ease forwards, popupStay 6s ease-in-out 1s forwards;
+      color: #333;
+      margin-bottom: 4px;
+      font-size: 0.75rem;
     }
 
-    /* animation */
-    @keyframes popupFade {
-      0% { opacity: 0; transform: translateY(20px); }
-      100% { opacity: 1; transform: translateY(0); }
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
     }
 
-    @keyframes popupStay {
-      0% { opacity: 1; }
-      90% { opacity: 1; }
-      100% { opacity: 0; }
+    .input-icon {
+      position: absolute;
+      left: 12px;
+      color: var(--gray);
+      font-size: 0.85rem;
     }
-    
-    @keyframes float {
-      0%, 100% { transform: translateY(0) rotate(0deg); }
-      50% { transform: translateY(-15px) rotate(5deg); }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 10px 10px 38px;
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      font-size: 0.8rem;
+      transition: all 0.2s;
+      background: white;
     }
-    
-    @media (max-width: 768px) {
-      .register-box {
-        padding: 30px 20px;
-        margin: 0 15px;
-      }
-      
-      .navbar-brand {
-        font-size: 1.5rem;
-      }
-      
-      .floating-cow {
-        font-size: 2.5rem;
-        bottom: 10px;
-        right: 10px;
-      }
+
+    .form-control:focus {
+      border-color: var(--primary);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(4, 60, 7, 0.08);
     }
-     /* Language Selector Styles - BOTTOM */
+
+    .form-control::placeholder {
+      color: #aaa;
+      font-size: 0.75rem;
+    }
+
+    /* Photo Upload - compact */
+    .photo-upload-area {
+      border: 1.5px dashed var(--border);
+      border-radius: 14px;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: #f8f9fa;
+    }
+
+    .photo-upload-area:active {
+      border-color: var(--primary);
+      background: #e8f5e9;
+    }
+
+    .photo-upload-area i {
+      font-size: 1.5rem;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+
+    .photo-upload-area p {
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 2px;
+      font-size: 0.75rem;
+    }
+
+    .photo-upload-area small {
+      color: var(--gray);
+      font-size: 0.65rem;
+    }
+
+    .photo-preview {
+      width: 60px;
+      height: 60px;
+      border-radius: 30px;
+      object-fit: cover;
+      border: 2px solid var(--primary);
+      margin: 8px auto 0;
+      display: none;
+    }
+
+    /* Row Layout */
+    .row {
+      display: flex;
+      gap: 10px;
+      margin: 0;
+    }
+
+    .col {
+      flex: 1;
+    }
+
+    /* Password Toggle */
+    .password-wrapper {
+      position: relative;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray);
+      cursor: pointer;
+      font-size: 0.9rem;
+    }
+
+    /* Submit Button */
+    .register-btn {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      border: none;
+      border-radius: 40px;
+      padding: 12px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: pointer;
+      margin: 12px 0 10px;
+      box-shadow: 0 4px 12px rgba(4, 60, 7, 0.2);
+    }
+
+    .register-btn:active {
+      transform: scale(0.98);
+    }
+
+    /* Login Link */
+    .login-section {
+      text-align: center;
+    }
+
+    .login-text {
+      color: var(--gray);
+      font-size: 0.75rem;
+    }
+
+    .login-link {
+      color: var(--primary);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .login-link:active {
+      opacity: 0.7;
+    }
+
+    /* Validation Messages */
+    .form-text {
+      font-size: 0.65rem;
+      margin-top: 2px;
+      display: block;
+    }
+
+    .text-success {
+      color: var(--success);
+    }
+
+    .text-danger {
+      color: var(--danger);
+    }
+
+    .is-invalid {
+      border-color: var(--danger) !important;
+    }
+
+    .is-valid {
+      border-color: var(--success) !important;
+    }
+
+    /* Alert Styles */
+    .alert {
+      padding: 8px 12px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .alert-danger {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    .alert-success {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #bbf7d0;
+    }
+
+    /* Language Selector */
     .language-selector {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 10000;
-        background: white;
-        padding: 10px 15px;
-        border-radius: 25px;
-        box-shadow: 0 -4px 15px rgba(0,0,0,0.2);
-        display: flex;
-        gap: 10px;
-        border: 2px solid #27ae60;
+      position: fixed;
+      bottom: 12px;
+      right: 12px;
+      z-index: 9999;
+      background: white;
+      padding: 4px 8px;
+      border-radius: 30px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      display: flex;
+      gap: 4px;
+      border: 1px solid var(--border);
     }
 
     .lang-btn {
-        padding: 8px 20px;
-        border: none;
-        border-radius: 20px;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 14px;
-        transition: all 0.3s ease;
+      padding: 4px 10px;
+      border: none;
+      border-radius: 25px;
+      font-weight: 600;
+      font-size: 0.7rem;
+      cursor: pointer;
     }
 
     .lang-btn.english {
-        background: #007bff;
-        color: white;
+      background: var(--primary);
+      color: white;
     }
 
     .lang-btn.kannada {
-        background: #ff9800;
-        color: white;
+      background: var(--secondary);
+      color: var(--primary);
     }
 
     .lang-btn.active {
-        transform: scale(1.05);
-        box-shadow: 0 0 0 2px white, 0 0 0 4px currentColor;
+      background: var(--primary);
+      color: white;
     }
 
-    /* Hide Google banner */
-    .goog-te-banner-frame { display: none !important; }
-    body { top: 0 !important; }
-
-    /* Mobile responsive */
-    @media (max-width: 768px) {
-        .language-selector {
-            bottom: 10px;
-            right: 10px;
-            padding: 6px 10px;
-        }
-        
-        .lang-btn {
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-    }
-    /* Completely hide ALL Google Translate elements */
+    /* Hide Google Translate */
     .goog-te-banner-frame,
     .goog-te-banner,
-    .goog-te-banner-wrapper,
     .skiptranslate,
-    #goog-gt-tt,
-    .goog-te-balloon-frame,
-    .goog-tooltip,
-    .goog-tooltip:hover,
-    .goog-text-highlight {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        height: 0 !important;
-        width: 0 !important;
-        position: absolute !important;
+    #google_translate_element {
+      display: none !important;
     }
-    
-    /* Prevent body shift */
+
     body {
-        top: 0px !important;
-        position: static !important;
-    }
-    
-    /* Hide the translation menu if it appears */
-    .goog-te-menu-frame {
-        display: none !important;
+      top: 0 !important;
     }
   </style>
 </head>
 <body>
-  <!-- Navbar -->
-  <nav class="navbar navbar-expand-lg navbar-dark fixed-top" style="background-color: #032c1a;">
-    <div class="container">
-      <a class="navbar-brand" href="/">
-        <i class="fas fa-cow"></i>Kamadhenu
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav ms-auto">
-          <li class="nav-item">
-            <a class="nav-link" href="{{ url_for('farmer') }}"><i class="fas fa-home me-1"></i> Home</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="/login"><i class="fas fa-sign-in-alt me-1"></i> Login</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link active" href="#"><i class="fas fa-user-plus me-1"></i> Register</a>
-          </li>
-        </ul>
-      </div>
-    </div>
-  </nav>
-<br><br><br><br>
-  <!-- Registration Container -->
-  <div class="register-container">
-    <div class="register-box">
-      <h2><i class="fas fa-user-plus me-2"></i>Farmer Registration</h2>
-      <form method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
-        <!-- Photo Upload Section -->
-                 <!-- Error/Success Messages -->
-{% if session.get('register_error') %}
-<div class="alert alert-danger alert-dismissible fade show" role="alert">
-    {{ session.pop('register_error') }}
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-</div>
-{% endif %}
+      <input type="hidden" id="currentLang" value="{{ current_lang|default('en') }}">
 
-{% if session.get('register_success') %}
-<div class="alert alert-success alert-dismissible fade show" role="alert">
-    {{ session.pop('register_success') }}
-    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-</div>
-{% endif %}
-        <div class="mb-3">
+  <div class="register-container">
+    <!-- Logo Section -->
+    <div class="logo-section">
+      <div class="app-icon">
+        <i class="fas fa-cow"></i>
+      </div>
+      <h1 class="app-name">Kamadhenu</h1>
+    </div>
+
+    <!-- Registration Card -->
+    <div class="register-card">
+      <h2 class="register-title">Farmer Registration</h2>
+
+      <!-- Flash Messages -->
+      {% if session.get('register_error') %}
+      <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <i class="fas fa-exclamation-circle"></i>
+        {{ session.pop('register_error') }}
+      </div>
+      {% endif %}
+
+      {% if session.get('register_success') %}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <i class="fas fa-check-circle"></i>
+        {{ session.pop('register_success') }}
+      </div>
+      {% endif %}
+
+      <!-- Registration Form -->
+      <form method="POST" enctype="multipart/form-data" onsubmit="return validateForm()">
+        
+        <!-- Profile Photo Upload -->
+        <div class="form-group">
           <label class="form-label">Profile Photo</label>
           <div class="photo-upload-area" onclick="document.getElementById('photo').click()">
             <i class="fas fa-camera"></i>
-            <p class="mb-1">Click to upload your photo</p>
-            <small class="text-muted">JPEG, PNG - Max 5MB</small>
+            <p>Tap to upload photo</p>
+            <small>JPEG, PNG (Max 5MB)</small>
           </div>
           <input type="file" id="photo" name="photo" accept="image/*" style="display: none;" onchange="previewPhoto(event)">
           <img id="photoPreview" class="photo-preview" alt="Photo Preview">
         </div>
 
-        <div class="mb-3">
-          <label class="form-label">Name</label>
-          <input 
-            type="text" 
-            class="form-control" 
-            name="name" 
-            id="name"
-            pattern="[A-Za-z\s]+"
-            title="Name should contain only letters and spaces"
-            required>
+        <!-- Full Name -->
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <div class="input-wrapper">
+            <i class="fas fa-user input-icon"></i>
+            <input type="text" class="form-control" name="name" id="name" 
+                   placeholder="Enter your full name" 
+                   pattern="[A-Za-z\s]+" 
+                   title="Only letters and spaces allowed" 
+                   required>
+          </div>
           <small id="nameMessage" class="form-text"></small>
         </div>
 
-        <div class="mb-3">
-          <label class="form-label">Email</label>
-          <input type="email" class="form-control" name="email" id="email" required>
-          <div class="invalid-feedback">Please enter a valid email address.</div>
+        <!-- Email Address -->
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <div class="input-wrapper">
+            <i class="fas fa-envelope input-icon"></i>
+            <input type="email" class="form-control" name="email" id="email" 
+                   placeholder="Enter your email" 
+                   required>
+          </div>
         </div>
 
-        <div class="mb-3">
-          <label class="form-label">Phone</label>
-          <input 
-            type="text" 
-            class="form-control" 
-            name="phone" 
-            id="phone"
-            minlength="10" 
-            maxlength="10" 
-            required
-            pattern="[0-9]{10}"
-            inputmode="numeric"
-            title="Please enter a valid 10-digit phone number"
-            oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+        <!-- Phone Number -->
+        <div class="form-group">
+          <label class="form-label">Phone Number</label>
+          <div class="input-wrapper">
+            <i class="fas fa-phone input-icon"></i>
+            <input type="tel" class="form-control" name="phone" id="phone" 
+                   placeholder="10-digit mobile number" 
+                   minlength="10" maxlength="10" 
+                   pattern="[0-9]{10}" 
+                   inputmode="numeric"
+                   required>
+          </div>
         </div>
 
+        <!-- State & City Row -->
         <div class="row">
-          <div class="col-md-6 mb-3">
-            <label class="form-label">State</label>
-            <input 
-              type="text" 
-              class="form-control" 
-              name="state" 
-              id="state"
-              required
-              pattern="[A-Za-z\s]+"
-              title="State name should contain only letters"
-              oninput="this.value = this.value.replace(/[^A-Za-z\s]/g, '');">
+          <div class="col">
+            <div class="form-group">
+              <label class="form-label">State</label>
+              <div class="input-wrapper">
+                <i class="fas fa-map-marker-alt input-icon"></i>
+                <input type="text" class="form-control" name="state" id="state" 
+                       placeholder="State" 
+                       pattern="[A-Za-z\s]+" 
+                       required>
+              </div>
+            </div>
           </div>
-
-          <div class="col-md-6 mb-3">
-            <label class="form-label">City</label>
-            <input type="text" class="form-control" name="city" required>
+          <div class="col">
+            <div class="form-group">
+              <label class="form-label">City</label>
+              <div class="input-wrapper">
+                <i class="fas fa-city input-icon"></i>
+                <input type="text" class="form-control" name="city" id="city"
+                       placeholder="City" 
+                       required>
+              </div>
+            </div>
           </div>
         </div>
 
-        <div class="mb-3">
-          <label class="form-label">Address</label>
-          <input type="text" class="form-control" name="address">
+        <!-- Address (Optional) -->
+        <div class="form-group">
+          <label class="form-label">Address (Optional)</label>
+          <div class="input-wrapper">
+            <i class="fas fa-home input-icon"></i>
+            <input type="text" class="form-control" name="address" 
+                   placeholder="Enter your address">
+          </div>
         </div>
 
-        <div class="mb-3">
+        <!-- Password -->
+        <div class="form-group">
           <label class="form-label">Password</label>
-          <input 
-            type="password" 
-            class="form-control" 
-            name="password" 
-            id="password" 
-            required 
-            minlength="8"
-            title="Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.">
+          <div class="password-wrapper">
+            <i class="fas fa-lock input-icon"></i>
+            <input type="password" class="form-control" name="password" id="password" 
+                   placeholder="Create a password" 
+                   required minlength="8">
+            <i class="fas fa-eye toggle-password" onclick="togglePassword()"></i>
+          </div>
           <small id="passwordMessage" class="form-text"></small>
         </div>
 
-        <button type="submit" class="btn btn-custom">Register</button>
+        <!-- Submit Button -->
+        <button type="submit" class="register-btn">
+          <i class="fas fa-user-plus"></i>
+          Create Account
+        </button>
       </form>
 
-      <div class="extra-links">
-        <p>Already registered? <a href="/login">Login here</a></p>
+      <!-- Login Link -->
+      <div class="login-section">
+        <p class="login-text">
+          Already have an account? 
+          <a href="/login" class="login-link">Sign In</a>
+        </p>
       </div>
     </div>
   </div>
 
-  <div class="floating-cow">
-    🐄
-    <div class="popup-message">
-      Please register and secure login
-    </div>
-  </div>
-  <!-- Language Selector Buttons 
-<div class="language-selector">
-    <button class="lang-btn english active" onclick="setLanguage('en')">
-        <i class="fas fa-globe-americas"></i> English
-    </button>
-    <button class="lang-btn kannada" onclick="setLanguage('kn')">
-        <i class="fas fa-globe-asia"></i> ಕನ್ನಡ
-    </button>
-</div>-->
 
-<!-- Google Translate Widget (comment if not needed) -->
-<!-- <div id="google_translate_element"></div> -->
 
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Hidden Google Translate -->
+  <div id="google_translate_element" style="display:none;"></div>
+
   <script>
-    // Navbar scroll effect
-    window.addEventListener('scroll', function() {
-      const navbar = document.querySelector('.navbar');
-      if (window.scrollY > 50) {
-        navbar.classList.add('navbar-scrolled');
+    // ==================== Password Toggle ====================
+    function togglePassword() {
+      const password = document.getElementById('password');
+      const icon = event.target;
+      if (password.type === 'password') {
+        password.type = 'text';
+        icon.classList.remove('fa-eye');
+        icon.classList.add('fa-eye-slash');
       } else {
-        navbar.classList.remove('navbar-scrolled');
+        password.type = 'password';
+        icon.classList.remove('fa-eye-slash');
+        icon.classList.add('fa-eye');
       }
-    });
+    }
 
-    // Photo preview function
+    // ==================== Photo Preview ====================
     function previewPhoto(event) {
       const input = event.target;
       const preview = document.getElementById('photoPreview');
@@ -545,31 +558,28 @@
       if (input.files && input.files[0]) {
         const file = input.files[0];
         
-        // Check file size (5MB limit)
         if (file.size > 5 * 1024 * 1024) {
-          alert('File size too large! Please select an image smaller than 5MB.');
+          alert('File too large! Max 5MB');
           input.value = '';
           return;
         }
         
-        // Check file type
         if (!file.type.match('image/jpeg') && !file.type.match('image/png')) {
-          alert('Please select a JPEG or PNG image!');
+          alert('Please select JPEG or PNG');
           input.value = '';
           return;
         }
         
         const reader = new FileReader();
-        
         reader.onload = function(e) {
           preview.src = e.target.result;
           preview.style.display = 'block';
         }
-        
         reader.readAsDataURL(file);
       }
     }
 
+    // ==================== Form Validation ====================
     function validateForm() {
       const email = document.getElementById('email');
       const phone = document.getElementById('phone');
@@ -586,7 +596,7 @@
         email.classList.remove('is-invalid');
       }
 
-      // Phone validation (must be 10 digits)
+      // Phone validation
       const phonePattern = /^[0-9]{10}$/;
       if (!phonePattern.test(phone.value)) {
         phone.classList.add('is-invalid');
@@ -599,7 +609,7 @@
       const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
       if (!passwordPattern.test(password.value)) {
         password.classList.add('is-invalid');
-        passwordMessage.textContent = "❌ Password must have at least 8 characters, including uppercase, lowercase, number, and special character.";
+        passwordMessage.textContent = "❌ Must have uppercase, lowercase, number & special character";
         passwordMessage.style.color = "red";
         valid = false;
       } else {
@@ -612,127 +622,121 @@
       return valid;
     }
 
-    // ✅ Live password feedback as user types
-    document.getElementById('password').addEventListener('input', function() {
-      const password = this.value;
-      const passwordMessage = document.getElementById('passwordMessage');
-      const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
+    // Live validation
+    const passwordInput = document.getElementById('password');
+    if (passwordInput) {
+      passwordInput.addEventListener('input', function() {
+        const password = this.value;
+        const passwordMessage = document.getElementById('passwordMessage');
+        const passwordPattern = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
 
-      if (passwordPattern.test(password)) {
-        this.classList.remove('is-invalid');
-        this.classList.add('is-valid');
-        passwordMessage.textContent = "✅ Password is valid!";
-        passwordMessage.style.color = "green";
-      } else {
-        this.classList.remove('is-valid');
-        this.classList.add('is-invalid');
-        passwordMessage.textContent = "❌ Password must have at least 8 characters, including uppercase, lowercase, number, and special character.";
-        passwordMessage.style.color = "red";
-      }
-    });
-
-    document.getElementById('name').addEventListener('input', function() {
-      const name = this.value;
-      const nameMessage = document.getElementById('nameMessage');
-      const namePattern = /^[A-Za-z\s]+$/;
-
-      if (namePattern.test(name)) {
-        this.classList.remove('is-invalid');
-        this.classList.add('is-valid');
-        nameMessage.textContent = "✅ Name looks good!";
-        nameMessage.style.color = "green";
-      } else {
-        this.classList.remove('is-valid');
-        this.classList.add('is-invalid');
-        nameMessage.textContent = "❌ Only letters and spaces are allowed.";
-        nameMessage.style.color = "red";
-      }
-    });
-  </script>
-  <script>
-    // Language translation functions
-    function googleTranslateElementInit() {
-        if (typeof google !== 'undefined' && google.translate) {
-            new google.translate.TranslateElement({
-                pageLanguage: 'en',
-                includedLanguages: 'en,kn',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                autoDisplay: false
-            }, 'google_translate_element');
-            
-            const savedLang = localStorage.getItem('selectedLanguage');
-            if(savedLang === 'kn') {
-                setTimeout(() => applyKannada(), 1000);
-            }
+        if (passwordPattern.test(password)) {
+          this.classList.remove('is-invalid');
+          this.classList.add('is-valid');
+          passwordMessage.textContent = "✅ Password is valid!";
+          passwordMessage.style.color = "green";
+        } else {
+          this.classList.remove('is-valid');
+          this.classList.add('is-invalid');
+          passwordMessage.textContent = "❌ Must have uppercase, lowercase, number & special character";
+          passwordMessage.style.color = "red";
         }
+      });
     }
 
-    window.onload = function() {
-        if (typeof google !== 'undefined' && google.translate) {
-            googleTranslateElementInit();
-        } else {
-            var script = document.createElement('script');
-            script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-            document.body.appendChild(script);
-        }
-        
-        const savedLang = localStorage.getItem('selectedLanguage');
-        if(savedLang === 'kn') {
-            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector('.lang-btn.kannada').classList.add('active');
-            setTimeout(() => applyKannada(), 2000);
-        }
-    };
+    const nameInput = document.getElementById('name');
+    if (nameInput) {
+      nameInput.addEventListener('input', function() {
+        const name = this.value;
+        const nameMessage = document.getElementById('nameMessage');
+        const namePattern = /^[A-Za-z\s]+$/;
 
-    function applyKannada() {
-        var iframe = document.querySelector('.goog-te-menu-frame');
-        if(iframe && iframe.contentDocument) {
-            var select = iframe.contentDocument.querySelector('.goog-te-menu2-select');
-            if(select) {
-                select.value = 'kn';
-                select.dispatchEvent(new Event('change'));
-                return true;
-            }
+        if (namePattern.test(name)) {
+          this.classList.remove('is-invalid');
+          this.classList.add('is-valid');
+          nameMessage.textContent = "✅ Name looks good!";
+          nameMessage.style.color = "green";
+        } else {
+          this.classList.remove('is-valid');
+          this.classList.add('is-invalid');
+          nameMessage.textContent = "❌ Only letters and spaces";
+          nameMessage.style.color = "red";
         }
-        
-        var elements = document.querySelectorAll('.goog-te-menu2-select');
-        if(elements.length > 0) {
-            elements[0].value = 'kn';
-            elements[0].dispatchEvent(new Event('change'));
-            return true;
-        }
-        
-        return false;
+      });
+    }
+
+    const phoneInput = document.getElementById('phone');
+    if (phoneInput) {
+      phoneInput.addEventListener('input', function() {
+        this.value = this.value.replace(/[^0-9]/g, '');
+      });
+    }
+
+    const stateInput = document.getElementById('state');
+    if (stateInput) {
+      stateInput.addEventListener('input', function() {
+        this.value = this.value.replace(/[^A-Za-z\s]/g, '');
+      });
+    }
+
+    // ==================== Language Functions ====================
+    function saveLanguagePreference(lang) {
+      localStorage.setItem('selectedLanguage', lang);
+      document.cookie = `user_language=${lang}; path=/; max-age=31536000`;
+    }
+
+    function applyLanguage(lang) {
+      if (lang === 'kn') {
+        window.location.hash = '#googtrans(kn|en)';
+      } else {
+        window.location.hash = '#googtrans(en)';
+      }
     }
 
     function setLanguage(lang) {
-        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-        localStorage.setItem('selectedLanguage', lang);
-        
-        if(lang === 'kn') {
-            window.location.hash = '#googtrans(kn)';
-            if(applyKannada()) {
-                console.log('ಭಾಷೆ ಕನ್ನಡಕ್ಕೆ ಬದಲಾಯಿಸಲಾಗಿದೆ');
-            } else {
-                setTimeout(() => location.reload(), 500);
-            }
-        } else {
-            window.location.hash = '#googtrans(en)';
-            var iframe = document.querySelector('.goog-te-menu-frame');
-            if(iframe && iframe.contentDocument) {
-                var select = iframe.contentDocument.querySelector('.goog-te-menu2-select');
-                if(select) {
-                    select.value = 'en';
-                    select.dispatchEvent(new Event('change'));
-                    console.log('Language changed to English');
-                    return;
-                }
-            }
-            setTimeout(() => location.reload(), 500);
-        }
+      document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+      if (lang === 'en') {
+        document.querySelector('.lang-btn.english').classList.add('active');
+      } else {
+        document.querySelector('.lang-btn.kannada').classList.add('active');
+      }
+      saveLanguagePreference(lang);
+      applyLanguage(lang);
     }
-</script>
-</body>
 
+    function googleTranslateElementInit() {
+      new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,kn',
+        autoDisplay: false
+      }, 'google_translate_element');
+    }
+
+    function loadGoogleTranslate() {
+      if (window.google && google.translate) {
+        googleTranslateElementInit();
+        return;
+      }
+      var script = document.createElement('script');
+      script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+      document.head.appendChild(script);
+    }
+
+    // ==================== Initialize ====================
+    document.addEventListener('DOMContentLoaded', function() {
+      loadGoogleTranslate();
+      
+      const savedLang = localStorage.getItem('selectedLanguage') || 'en';
+      document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if ((savedLang === 'en' && btn.classList.contains('english')) || 
+            (savedLang === 'kn' && btn.classList.contains('kannada'))) {
+          btn.classList.add('active');
+        }
+      });
+      
+      setTimeout(() => applyLanguage(savedLang), 500);
+    });
+  </script>
+</body>
 </html>

@@ -1,3 +1,66 @@
-*.db
 kamadhenu.db
 kamadhenu_db
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+*.json
+
+# Uploads and static files
+static/uploads/
+static/qrcodes/
+static/audio/
+static/temp/
+static/audio/*.mp3
+
+# ML Models
+*.pt
+best.pt
+best_new.pt
+
+# Muzzle database
+cow_embeddings.json
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Flask
+instance/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Misc
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/

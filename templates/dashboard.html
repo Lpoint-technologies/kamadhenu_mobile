@@ -2,1353 +2,641 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#043c07">
+  
   <title>Dashboard - Kamadhenu</title>
+  
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
-    :root {
-      --primary: #043c07;
-      --secondary: #ffc107;
-      --light: #f8f9fa;
-      --dark: #343a40;
-      --light-green: #e8f5e9;
-    }
-    @keyframes pulse {
+    /* Speaker icon animation */
+@keyframes pulse {
     0% { opacity: 1; }
     50% { opacity: 0.5; }
     100% { opacity: 1; }
 }
+.fa-volume-up {
+    margin-left: 5px;
+    font-size: 10px;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+.fa-volume-up:hover {
+    transform: scale(1.1);
+    color: var(--secondary);
+}
+    :root {
+      --primary: #043c07;
+      --primary-light: #1b5e20;
+      --secondary: #ffc107;
+      --danger: #dc3545;
+      --success: #28a745;
+      --gray: #6c757d;
+      --border: #e9ecef;
+      --safe-area-top: env(safe-area-inset-top, 0px);
+      --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+      --header-height: 60px;
+      --bottom-nav-height: 65px;
+    }
 
-.speaker-icon {
-    display: inline-block;
-    animation: pulse 1s infinite;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    } 
+
+    /* Make sure Google Translate dropdown is visible (but not intrusive) */
+.goog-te-gadget {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+    visibility: hidden;
+    height: 0;
+    width: 0;
 }
 
-.bot-message {
-    position: relative;
-    padding-right: 30px; /* Make room for speaker icon */
+/* Keep the translation effect but hide the widget */
+.goog-te-banner-frame {
+    display: none !important;
 }
     body {
+      font-family: 'Inter', sans-serif;
       background-color: #f5f9f5;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      overflow-x: hidden;
-    }
-    
-    .dashboard-container {
-      width: 100%;
-      margin: 0;
-    }
-
-    .sidebar {
-      background: linear-gradient(to bottom, var(--primary), #1b5e20);
-      color: white;
+      color: #343a40;
+      overflow: hidden;
       height: 100vh;
-      position: fixed;
-      width: 260px;
-      padding-top: 20px;
-      box-shadow: 3px 0 10px rgba(0,0,0,0.1);
-      overflow-y: auto;
-      z-index: 1000;
-      transition: all 0.3s ease;
-    }
-    
-    .main-content { 
-      margin-left: 250px; 
-      padding: 20px;
-      transition: all 0.3s ease;
-    }
-    /* ============================================
-   LANGUAGE TRANSLATION STYLES - COMPLETELY HIDDEN
-   ============================================ */
-
-/* Hide ALL Google Translate elements */
-.goog-te-banner-frame,
-.goog-te-banner,
-.goog-te-banner-wrapper,
-.skiptranslate,
-#goog-gt-tt,
-.goog-te-balloon-frame,
-.goog-tooltip,
-.goog-tooltip:hover,
-.goog-text-highlight,
-.goog-te-gadget,
-.goog-te-gadget-simple,
-.goog-te-combo,
-.goog-te-menu-value,
-.goog-te-menu-frame,
-.goog-te-menu2,
-.goog-te-spinner-pos,
-#google_translate_element {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    height: 0 !important;
-    width: 0 !important;
-    position: absolute !important;
-    top: -9999px !important;
-    left: -9999px !important;
-    overflow: hidden !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: none !important;
-    background: transparent !important;
-    pointer-events: none !important;
-}
-
-/* Prevent iframe from showing */
-iframe.goog-te-banner-frame,
-iframe.goog-te-menu-frame {
-    display: none !important;
-    border: none !important;
-    height: 0 !important;
-    width: 0 !important;
-}
-
-/* Fix body positioning */
-body {
-    top: 0px !important;
-    position: static !important;
-    transform: none !important;
-}
-
-/* Hide the top bar that appears with translation */
-body > .skiptranslate {
-    display: none !important;
-}
-
-/* Language Selector - Our custom buttons only */
-.language-selector {
-    position: fixed;
-    bottom: 20px;
-    left: 250px;
-    z-index: 10000;
-    background: white;
-    padding: 10px 15px;
-    border-radius: 25px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    display: flex;
-    gap: 10px;
-    border: 2px solid var(--primary);
-}
-
-.lang-btn {
-    padding: 8px 20px;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 14px;
-    transition: all 0.3s ease;
-}
-
-.lang-btn.english {
-    background: var(--primary);
-    color: white;
-}
-
-.lang-btn.kannada {
-    background: #ffc107;
-    color: var(--dark);
-}
-
-.lang-btn.active {
-    transform: scale(1.05);
-    box-shadow: 0 0 0 2px white, 0 0 0 4px currentColor;
-}
-
-.lang-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-
-/* Mobile responsive for language selector */
-@media (max-width: 768px) {
-    .language-selector {
-        bottom: 90px;
-        right: 10px;
-        left: auto;
-        padding: 6px 10px;
-    }
-    
-    .lang-btn {
-        padding: 5px 10px;
-        font-size: 12px;
-    }
-}
-    .header {
-      background-color: white;
-      padding: 15px 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .welcome-text { 
-      color: var(--primary); 
-      font-weight: 600; 
-    }
-    
-    .card {
-      border: none;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      transition: transform 0.3s;
-      margin-bottom: 20px;
-    }
-    
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-    }
-    
-    .card-action {
-      display: block;
-      padding: 25px;
-      text-decoration: none;
-      color: var(--dark);
-      text-align: center;
-    }
-    
-    .card-action i {
-      font-size: 2.5rem;
-      margin-bottom: 15px;
-      color: var(--primary);
-    }
-    
-    .card-action h3 {
-      font-size: 1.3rem;
-      margin-bottom: 10px;
-      color: var(--primary);
-    }
-    
-    .card-action p {
-      color: #666;
-      font-size: 0.9rem;
-    }
-    
-    .stats-card {
-      background: white;
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      text-align: center;
-    }
-    
-    .stats-number {
-      font-size: 2rem;
-      font-weight: bold;
-      color: var(--primary);
-    }
-    
-    .stats-label {
-      color: #666;
-      font-size: 0.9rem;
-    }
-    
-    .cow-icon {
-      background-color: var(--light-green);
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin: 0 auto 15px;
-    }
-    
-    .cow-icon i {
-      color: var(--primary);
-      font-size: 1.5rem;
-    }
-    
-    .logo {
-      text-align: center;
-      padding: 20px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
-      margin-bottom: 30px;
-    }
-    
-    .nav-item {
-      margin: 10px 0;
-    }
-    
-    .nav-link {
-      color: rgba(255,255,255,0.8);
-      padding: 8px 16px;
-      border-radius: 5px;
-      margin: 5px 15px;
-      transition: all 0.3s;
-    }
-    
-    .nav-link:hover, .nav-link.active {
-      background-color: rgba(255,255,255,0.1);
-      color: white;
-    }
-    
-    .nav-link i {
-      margin-right: 10px;
-      width: 20px;
-      text-align: center;
-    }
-    
-    .logout-btn {
-      background-color: var(--secondary);
-      color: var(--dark);
-      border: none;
-      padding: 8px 15px;
-      border-radius: 5px;
-      font-weight: 500;
-      transition: all 0.3s;
-    }
-    
-    .logout-btn:hover {
-      background-color: #e0a800;
-      transform: translateY(-2px);
-    }
-    
-    .cow-background {
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path fill="%232e7d32" fill-opacity="0.05" d="M50,10A40,40 0 1,1 50,90A40,40 0 1,1 50,10z M30,30 Q50,15 70,30 Q65,50 70,70 Q50,85 30,70 Q35,50 30,30 z"></path></svg>');
-      background-repeat: repeat;
-      background-size: 200px;
-    }
-    
-    /* Profile Icon Styles */
-    .profile-section {
-      display: flex;
-      align-items: center;
-      gap: 15px;
-    }
-    
-    .profile-icon {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      cursor: pointer;
-      border: 3px solid var(--primary);
-      transition: all 0.3s ease;
-      object-fit: cover;
-    }
-    
-    .profile-icon:hover {
-      transform: scale(1.1);
-      box-shadow: 0 0 10px rgba(4, 60, 7, 0.3);
-    }
-    
-    .profile-placeholder {
-      width: 45px;
-      height: 45px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--primary), #1b5e20);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      border: 3px solid var(--primary);
-      transition: all 0.3s ease;
-    }
-    
-    .profile-placeholder:hover {
-      transform: scale(1.1);
-      box-shadow: 0 0 10px rgba(4, 60, 7, 0.3);
-    }
-    
-    /* Profile Modal Styles */
-    .profile-modal-img {
-      width: 100px;
-      height: 100px;
-      border-radius: 50%;
-      object-fit: cover;
-      border: 4px solid var(--primary);
-      margin: 0 auto 15px;
-      display: block;
-    }
-    
-    .profile-detail-item {
-      padding: 8px 0;
-      border-bottom: 1px solid #e9ecef;
-    }
-    
-    .profile-detail-item:last-child {
-      border-bottom: none;
-    }
-    
-    .profile-detail-label {
-      font-weight: 600;
-      color: var(--primary);
-      min-width: 100px;
-    }
-    
-    .profile-detail-value {
-      color: #555;
-    }
-    
-    /* Edit Profile Form Styles */
-    .edit-form-group {
-      margin-bottom: 15px;
-    }
-    
-    .edit-form-group label {
-      font-weight: 600;
-      color: var(--primary);
-      margin-bottom: 5px;
-    }
-    
-    .photo-upload-area {
-      border: 2px dashed #dee2e6;
-      border-radius: 8px;
-      padding: 15px;
-      text-align: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin-bottom: 10px;
-    }
-    
-    .photo-upload-area:hover {
-      border-color: var(--primary);
-      background-color: rgba(4, 60, 7, 0.05);
-    }
-    
-    /* Mobile menu toggle button */
-    .menu-toggle {
-      display: none;
-      position: fixed;
-      top: 15px;
-      left: 15px;
-      z-index: 1100;
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 5px;
-      width: 40px;
-      height: 40px;
-      font-size: 20px;
-      cursor: pointer;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+      padding-top: var(--header-height);
+      padding-bottom: calc(var(--bottom-nav-height) + var(--safe-area-bottom));
     }
 
-    /* Overlay for mobile when sidebar is open */
-    .overlay {
-      display: none;
+    /* App Header */
+    .app-header {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.5);
-      z-index: 999;
+      right: 0;
+      height: var(--header-height);
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      padding-top: var(--safe-area-top);
+      z-index: 1000;
     }
-    
-    .overlay.active {
-      display: block;
+
+    .menu-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.5rem;
+      cursor: pointer;
+      width: 40px;
+      height: 40px;
     }
-    
-    /* Submenu styles */
-    .submenu {
-      list-style: none;
-      padding-left: 30px;
-      display: none;
-    }
-    
-    .submenu .nav-link {
-      font-size: 14px;
-      padding: 6px 14px;
-      color: rgba(255,255,255,0.7);
-    }
-    
-    .submenu .nav-link:hover {
-      color: #fff;
-    }
-    
-    /* Chatbot Styles */
-    #chatbot-icon {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 60px;
-      height: 60px;
-      background: var(--primary);
-      border-radius: 50%;
+
+    .profile-thumb {
+      width: 36px;
+      height: 36px;
+      border-radius: 18px;
+      border: 2px solid white;
+      object-fit: cover;
+      background: var(--primary-light);
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      cursor: pointer;
-      z-index: 1000;
-    }
-    
-    #chatbot-icon i {
       color: white;
-      font-size: 24px;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
     }
-    
-    #chatbot-popup {
+
+    /* Bottom Navigation */
+    .bottom-nav {
       position: fixed;
-      bottom: 90px;
-      right: 20px;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--bottom-nav-height);
       background: white;
-      padding: 15px;
-      border-radius: 15px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-      width: 320px;
-      height: 400px;
-      display: none;
-      flex-direction: column;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding-bottom: var(--safe-area-bottom);
+      border-top: 1px solid var(--border);
       z-index: 1000;
     }
-    
-    .chat-header {
+
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray);
+      text-decoration: none;
+      font-size: 0.6rem;
+      font-weight: 500;
+      padding: 6px 0;
+    }
+
+    .nav-item i {
+      font-size: 1.2rem;
+      margin-bottom: 2px;
+    }
+
+    .nav-item.active {
+      color: var(--primary);
+    }
+
+    /* Main Content - Scrollable but with compact design */
+    .app-content {
+      padding: 8px 12px;
+      height: calc(100vh - var(--header-height) - var(--bottom-nav-height));
+      overflow-y: auto;
+    }
+    .app-content::-webkit-scrollbar { display: none; }
+
+    /* Welcome Header - Compact */
+    .welcome-header {
+      margin-bottom: 8px;
+    }
+    .welcome-text h2 {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 2px;
+    }
+    .welcome-text p {
+      font-size: 0.65rem;
+      color: var(--gray);
+    }
+
+    /* Stats Grid - 2x2 Compact */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .stat-card {
+      background: white;
+      border-radius: 10px;
+      padding: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+      border-left: 3px solid var(--primary);
+    }
+    .stat-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 12px;
+      background: rgba(4, 60, 7, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 4px;
+      color: var(--primary);
+      font-size: 0.8rem;
+    }
+    .stat-number {
+      font-size: 1rem;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1.2;
+      margin-bottom: 2px;
+    }
+    .stat-label {
+      font-size: 0.55rem;
+      color: var(--gray);
+    }
+
+    /* Section Headers */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+    .section-header h3 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .section-header a {
+      color: var(--primary);
+      font-size: 0.7rem;
+      font-weight: 600;
+      text-decoration: none;
+    }
+
+    /* Quick Actions - 3x2 Grid */
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .action-card {
+      background: white;
+      border-radius: 10px;
+      padding: 6px 4px;
+      text-decoration: none;
+      color: var(--dark);
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .action-card:active { transform: scale(0.97); background: #f8f9fa; }
+    .action-card i { font-size: 1rem; color: var(--primary); margin-bottom: 3px; }
+    .action-card h4 { font-size: 0.65rem; font-weight: 600; margin-bottom: 1px; }
+    .action-card p { font-size: 0.5rem; color: var(--gray); margin: 0; }
+
+    /* Marketplace Preview - Compact */
+    .marketplace-preview {
+      background: white;
+      border-radius: 10px;
+      padding: 8px;
+      margin-bottom: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+    .marketplace-item {
+      display: flex;
+      align-items: center;
+      padding: 6px 0;
+      border-bottom: 1px solid var(--border);
+      text-decoration: none;
+      color: inherit;
+    }
+    .marketplace-item:last-child { border-bottom: none; }
+    .marketplace-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 14px;
+      background: rgba(4, 60, 7, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-right: 8px;
+      color: var(--primary);
+      font-size: 0.8rem;
+    }
+    .marketplace-content { flex: 1; }
+    .marketplace-title { font-weight: 600; font-size: 0.7rem; margin-bottom: 1px; }
+    .marketplace-subtitle { font-size: 0.6rem; color: var(--gray); }
+    .marketplace-action { color: var(--primary); font-size: 0.7rem; }
+
+    /* Health Tip - Compact */
+    .health-tip {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      border-radius: 10px;
+      padding: 10px;
+    }
+    .health-tip h4 {
+      font-size: 0.75rem;
+      font-weight: 700;
+      margin-bottom: 3px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .health-tip p {
+      font-size: 0.6rem;
+      opacity: 0.9;
+      margin-bottom: 6px;
+    }
+    .tip-btn {
+      background: var(--secondary);
+      color: var(--primary);
+      border: none;
+      border-radius: 20px;
+      padding: 6px;
+      font-weight: 600;
+      font-size: 0.6rem;
+      width: 100%;
+      text-decoration: none;
+      display: inline-block;
+      text-align: center;
+    }
+
+    /* Drawer */
+    .drawer-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 2000;
+      display: none;
+    }
+    .drawer-overlay.active { display: block; }
+    .drawer {
+      position: fixed;
+      top: 0;
+      left: -260px;
+      width: 260px;
+      height: 100vh;
+      background: white;
+      z-index: 2001;
+      transition: left 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .drawer.active { left: 0; }
+    .drawer-header {
+      padding: 16px;
+      padding-top: calc(16px + var(--safe-area-top));
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+    }
+    .drawer-header h3 { font-size: 1.1rem; font-weight: 700; }
+    .drawer-header p { font-size: 0.65rem; opacity: 0.9; }
+    .drawer-content { flex: 1; overflow-y: auto; padding: 8px 0; }
+    .drawer-section { margin-bottom: 12px; }
+    .drawer-section-title {
+      padding: 5px 16px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+    .drawer-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      color: var(--dark);
+      text-decoration: none;
+    }
+    .drawer-item i { width: 20px; color: var(--primary); font-size: 0.9rem; }
+    .drawer-item span { font-size: 0.8rem; font-weight: 500; }
+    .language-submenu {
+      background: #f8f9fa;
+      margin-top: 4px;
+      border-radius: 8px;
+    }
+    .lang-option {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px 8px 40px;
+      text-decoration: none;
+      font-size: 0.75rem;
+      color: var(--dark);
+    }
+
+    /* Modals */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      display: none;
+      align-items: flex-end;
+      z-index: 2000;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal-sheet {
+      background: white;
+      width: 100%;
+      border-radius: 20px 20px 0 0;
+      max-height: 70vh;
+      overflow-y: auto;
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+    .modal-header {
+      padding: 16px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 10px;
     }
-    
-    .chat-header h5 {
-      color: #2e7d32;
-      margin: 0;
+    .modal-header h5 { font-size: 1rem; margin: 0; }
+    .close-btn { background: none; border: none; color: white; font-size: 1.2rem; cursor: pointer; }
+    .modal-body { padding: 16px; }
+    .modal-footer { padding: 12px 16px; border-top: 1px solid var(--border); display: flex; gap: 12px; }
+    .profile-img-large {
+      width: 70px;
+      height: 70px;
+      border-radius: 35px;
+      border: 3px solid var(--secondary);
+      margin: 0 auto 12px;
+      object-fit: cover;
     }
-    
-    #close-chatbot {
-      background: none;
-      border: none;
+    .detail-row {
+      display: flex;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.8rem;
+    }
+    .detail-label { width: 80px; font-weight: 600; color: var(--primary); }
+    .detail-value { flex: 1; color: var(--dark); }
+
+    /* Chatbot */
+    .chatbot-fab {
+      position: fixed;
+      bottom: calc(75px + var(--safe-area-bottom));
+      right: 12px;
+      width: 50px;
+      height: 50px;
+      border-radius: 25px;
+      background: var(--primary);
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+      z-index: 999;
       cursor: pointer;
-      font-size: 18px;
-      color: #666;
     }
-    
-    #chat-log {
+    .chatbot-sheet { height: 60vh; display: flex; flex-direction: column; }
+    .chat-messages { flex: 1; overflow-y: auto; padding: 12px; }
+    .message { margin-bottom: 8px; max-width: 80%; }
+    .message.user { margin-left: auto; }
+    .message-content {
+      padding: 8px 12px;
+      border-radius: 16px;
+      font-size: 0.8rem;
+    }
+    .message.bot .message-content { background: #f0f0f0; }
+    .message.user .message-content { background: var(--primary); color: white; }
+    .chat-input-area {
+      padding: 12px;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+    }
+    .chat-input-area input {
       flex: 1;
-      max-height: 300px;
-      overflow-y: auto;
-      font-size: 14px;
-      margin-bottom: 10px;
-      padding: 5px;
-      border: 1px solid #eee;
-      border-radius: 5px;
+      padding: 10px;
+      border: 1px solid var(--border);
+      border-radius: 25px;
+      font-size: 0.8rem;
+    }
+    .chat-input-area button {
+      width: 40px;
+      height: 40px;
+      border-radius: 20px;
+      background: var(--primary);
+      color: white;
+      border: none;
     }
 
-    /* Responsive styles */
-    @media (max-width: 768px) {
-      .sidebar {
-        transform: translateX(-100%);
-        width: 70%;
-        max-width: 250px;
-      }
-      
-      .sidebar.active {
-        transform: translateX(0);
-      }
-      
-      .main-content {
-        margin-left: 0;
-        width: 100%;
-      }
-      
-      .menu-toggle {
-        display: block;
-      }
-      
-      .header {
-        padding: 15px 15px 15px 50px;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
-      
-      .profile-section {
-        width: 100%;
-        justify-content: space-between;
-      }
-      
-      #chatbot-popup {
-        width: 280px;
-        right: 10px;
-      }
-      
-      .stats-card {
-        margin-bottom: 15px;
-      }
-    }
-
-    @media (max-width: 576px) {
-      .main-content {
-        padding: 10px;
-      }
-      
-      .card-action {
-        padding: 20px;
-      }
-      
-      .logo h2 {
-        font-size: 1.5rem;
-      }
-      
-      .stats-number {
-        font-size: 1.7rem;
-      }
-      
-      .profile-icon, .profile-placeholder {
-        width: 40px;
-        height: 40px;
-      }
-    }
-     /* ============================================
-   LANGUAGE TRANSLATION STYLES FOR FARMER DASHBOARD
-   ============================================ */
-
-/* Language Selector */
-.language-selector {
-    position: fixed;
-    bottom: 20px; /* Adjusted to be above chatbot icon */
-    left: 250px;
-    z-index: 10000;
-    background: white;
-    padding: 10px 15px;
-    border-radius: 25px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    display: flex;
-    gap: 10px;
-    border: 2px solid var(--primary);
-}
-
-.lang-btn {
-    padding: 8px 20px;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    font-weight: bold;
-    font-size: 14px;
-    transition: all 0.3s ease;
-}
-
-.lang-btn.english {
-    background: var(--primary);
-    color: white;
-}
-
-.lang-btn.kannada {
-    background: #ffc107;
-    color: var(--dark);
-}
-
-.lang-btn.active {
-    transform: scale(1.05);
-    box-shadow: 0 0 0 2px white, 0 0 0 4px currentColor;
-}
-
-.lang-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-
-/* Google Translate Widget Styling */
-#google_translate_element {
-    position: fixed !important;
-    top: 70px !important;
-    right: 20px !important;
-    z-index: 9999 !important;
-    background: white !important;
-    padding: 5px 10px !important;
-    border-radius: 5px !important;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1) !important;
-    display: block !important;
-    border: 1px solid var(--primary) !important;
-}
-
-.goog-te-gadget {
-    font-size: 12px !important;
-}
-
-.goog-te-gadget-simple {
-    background: transparent !important;
-    border: none !important;
-    padding: 0 !important;
-}
-
-.goog-te-menu-value span {
-    color: var(--primary) !important;
-    font-weight: bold !important;
-}
-
-/* Hide Google Translate UI elements */
-.goog-te-banner-frame,
-.goog-te-banner,
-.goog-te-banner-wrapper,
-.skiptranslate,
-#goog-gt-tt,
-.goog-te-balloon-frame,
-.goog-tooltip,
-.goog-tooltip:hover,
-.goog-text-highlight {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-    height: 0 !important;
-    width: 0 !important;
-    position: absolute !important;
-}
-
-/* Prevent body shift */
-body {
-    top: 0px !important;
-    position: static !important;
-}
-
-/* Hide the translation menu if it appears */
-.goog-te-menu-frame {
-    display: none !important;
-}
-
-/* Mobile responsive for language selector */
-@media (max-width: 768px) {
-    .language-selector {
-        bottom: 90px; /* Adjusted for mobile */
-        right: 10px;
-        padding: 6px 10px;
-    }
-    
-    .lang-btn {
-        padding: 5px 10px;
-        font-size: 12px;
-    }
-    
-    #google_translate_element {
-        bottom: 70px !important;
-        right: 10px !important;
-        padding: 4px 8px !important;
-    }
-}
+    .btn-secondary { background: var(--gray); color: white; border: none; border-radius: 25px; padding: 10px; font-weight: 600; }
+    .btn-primary { background: var(--primary); color: white; border: none; border-radius: 25px; padding: 10px; font-weight: 600; }
+    .btn-success { background: var(--success); color: white; border: none; border-radius: 25px; padding: 10px; font-weight: 600; }
+    .hide { display: none !important; }
+    .goog-te-banner-frame, .goog-te-banner, .skiptranslate, #google_translate_element { display: none !important; }
+    body { top: 0 !important; }
   </style>
 </head>
-<body class="cow-background">
-  <!-- Mobile menu toggle -->
-  <button class="menu-toggle" id="menuToggle">
-    <i class="fas fa-bars"></i>
-  </button>
-  
-  <!-- Overlay for mobile -->
-  <div class="overlay" id="overlay"></div>
+<body>
+    <input type="hidden" id="currentLang" value="{{ current_lang|default('en') }}">
+  <!-- App Header -->
+  <header class="app-header">
+    <button class="menu-btn" onclick="toggleDrawer()"><i class="fas fa-bars"></i></button>
+    <span style="font-weight: 600; font-size: 1.1rem;">Kamadhenu</span>
+    <div class="profile-thumb" onclick="openProfileModal()">{{ farmer_name[0]|upper if farmer_name else 'F' }}</div>
+  </header>
 
-  <div class="dashboard-container">
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-      <div class="logo">
-        <h2><i class="fas fa-cow"></i> Kamadhenu</h2>
-        <p class="mb-0">Cow Management System</p>
+  <!-- Drawer -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+  <div class="drawer" id="drawer">
+    <div class="drawer-header"><h3>Kamadhenu</h3><p>Smart Farm Management</p></div>
+    <div class="drawer-content">
+      <div class="drawer-section"><div class="drawer-section-title">Main Menu</div>
+        <a href="/dashboard" class="drawer-item"><i class="fas fa-home"></i><span>Dashboard</span></a>
+        <a href="/add_cow" class="drawer-item"><i class="fas fa-plus-circle"></i><span>Add New Cow</span></a>
+        <a href="/cows" class="drawer-item"><i class="fas fa-list"></i><span>View My Cows</span></a>
+        <a href="/find_cow" class="drawer-item"><i class="fas fa-search"></i><span>Find Cow</span></a>
       </div>
-      
-      <ul class="nav flex-column">
-        <li class="nav-item">
-          <a class="nav-link active" href="/dashboard">
-            <i class="fas fa-tachometer-alt"></i> Dashboard
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/add_cow">
-            <i class="fas fa-plus-circle"></i> Add New Cow
-          </a>
-        </li>
-           <li class="nav-item">
-    <a class="nav-link" href="/web_muzzle_registration">
-        <i class="fas fa-fingerprint"></i> Muzzle Registration
-    </a>
-</li>
-        <li class="nav-item">
-          <a class="nav-link" href="/cows">
-            <i class="fas fa-list"></i> View My Cows
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/find_cow">
-            <i class="fas fa-search"></i> Find Cow
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/milk_yield">
-            <i class="fas fa-tint"></i> Milk Yield
-          </a>
-        </li>
-       <li class="nav-item">
-          <a class="nav-link" href="/disease_prediction">
-              <i class="fas fa-stethoscope"></i> Disease Detection
-          </a>
-      </li>
-      
-        <li class="nav-item">
-          <a class="nav-link" href="/book_appointment">
-            <i class="fas fa-syringe"></i> Book Appointment
-          </a>
-        </li>
-          <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('farmer_treatments') }}">
-            <i class="fas fa-syringe"></i> Treatment History
-          </a>
-        </li>
-       
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('add_geotag') }}">
-            <i class="fas fa-map-marker-alt"></i> Add Geo Tag
-          </a>
-        </li>
-        <li class="nav-item">
-  <a class="nav-link" href="{{ url_for('analytics') }}">
-   <i class="fas fa-chart-bar"></i> Analytics
-  </a>
-</li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="#" onclick="toggleSubmenu(event)">
-            <i class="fas fa-chart-line"></i> Market Place <i class="fas fa-caret-down float-end"></i>
-          </a>
-          <ul class="submenu">
-            <li><a class="nav-link" href="/buy_cow"><i class="fas fa-shopping-cart"></i> Buy Cows</a></li>
-            <li><a class="nav-link" href="/sell_cow"><i class="fas fa-hand-holding-usd"></i> Sell Cows</a></li>
-          </ul>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/sold_cows">
-            <i class="fas fa-check-circle"></i> Sale History
-          </a>
-        </li>
-      </ul>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-content" id="mainContent">
-      <!-- Header -->
-      <div class="header">
-        <div>
-          <h2 class="welcome-text">Welcome, {{ farmer_name }}!</h2>
-          <p class="mb-0 text-muted">Here's your farm management dashboard</p>
-        </div>
-        <div class="profile-section">
-          <!-- Profile Icon -->
-          {% if farmer_photo %}
-          <img src="{{ url_for('static', filename='uploads/farmers/' + farmer_photo) }}" 
-               alt="Profile" 
-               class="profile-icon"
-               data-bs-toggle="modal" 
-               data-bs-target="#profileModal">
-          {% else %}
-          <div class="profile-placeholder" 
-               data-bs-toggle="modal" 
-               data-bs-target="#profileModal">
-            {{ farmer_name[0]|upper }}
-          </div>
-          {% endif %}
-          
-          <a href="{{ url_for('farmer_logout') }}" class="btn logout-btn">
-            <i class="fas fa-sign-out-alt"></i> Logout
-          </a>
-        </div>
+      <div class="drawer-section"><div class="drawer-section-title">Farm Operations</div>
+        <a href="/milk_yield" class="drawer-item"><i class="fas fa-tint"></i><span>Milk Yield</span></a>
+        <a href="/disease_prediction" class="drawer-item"><i class="fas fa-stethoscope"></i><span>Disease Detection</span></a>
+        <a href="/book_appointment" class="drawer-item"><i class="fas fa-syringe"></i><span>Book Appointment</span></a>
+        <a href="/farmer/treatments" class="drawer-item"><i class="fas fa-history"></i><span>Treatment History</span></a>
+        <a href="/add_geotag" class="drawer-item"><i class="fas fa-map-marker-alt"></i><span>Add Geo Tag</span></a>
+        <a href="/analytics" class="drawer-item"><i class="fas fa-chart-bar"></i><span>Analytics</span></a>
       </div>
-
-      <!-- Stats Overview -->
-      <div class="row">
-        <div class="col-md-3">
-          <div class="stats-card">
-            <div class="cow-icon">
-              <i class="fas fa-cow"></i>
-            </div>
-            <div class="stats-number">{{ total_cows }}</div>
-            <div class="stats-label">Total Cows</div>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="stats-card">
-            <div class="cow-icon">
-              <i class="fas fa-cow"></i>
-            </div>
-            <div class="stats-number">{{ total_milk }} L</div>
-            <div class="stats-label">Daily Milk Production</div>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="stats-card">
-            <div class="cow-icon">
-              <i class="fas fa-chart-line"></i>
-            </div>
-            <div class="stats-number">Performance</div>
-            <div class="stats-label">Show Analytics</div>
-          </div>
-        </div>
-        <div class="col-md-3">
-          <div class="stats-card">
-            <div class="cow-icon">
-              <i class="fas fa-calendar"></i>
-            </div>
-            <div class="stats-number">{{ upcoming_appointments or 0 }}</div>
-            <div class="stats-label">Upcoming Appointments</div>
-          </div>
-        </div>
+      <div class="drawer-section"><div class="drawer-section-title">Marketplace</div>
+        <a href="/buy_cow" class="drawer-item"><i class="fas fa-shopping-cart"></i><span>Buy Cows</span></a>
+        <a href="/sell_cow" class="drawer-item"><i class="fas fa-hand-holding-usd"></i><span>Sell Cows</span></a>
+        <a href="/sold_cows" class="drawer-item"><i class="fas fa-check-circle"></i><span>Sale History</span></a>
       </div>
-
-      <!-- Quick Actions -->
-      <h3 class="mt-4 mb-3" style="color: var(--primary);">Quick Actions</h3>
-      <div class="row">
-        <div class="col-md-4">
-          <div class="card">
-            <a href="/add_cow" class="card-action">
-              <i class="fas fa-plus-circle"></i>
-              <h3>Add New Cow</h3>
-              <p>Register a new cow to your farm with detailed profile information</p>
-            </a>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card">
-            <a href="/cows" class="card-action">
-              <i class="fas fa-list"></i>
-              <h3>View My Cows</h3>
-              <p>Browse your cattle, check health records and update information</p>
-            </a>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card">
-            <a href="/milk_yield" class="card-action">
-              <i class="fas fa-tint"></i>
-              <h3>Milk Yield</h3>
-              <p>Track and analyze milk production data from your cows</p>
-            </a>
-          </div>
-        </div>
+      <div class="drawer-section"><div class="drawer-section-title">Preferences</div>
+        <div class="drawer-item" onclick="toggleLanguageMenu()" style="cursor:pointer;"><i class="fas fa-globe"></i><span>Language</span><i class="fas fa-chevron-down" id="langArrow" style="font-size:0.7rem;"></i></div>
+        <div id="languageMenu" style="display:none;"><div class="language-submenu">
+          <a href="#" class="lang-option" onclick="setLanguageFromDrawer('en'); return false;"><i class="fas fa-check-circle" id="enCheck" style="opacity:0;"></i><span>English</span></a>
+          <a href="#" class="lang-option" onclick="setLanguageFromDrawer('kn'); return false;"><i class="fas fa-check-circle" id="knCheck" style="opacity:0;"></i><span>ಕನ್ನಡ</span></a>
+        </div></div>
       </div>
-      
-      <div class="row mt-3">
-        <div class="col-md-4">
-          <div class="card">
-            <a href="/find_cow" class="card-action">
-              <i class="fas fa-search"></i>
-              <h3>Find Cow</h3>
-              <p>Identify cows using biometric muzzle recognition technology</p>
-            </a>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card">
-            <a href="/book_appointment" class="card-action">
-              <i class="fas fa-syringe"></i>
-              <h3>Book Appointment</h3>
-              <p>Schedule veterinary appointments for your cattle</p>
-            </a>
-          </div>
-        </div>
-        <div class="col-md-4">
-          <div class="card">
-            <a href="{{ url_for('analytics') }}" class="card-action">
-              <i class="fas fa-chart-line"></i>
-              <h3>Analytics</h3>
-              <p>View detailed analytics and insights about your farm</p>
-            </a>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Profile Modal -->
-    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-md">
-        <div class="modal-content">
-          <div class="modal-header" style="background: linear-gradient(to right, var(--primary), #1b5e20); color: white;">
-            <h5 class="modal-title" id="profileModalLabel">
-              <i class="fas fa-user-circle me-2"></i>Your Profile
-            </h5>
-            <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <!-- View Mode -->
-            <div id="viewProfile">
-              <div class="text-center mb-3">
-                {% if farmer_photo %}
-                <img src="{{ url_for('static', filename='uploads/farmers/' + farmer_photo) }}" 
-                     alt="Profile Photo" 
-                     class="profile-modal-img">
-                {% else %}
-                <div class="profile-modal-img bg-primary text-white d-flex align-items-center justify-content-center mx-auto" 
-                     style="font-size: 2.5rem; font-weight: bold;">
-                  {{ farmer_name[0]|upper }}
-                </div>
-                {% endif %}
-                <h4 class="mt-2">{{ farmer_name }}</h4>
-                <p class="text-muted mb-3">Farmer ID: {{ farmer_id }}</p>
-              </div>
-              
-              <div class="profile-details">
-                <div class="profile-detail-item">
-                  <span class="profile-detail-label">Email:</span>
-                  <span class="profile-detail-value">{{ farmer_email }}</span>
-                </div>
-                <div class="profile-detail-item">
-                  <span class="profile-detail-label">Phone:</span>
-                  <span class="profile-detail-value">{{ farmer_phone }}</span>
-                </div>
-                <div class="profile-detail-item">
-                  <span class="profile-detail-label">State:</span>
-                  <span class="profile-detail-value">{{ farmer_state }}</span>
-                </div>
-                <div class="profile-detail-item">
-                  <span class="profile-detail-label">City:</span>
-                  <span class="profile-detail-value">{{ farmer_city }}</span>
-                </div>
-                <div class="profile-detail-item">
-                  <span class="profile-detail-label">Address:</span>
-                  <span class="profile-detail-value">{{ farmer_address or 'Not provided' }}</span>
-                </div>
-                <div class="profile-detail-item">
-                  <span class="profile-detail-label">Member Since:</span>
-                  <span class="profile-detail-value">{{ farmer_created_at }}</span>
-                </div>
-              </div>
-            </div>
-
-            <!-- Edit Mode -->
-            <div id="editProfile" style="display: none;">
-              <form id="profileForm" enctype="multipart/form-data">
-                <div class="text-center mb-3">
-                  <div class="position-relative d-inline-block">
-                    {% if farmer_photo %}
-                    <img id="editProfileImg" src="{{ url_for('static', filename='uploads/farmers/' + farmer_photo) }}" 
-                         alt="Profile Photo" 
-                         class="profile-modal-img">
-                    {% else %}
-                    <div id="editProfilePlaceholder" class="profile-modal-img bg-primary text-white d-flex align-items-center justify-content-center mx-auto" 
-                         style="font-size: 2.5rem; font-weight: bold;">
-                      {{ farmer_name[0]|upper }}
-                    </div>
-                    {% endif %}
-                    <label for="photoUpload" class="btn btn-sm btn-primary position-absolute bottom-0 end-0 rounded-circle" style="width: 35px; height: 35px;">
-                      <i class="fas fa-camera"></i>
-                    </label>
-                    <input type="file" id="photoUpload" name="photo" accept="image/*" style="display: none;" onchange="previewProfilePhoto(event)">
-                  </div>
-                </div>
-
-                <div class="edit-form-group">
-                  <label for="editName">Full Name</label>
-                  <input type="text" class="form-control" id="editName" name="name" value="{{ farmer_name }}" required>
-                </div>
-
-                <div class="edit-form-group">
-                  <label for="editEmail">Email</label>
-                  <input type="email" class="form-control" id="editEmail" name="email" value="{{ farmer_email }}" required>
-                </div>
-
-                <div class="edit-form-group">
-                  <label for="editPhone">Phone</label>
-                  <input type="text" class="form-control" id="editPhone" name="phone" value="{{ farmer_phone }}" required>
-                </div>
-
-                <div class="row">
-                  <div class="col-md-6">
-                    <div class="edit-form-group">
-                      <label for="editState">State</label>
-                      <input type="text" class="form-control" id="editState" name="state" value="{{ farmer_state }}" required>
-                    </div>
-                  </div>
-                  <div class="col-md-6">
-                    <div class="edit-form-group">
-                      <label for="editCity">City</label>
-                      <input type="text" class="form-control" id="editCity" name="city" value="{{ farmer_city }}" required>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="edit-form-group">
-                  <label for="editAddress">Address</label>
-                  <textarea class="form-control" id="editAddress" name="address" rows="2">{{ farmer_address or '' }}</textarea>
-                </div>
-              </form>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            <button type="button" class="btn btn-outline-primary" id="editProfileBtn" onclick="toggleEditMode()">
-              <i class="fas fa-edit me-2"></i>Edit Profile
-            </button>
-            <button type="button" class="btn btn-primary" id="saveProfileBtn" style="display: none;" onclick="saveProfile()">
-              <i class="fas fa-save me-2"></i>Save Changes
-            </button>
-            <button type="button" class="btn btn-outline-secondary" id="cancelEditBtn" style="display: none;" onclick="toggleEditMode()">
-              <i class="fas fa-times me-2"></i>Cancel
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Chatbot Icon (Always visible) -->
-    <div id="chatbot-icon">
-      <i class="fas fa-robot"></i>
-    </div>
-
-    <!-- Chatbot Popup (Hidden by default) -->
-    <div id="chatbot-popup">
-      <div class="chat-header">
-        <h5>🐄 Kamadhenu Voice Help</h5>
-        <button id="close-chatbot">×</button>
-      </div>
-      <div id="chat-log"></div>
-      <div style="display: flex; gap: 10px;">
-        <button id="recordBtn" class="btn btn-success" style="flex: 1;"><i class="fas fa-microphone"></i> ಮಾತನಾಡಿ</button>
-        <button id="textInputBtn" class="btn btn-outline-primary"><i class="fas fa-keyboard"></i></button>
-      </div>
-      <button id="clear-chat-btn" class="btn btn-outline-secondary btn-sm mb-2">
-        <i class="fas fa-trash"></i> ಚಾಟ್ ಅಳಿಸಿ
-      </button>
-      <div id="text-input-container" style="display: none; margin-top: 10px;">
-        <input type="text" id="text-input" class="form-control" placeholder="ಟೈಪ್ ಮಾಡಿ...">
-        <button id="send-text-btn" class="btn btn-primary w-100 mt-2">ಕಳುಹಿಸಿ</button>
+      <div class="drawer-section"><div class="drawer-section-title">Account</div>
+        <a href="#" class="drawer-item" onclick="openProfileModal(); closeDrawer(); return false;"><i class="fas fa-user-circle"></i><span>Profile</span></a>
+        <a href="{{ url_for('farmer_logout') }}" class="drawer-item"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
       </div>
     </div>
   </div>
-<!-- Add this right before your existing language script -->
-<!-- Language Selector -->
-<div class="language-selector">
-    <button class="lang-btn english active" onclick="setLanguage('en')">
-        <i class="fas fa-globe-americas"></i> English
-    </button>
-    <button class="lang-btn kannada" onclick="setLanguage('kn')">
-        <i class="fas fa-globe-asia"></i> ಕನ್ನಡ
-    </button>
-</div>
 
-<!-- Google Translate Widget -->
-<div id="google_translate_element" style="display: none;"></div>
+  <!-- Main Content -->
+  <main class="app-content">
+    <div class="welcome-header"><div class="welcome-text"><h2>Welcome, {{ farmer_name }}!</h2><p>Your farm at a glance</p></div></div>
+
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-icon"><i class="fas fa-cow"></i></div><div class="stat-number">{{ total_cows }}</div><div class="stat-label">Total Cattle</div></div>
+      <div class="stat-card"><div class="stat-icon"><i class="fas fa-tint"></i></div><div class="stat-number">{{ total_milk }}L</div><div class="stat-label">Today's Milk</div></div>
+      <div class="stat-card"><div class="stat-icon"><i class="fas fa-calendar"></i></div><div class="stat-number">{{ upcoming_appointments or 0 }}</div><div class="stat-label">Appointments</div></div>
+      <div class="stat-card"><div class="stat-icon"><i class="fas fa-chart-line"></i></div><div class="stat-number">View</div><div class="stat-label">Analytics</div></div>
+    </div>
+
+    <div class="section-header"><h3>Quick Actions</h3></div>
+    <div class="actions-grid">
+      <a href="/add_cow" class="action-card"><i class="fas fa-plus-circle"></i><h4>Add Cow</h4><p>Register</p></a>
+      <a href="/cows" class="action-card"><i class="fas fa-list"></i><h4>My Cows</h4><p>View all</p></a>
+      <a href="/milk_yield" class="action-card"><i class="fas fa-tint"></i><h4>Milk</h4><p>Track</p></a>
+      <a href="/find_cow" class="action-card"><i class="fas fa-search"></i><h4>Find</h4><p>Muzzle</p></a>
+      <a href="/book_appointment" class="action-card"><i class="fas fa-syringe"></i><h4>Appoint</h4><p>Book vet</p></a>
+      <a href="/analytics" class="action-card"><i class="fas fa-chart-bar"></i><h4>Stats</h4><p>Insights</p></a>
+    </div>
+
+    <div class="section-header"><h3>Marketplace</h3><a href="/buy_cow">View All →</a></div>
+    <div class="marketplace-preview">
+      <a href="/buy_cow" class="marketplace-item"><div class="marketplace-icon"><i class="fas fa-shopping-cart"></i></div><div class="marketplace-content"><div class="marketplace-title">Buy Cattle</div><div class="marketplace-subtitle">Browse cows for sale</div></div><div class="marketplace-action"><i class="fas fa-chevron-right"></i></div></a>
+      <a href="/sell_cow" class="marketplace-item"><div class="marketplace-icon"><i class="fas fa-hand-holding-usd"></i></div><div class="marketplace-content"><div class="marketplace-title">Sell Cattle</div><div class="marketplace-subtitle">List your cows</div></div><div class="marketplace-action"><i class="fas fa-chevron-right"></i></div></a>
+      <a href="/sold_cows" class="marketplace-item"><div class="marketplace-icon"><i class="fas fa-history"></i></div><div class="marketplace-content"><div class="marketplace-title">Sale History</div><div class="marketplace-subtitle">Track your sales</div></div><div class="marketplace-action"><i class="fas fa-chevron-right"></i></div></a>
+    </div>
+
+    <div class="health-tip">
+      <h4><i class="fas fa-heartbeat"></i> Health Tip</h4>
+      <p>Regular vaccination keeps cattle healthy.</p>
+      <a href="/book_appointment" class="tip-btn"><i class="fas fa-calendar-plus"></i> Book Check-up</a>
+    </div>
+  </main>
+
+  <nav class="bottom-nav">
+    <a href="/dashboard" class="nav-item active"><i class="fas fa-home"></i><span>Home</span></a>
+    <a href="/cows" class="nav-item"><i class="fas fa-cow"></i><span>My Cows</span></a>
+    <a href="/add_cow" class="nav-item"><i class="fas fa-plus-circle"></i><span>Add</span></a>
+    <a href="/milk_yield" class="nav-item"><i class="fas fa-tint"></i><span>Milk</span></a>
+    <a href="/find_cow" class="nav-item"><i class="fas fa-search"></i><span>Find</span></a>
+  </nav>
+
+  <div class="chatbot-fab" onclick="toggleChatbot()"><i class="fas fa-robot"></i></div>
+
+  <!-- Profile Modal -->
+  <div class="modal-overlay" id="profileModal" onclick="closeModal(event)">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-header"><h5><i class="fas fa-user-circle"></i> Your Profile</h5><button class="close-btn" onclick="closeModal()">&times;</button></div>
+      <div class="modal-body" id="viewProfile">
+        <div class="text-center">
+          {% if farmer_photo %}<img src="{{ url_for('static', filename='uploads/farmers/' + farmer_photo) }}" class="profile-img-large">
+          {% else %}<div class="profile-img-large" style="background: var(--primary); color: white; display: flex; align-items: center; justify-content: center; font-size: 2rem;">{{ farmer_name[0]|upper }}</div>{% endif %}
+          <h5 class="mt-2">{{ farmer_name }}</h5><p class="text-muted">ID: {{ farmer_id }}</p>
+        </div>
+        <div class="detail-row"><span class="detail-label">Email</span><span class="detail-value">{{ farmer_email }}</span></div>
+        <div class="detail-row"><span class="detail-label">Phone</span><span class="detail-value">{{ farmer_phone }}</span></div>
+        <div class="detail-row"><span class="detail-label">Location</span><span class="detail-value">{{ farmer_city }}, {{ farmer_state }}</span></div>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" style="flex:1" onclick="closeModal()">Close</button></div>
+    </div>
+  </div>
+
+  <!-- Chatbot Modal -->
+  <div class="modal-overlay" id="chatbotModal" onclick="closeChatbotModal()">
+    <div class="modal-sheet chatbot-sheet" onclick="event.stopPropagation()">
+      <div class="modal-header"><h5><i class="fas fa-robot"></i> Kamadhenu Assistant</h5><button class="close-btn" onclick="closeChatbotModal()">&times;</button></div>
+      <div class="chat-messages" id="chatMessages"><div class="message bot"><div class="message-content">ನಮಸ್ಕಾರ! ನಾನು ನಿಮ್ಮ ಕೃಷಿ ಸಹಾಯಕ. ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?</div></div></div>
+      <div class="chat-input-area"><input type="text" id="chatInput" placeholder="Type..." onkeypress="if(event.key==='Enter') sendChatMessage()"><button onclick="sendChatMessage()"><i class="fas fa-paper-plane"></i></button></div>
+      <div style="padding: 0 12px 12px;"><button class="tip-btn" style="background: var(--secondary); width:100%;" onclick="startVoiceInput()"><i class="fas fa-microphone"></i> ಮಾತನಾಡಿ</button></div>
+    </div>
+  </div>
+
+  <div id="google_translate_element" style="display:none;"></div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
- <script>
-    // ============================================
-    // LANGUAGE MANAGEMENT SYSTEM FOR FARMER DASHBOARD
-    // ============================================
+  
+  <script>
     
-    // 1. Function to save language preference
-    function saveLanguagePreference(lang) {
-        localStorage.setItem('selectedLanguage', lang);
-        document.cookie = `user_language=${lang}; path=/; max-age=31536000`;
-        sessionStorage.setItem('selectedLanguage', lang);
-    }
-    
-    // 2. Function to apply language translation
-    function applyLanguage(lang) {
-        if (lang === 'kn') {
-            // Kannada translation
-            window.location.hash = '#googtrans(kn|en)';
-            
-            // Force Google Translate to apply
-            setTimeout(function() {
-                if (window.google && google.translate && google.translate.TranslateElement) {
-                    try {
-                        // This triggers the translation
-                        var select = document.querySelector('.goog-te-combo');
-                        if (select) {
-                            select.value = 'kn';
-                            select.dispatchEvent(new Event('change'));
-                        }
-                    } catch(e) {
-                        console.log('Kannada translation applied');
-                    }
-                }
-            }, 500);
-        } else {
-            // English (default)
-            window.location.hash = '#googtrans(en)';
-            
-            setTimeout(function() {
-                if (window.google && google.translate && google.translate.TranslateElement) {
-                    try {
-                        var select = document.querySelector('.goog-te-combo');
-                        if (select) {
-                            select.value = 'en';
-                            select.dispatchEvent(new Event('change'));
-                        }
-                    } catch(e) {
-                        console.log('English translation applied');
-                    }
-                }
-            }, 500);
-        }
-    }
-    
-    // 3. Main language switching function
-    function setLanguage(lang) {
-        // Update button UI
-        document.querySelectorAll('.lang-btn').forEach(btn => {
-            btn.classList.remove('active');
-        });
-        event.target.classList.add('active');
-        
-        // Save the preference
-        saveLanguagePreference(lang);
-        
-        // Apply immediately
-        applyLanguage(lang);
-        
-        // Show confirmation
-        if (lang === 'kn') {
-            alert('ಭಾಷೆ ಕನ್ನಡಕ್ಕೆ ಬದಲಾಯಿಸಲಾಗಿದೆ');
-        } else {
-            alert('Language changed to English');
-        }
-    }
-    
-    // 4. Initialize Google Translate
-    function googleTranslateElementInit() {
-        new google.translate.TranslateElement({
-            pageLanguage: 'en',
-            includedLanguages: 'en,kn',
-            layout: google.translate.TranslateElement.InlineLayout.HORIZONTAL,
-            autoDisplay: false,
-            disableAutoTranslation: false
-        }, 'google_translate_element');
-        
-        // Hide the Google Translate widget immediately
-        setTimeout(function() {
-            // Hide all Google Translate elements
-            var elements = document.querySelectorAll('.goog-te-banner, .skiptranslate, .goog-te-gadget');
-            elements.forEach(function(el) {
-                el.style.display = 'none';
-                el.style.visibility = 'hidden';
-                el.style.height = '0';
-                el.style.overflow = 'hidden';
-            });
-            
-            // Fix body position
-            document.body.style.top = '0';
-        }, 100);
-    }
-    
-    // 5. Load Google Translate script
-    function loadGoogleTranslate() {
-        // Check if already loaded
-        if (window.google && google.translate) {
-            googleTranslateElementInit();
-            return;
-        }
-        
-        // Load the script
-        var script = document.createElement('script');
-        script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-        script.type = 'text/javascript';
-        document.head.appendChild(script);
-    }
-    
-    // ============================================
-    // YOUR EXISTING DASHBOARD FUNCTIONS
-    // ============================================
-    
-    // Simple animation for cards on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        const cards = document.querySelectorAll('.card');
-        cards.forEach((card, index) => {
-            setTimeout(() => {
-                card.style.opacity = 1;
-                card.style.transform = 'translateY(0)';
-            }, 100 * index);
-        });
-    });
-
-    function toggleSubmenu(event) {
-        event.preventDefault();
-        const submenu = event.target.closest("li").querySelector(".submenu");
-        submenu.style.display = submenu.style.display === "block" ? "none" : "block";
-    }
-
-    // Profile Modal Functions
-    function toggleEditMode() {
-        const viewProfile = document.getElementById('viewProfile');
-        const editProfile = document.getElementById('editProfile');
-        const editBtn = document.getElementById('editProfileBtn');
-        const saveBtn = document.getElementById('saveProfileBtn');
-        const cancelBtn = document.getElementById('cancelEditBtn');
-
-        if (viewProfile.style.display !== 'none') {
-            // Switch to edit mode
-            viewProfile.style.display = 'none';
-            editProfile.style.display = 'block';
-            editBtn.style.display = 'none';
-            saveBtn.style.display = 'inline-block';
-            cancelBtn.style.display = 'inline-block';
-        } else {
-            // Switch back to view mode
-            viewProfile.style.display = 'block';
-            editProfile.style.display = 'none';
-            editBtn.style.display = 'inline-block';
-            saveBtn.style.display = 'none';
-            cancelBtn.style.display = 'none';
-        }
-    }
-
-    function previewProfilePhoto(event) {
-        const input = event.target;
-        const editProfileImg = document.getElementById('editProfileImg');
-        const editProfilePlaceholder = document.getElementById('editProfilePlaceholder');
-
-        if (input.files && input.files[0]) {
-            const file = input.files[0];
-            
-            // Check file size (5MB limit)
-            if (file.size > 5 * 1024 * 1024) {
-                alert('File size too large! Please select an image smaller than 5MB.');
-                input.value = '';
-                return;
-            }
-            
-            // Check file type
-            if (!file.type.match('image/jpeg') && !file.type.match('image/png')) {
-                alert('Please select a JPEG or PNG image!');
-                input.value = '';
-                return;
-            }
-            
-            const reader = new FileReader();
-            
-            reader.onload = function(e) {
-                if (editProfileImg) {
-                    editProfileImg.src = e.target.result;
-                } else {
-                    // Create image element if placeholder exists
-                    if (editProfilePlaceholder) {
-                        editProfilePlaceholder.style.display = 'none';
-                        const newImg = document.createElement('img');
-                        newImg.id = 'editProfileImg';
-                        newImg.className = 'profile-modal-img';
-                        newImg.src = e.target.result;
-                        newImg.alt = 'Profile Photo';
-                        editProfilePlaceholder.parentNode.insertBefore(newImg, editProfilePlaceholder);
-                    }
-                }
-            }
-            
-            reader.readAsDataURL(file);
-        }
-    }
-    async function processMessage(message) {
-    try {
-        const res = await fetch("/chatbot", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ text: message, lang: currentLang })
-        });
-        const data = await res.json();
-        addMessage("bot", data.reply);
-        
-        // Automatically speak the response
-        await speakKannada(data.reply);
-        
-    } catch (error) {
-        console.error("Error:", error);
-        addMessage("bot", "ಕ್ಷಮಿಸಿ, ತಾಂತ್ರಿಕ ಸಮಸ್ಯೆ ಉಂಟಾಗಿದೆ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.");
-    }
-}
-
+// Function to speak Kannada text using the /speak endpoint
 async function speakKannada(text) {
+    if (!text || text.trim() === "") return;
+    
     try {
+        console.log("🔊 Requesting speech for:", text.substring(0, 50));
+        
         const response = await fetch("/speak", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -1357,294 +645,424 @@ async function speakKannada(text) {
         
         const data = await response.json();
         
-        if (data.success) {
-            const audio = new Audio(data.audio_url);
-            audio.playbackRate = 1.3;  // Make it 30% faster
-            audio.play();
-            console.log("🔊 Playing Kannada speech");
+        if (data.success && data.audio_url) {
+            // Stop any currently playing audio
+            if (audioPlayer) {
+                audioPlayer.pause();
+                audioPlayer = null;
+            }
+            
+            // Create and play new audio
+            audioPlayer = new Audio(data.audio_url);
+            audioPlayer.playbackRate = 1.0;
+            
+            audioPlayer.onplay = () => {
+                console.log("🔊 Playing Kannada speech");
+                // Add speaker icon animation to the last bot message
+                const lastBotMsg = document.querySelector('#chatMessages .message.bot:last-child');
+                if (lastBotMsg) {
+                    const speakerIcon = document.createElement('i');
+                    speakerIcon.className = 'fas fa-volume-up ms-2';
+                    speakerIcon.style.cursor = 'pointer';
+                    speakerIcon.style.fontSize = '12px';
+                    speakerIcon.onclick = () => speakKannada(text);
+                    lastBotMsg.querySelector('.message-content').appendChild(speakerIcon);
+                }
+            };
+            
+            audioPlayer.onerror = (err) => {
+                console.error("Audio playback error:", err);
+                fallbackBrowserTTS(text);
+            };
+            
+            audioPlayer.play();
+        } else {
+            console.error("Speech generation failed:", data.error);
+            fallbackBrowserTTS(text);
         }
     } catch (error) {
         console.error("Speech error:", error);
+        fallbackBrowserTTS(text);
     }
 }
-
-// Add this CSS for the animation
-const style = document.createElement('style');
-style.textContent = `
-@keyframes pulse {
-    0% { opacity: 1; }
-    50% { opacity: 0.3; }
-    100% { opacity: 1; }
-}`;
-document.head.appendChild(style);
+// Fallback to browser's TTS if server TTS fails
 function fallbackBrowserTTS(text) {
     console.log("Using browser TTS fallback");
     if ('speechSynthesis' in window) {
         const utterance = new SpeechSynthesisUtterance(text);
-        // Use any available voice
-        const voices = window.speechSynthesis.getVoices();
-        const anyVoice = voices.find(v => v.lang.includes('en')) || voices[0];
-        if (anyVoice) utterance.voice = anyVoice;
+        utterance.lang = 'kn-IN';
         utterance.rate = 0.9;
+        window.speechSynthesis.cancel();
         window.speechSynthesis.speak(utterance);
     }
 }
-function removeLastBotMessage() {
-    const messages = document.querySelectorAll('.bot-message');
-    if (messages.length > 0) {
-        messages[messages.length - 1].remove();
+
+    // Drawer
+    function toggleDrawer() { document.getElementById('drawer').classList.toggle('active'); document.getElementById('drawerOverlay').classList.toggle('active'); }
+    function closeDrawer() { document.getElementById('drawer').classList.remove('active'); document.getElementById('drawerOverlay').classList.remove('active'); document.getElementById('languageMenu').style.display = 'none'; document.getElementById('langArrow').classList.remove('fa-chevron-up'); document.getElementById('langArrow').classList.add('fa-chevron-down'); }
+    
+    // Language
+    function toggleLanguageMenu() {
+      const menu = document.getElementById('languageMenu'); const arrow = document.getElementById('langArrow');
+      if (menu.style.display === 'none') { menu.style.display = 'block'; arrow.classList.remove('fa-chevron-down'); arrow.classList.add('fa-chevron-up'); }
+      else { menu.style.display = 'none'; arrow.classList.remove('fa-chevron-up'); arrow.classList.add('fa-chevron-down'); }
+    }
+
+    // Profile Modal
+    function openProfileModal() { document.getElementById('profileModal').classList.add('active'); closeDrawer(); }
+    function closeModal(event) { if (event && event.target.classList.contains('modal-overlay') || !event) { document.getElementById('profileModal').classList.remove('active'); } }
+    
+    // Chatbot
+    function toggleChatbot() { document.getElementById('chatbotModal').classList.toggle('active'); }
+function closeChatbotModal() {
+    if (audioPlayer) {
+        audioPlayer.pause();
+        audioPlayer = null;
+    }
+    document.getElementById('chatbotModal').classList.remove('active');
+}    async function sendChatMessage() {
+    const input = document.getElementById('chatInput');
+    const message = input.value.trim();
+    if (!message) return;
+    
+    const messages = document.getElementById('chatMessages');
+    
+    // Add user message
+    messages.innerHTML += `<div class="message user"><div class="message-content">${escapeHtml(message)}</div></div>`;
+    input.value = '';
+    messages.scrollTop = messages.scrollHeight;
+    
+    // Add typing indicator
+    const typingId = 'typing-' + Date.now();
+    messages.innerHTML += `<div id="${typingId}" class="message bot"><div class="message-content"><i class="fas fa-ellipsis-h"></i> ಆಲೋಚಿಸುತ್ತಿದೆ...</div></div>`;
+    messages.scrollTop = messages.scrollHeight;
+    
+    try {
+        const response = await fetch('/chatbot', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text: message, lang: currentLang })
+        });
+        const data = await response.json();
+        
+        // Remove typing indicator
+        document.getElementById(typingId)?.remove();
+        
+        const botReply = data.reply || "ಕ್ಷಮಿಸಿ, ನನಗೆ ಅರ್ಥವಾಗಲಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.";
+        
+        // Add bot message
+        messages.innerHTML += `<div class="message bot"><div class="message-content">${escapeHtml(botReply)}</div></div>`;
+        messages.scrollTop = messages.scrollHeight;
+        
+        // 🎤 SPEAK THE RESPONSE IN KANNADA
+        await speakKannada(botReply);
+        
+    } catch (error) {
+        document.getElementById(typingId)?.remove();
+        messages.innerHTML += `<div class="message bot"><div class="message-content">ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ. ನೆಟ್ವರ್ಕ್ ಸಮಸ್ಯೆ ಇರಬಹುದು.</div></div>`;
+        messages.scrollTop = messages.scrollHeight;
     }
 }
-    async function saveProfile() {
-        const form = document.getElementById('profileForm');
-        const formData = new FormData(form);
 
-        try {
-            const response = await fetch('/update_profile', {
-                method: 'POST',
-                body: formData
-            });
-
-            const result = await response.json();
-
-            if (result.success) {
-                alert('Profile updated successfully!');
-                toggleEditMode();
-                location.reload(); // Reload to show updated data
-            } else {
-                alert('Error updating profile: ' + result.message);
-            }
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Error updating profile. Please try again.');
-        }
+    function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
+}
+    function startVoiceInput() {
+      if (!('webkitSpeechRecognition' in window)) { alert('Voice not supported'); return; }
+      const recognition = new webkitSpeechRecognition(); recognition.lang = 'kn-IN';
+      recognition.onstart = function() { const btn = document.querySelector('[onclick="startVoiceInput()"]'); if(btn) btn.innerHTML = '<i class="fas fa-circle"></i> Listening...'; };
+      recognition.onresult = function(event) { document.getElementById('chatInput').value = event.results[0][0].transcript; sendChatMessage(); };
+      recognition.onend = function() { const btn = document.querySelector('[onclick="startVoiceInput()"]'); if(btn) btn.innerHTML = '<i class="fas fa-microphone"></i> ಮಾತನಾಡಿ'; };
+      recognition.start();
     }
+    let audioPlayer = null;
 
-    // Chatbot functionality
-    let recognition;
-    let currentLang = "kn"; // Default to Kannada
-    let isChatbotOpen = false;
-    let isListening = false;
+ // ==================== ENHANCED LANGUAGE MANAGEMENT ====================
 
-    // Toggle chatbot visibility
-    document.getElementById("chatbot-icon").addEventListener("click", function() {
-        const popup = document.getElementById("chatbot-popup");
-        if (isChatbotOpen) {
-            popup.style.display = "none";
-        } else {
-            popup.style.display = "flex";
-            // Add welcome message when opening
-            addMessage("bot", "ನಮಸ್ಕಾರ! ನಾನು ನಿಮ್ಮ ಕೃಷಿ ಸಹಾಯಕ. ಹೇಗೆ ಸಹಾಯ ಮಾಡಲಿ?");
-        }
-        isChatbotOpen = !isChatbotOpen;
-    });
+// Get initial language from hidden input
+let currentLang = document.getElementById('currentLang')?.value || 'en';
+let translationApplied = false;
+console.log("🌐 Initial language from hidden input:", currentLang);
 
-    // Close chatbot
-    document.getElementById("close-chatbot").addEventListener("click", function() {
-        document.getElementById("chatbot-popup").style.display = "none";
-        isChatbotOpen = false;
-    });
-
-    // Toggle text input
-    document.getElementById("textInputBtn").addEventListener("click", function() {
-        const textInputContainer = document.getElementById("text-input-container");
-        if (textInputContainer.style.display === "none") {
-            textInputContainer.style.display = "block";
-        } else {
-            textInputContainer.style.display = "none";
-        }
-    });
-
-    // Send text message
-    document.getElementById("send-text-btn").addEventListener("click", function() {
-        const textInput = document.getElementById("text-input");
-        const message = textInput.value.trim();
-        if (message) {
-            addMessage("user", message);
-            textInput.value = "";
-            processMessage(message);
-        }
-    });
-
-    // Clear chat button functionality
-    document.getElementById("clear-chat-btn").addEventListener("click", function() {
-        document.getElementById("chat-log").innerHTML = "";
-    });
-
-    // Enter key to send text message
-    document.getElementById("text-input").addEventListener("keypress", function(e) {
-        if (e.key === "Enter") {
-            document.getElementById("send-text-btn").click();
-        }
-    });
-
-    // Add message to chat log
-    function addMessage(sender, text) {
-        const chatLog = document.getElementById("chat-log");
-        const messageDiv = document.createElement("div");
-        messageDiv.innerHTML = `<b>${sender === "user" ? "ನೀವು" : "ಸಹಾಯಕ"}:</b> ${text}<br>`;
-        chatLog.appendChild(messageDiv);
-        chatLog.scrollTop = chatLog.scrollHeight;
-    }
-
-  
-    // Speak text using browser's speech synthesis
-    function speakText(text) {
-        if ('speechSynthesis' in window) {
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'kn-IN';
-            speechSynthesis.speak(utterance);
-        }
-    }
-
-    // 🎙️ Setup Speech Recognition
-    if ("webkitSpeechRecognition" in window) {
-        recognition = new webkitSpeechRecognition();
-        recognition.continuous = false;
-        recognition.interimResults = false;
-        recognition.lang = "kn-IN"; // Kannada by default
-
-        recognition.onstart = function() {
-            isListening = true;
-            document.getElementById("recordBtn").innerHTML = '<i class="fas fa-circle"></i> Listening...';
-            document.getElementById("recordBtn").classList.add("btn-danger");
-            document.getElementById("recordBtn").classList.remove("btn-success");
-        };
-
-        recognition.onend = function() {
-            isListening = false;
-            document.getElementById("recordBtn").innerHTML = '<i class="fas fa-microphone"></i> ಮಾತನಾಡಿ';
-            document.getElementById("recordBtn").classList.remove("btn-danger");
-            document.getElementById("recordBtn").classList.add("btn-success");
-        };
-
-        recognition.onresult = function(event) {
-            const transcript = event.results[0][0].transcript;
-            addMessage("user", transcript);
-            processMessage(transcript);
-        };
-
-        recognition.onerror = function(event) {
-            console.error("Speech recognition error", event.error);
-            addMessage("bot", "ಕ್ಷಮಿಸಿ, ನಿಮ್ಮ ಧ್ವನಿಯನ್ನು ಗುರುತಿಸಲು ಸಾಧ್ಯವಾಗಿಲ್ಲ. ದಯವಿಟ್ಟು ಮತ್ತೆ ಪ್ರಯತ್ನಿಸಿ.");
-            isListening = false;
-            document.getElementById("recordBtn").innerHTML = '<i class="fas fa-microphone"></i> ಮಾತನಾಡಿ';
-            document.getElementById("recordBtn").classList.remove("btn-danger");
-            document.getElementById("recordBtn").classList.add("btn-success");
-        };
-    } else {
-        // Browser doesn't support speech recognition
-        document.getElementById("recordBtn").disabled = true;
-        document.getElementById("recordBtn").innerHTML = '<i class="fas fa-microphone-slash"></i> Not Supported';
-    }
-
-    document.getElementById("recordBtn").addEventListener("click", function() {
-        if (isListening) {
-            recognition.stop();
-        } else {
-            recognition.start();
-        }
-    });
-
-    // Toggle mobile sidebar
-    const menuToggle = document.getElementById('menuToggle');
-    const sidebar = document.getElementById('sidebar');
-    const mainContent = document.getElementById('mainContent');
-    const overlay = document.getElementById('overlay');
+function saveLanguagePreference(lang) {
+    // Save to localStorage
+    localStorage.setItem('selectedLanguage', lang);
     
-    menuToggle.addEventListener('click', function() {
-        sidebar.classList.toggle('active');
-        overlay.classList.toggle('active');
-        
-        // Change icon based on sidebar state
-        const icon = menuToggle.querySelector('i');
-        if (sidebar.classList.contains('active')) {
-            icon.classList.remove('fa-bars');
-            icon.classList.add('fa-times');
-        } else {
-            icon.classList.remove('fa-times');
-            icon.classList.add('fa-bars');
-        }
+    // Save to sessionStorage for current session
+    sessionStorage.setItem('selectedLanguage', lang);
+    
+    // Save to cookie
+    document.cookie = `user_language=${lang}; path=/; max-age=31536000`;
+    
+    // Send to server via fetch
+    fetch('/set_language', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lang: lang })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("✅ Language saved to server:", data);
+    })
+    .catch(err => {
+        console.error("❌ Error saving language:", err);
     });
     
-    // Close sidebar when clicking on overlay
-    overlay.addEventListener('click', function() {
-        sidebar.classList.remove('active');
-        overlay.classList.remove('active');
-        const icon = menuToggle.querySelector('i');
-        icon.classList.remove('fa-times');
-        icon.classList.add('fa-bars');
-    });
-    
-    // Close sidebar when clicking on a nav link (mobile)
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach(link => {
-        link.addEventListener('click', function() {
-            if (window.innerWidth <= 768) {
-                sidebar.classList.remove('active');
-                overlay.classList.remove('active');
-                const icon = menuToggle.querySelector('i');
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            }
-        });
-    });
+    currentLang = lang;
+}
 
-    // ============================================
-    // MAIN INITIALIZATION
-    // ============================================
+function applyLanguage(lang) {
+    console.log("🔄 Applying language:", lang);
     
-    document.addEventListener('DOMContentLoaded', function() {
-        // Load Google Translate
-        loadGoogleTranslate();
+    if (lang === 'kn') {
+        // Set Google Translate to Kannada
+        window.location.hash = '#googtrans(kn|en)';
         
-        // Check for saved language preference
-        const savedLang = localStorage.getItem('selectedLanguage') || 'en';
-        
-        // Set active button
-        document.querySelectorAll('.lang-btn').forEach(btn => {
-            btn.classList.remove('active');
-            if ((savedLang === 'en' && btn.classList.contains('english')) || 
-                (savedLang === 'kn' && btn.classList.contains('kannada'))) {
-                btn.classList.add('active');
-            }
-        });
-        
-        // Apply saved language after a short delay
+        // Force Google Translate to apply
         setTimeout(function() {
-            applyLanguage(savedLang);
-        }, 1000);
-        
-        // Add language parameter to all links
-        document.querySelectorAll('a').forEach(link => {
-            const href = link.getAttribute('href');
-            if (href && !href.includes('#') && href !== '#' && !href.includes('javascript:')) {
-                const lang = localStorage.getItem('selectedLanguage') || 'en';
-                const separator = href.includes('?') ? '&' : '?';
-                link.href = href + separator + 'lang=' + lang;
-            }
-        });
-        
-        // Setup speech recognition
-        if (recognition) {
-            document.getElementById("recordBtn").addEventListener("click", function() {
-                if (isListening) {
-                    recognition.stop();
-                } else {
-                    recognition.start();
+            if (window.google && google.translate) {
+                try {
+                    // Find and trigger the Google Translate dropdown
+                    var select = document.querySelector('.goog-te-combo');
+                    if (select) {
+                        select.value = 'kn';
+                        select.dispatchEvent(new Event('change'));
+                        console.log("✅ Google Translate set to Kannada");
+                        translationApplied = true;
+                    } else {
+                        console.log("⚠️ Google Translate dropdown not found yet, retrying...");
+                        // Retry after another second
+                        setTimeout(() => {
+                            var select = document.querySelector('.goog-te-combo');
+                            if (select) {
+                                select.value = 'kn';
+                                select.dispatchEvent(new Event('change'));
+                                console.log("✅ Google Translate set to Kannada (retry)");
+                            }
+                        }, 1000);
+                    }
+                } catch(e) {
+                    console.log('Error applying translation:', e);
                 }
-            });
-        }
+            } else {
+                console.log("⚠️ Google Translate not loaded yet, waiting...");
+                // Wait for Google Translate to load
+                setTimeout(() => {
+                    if (window.google && google.translate) {
+                        var select = document.querySelector('.goog-te-combo');
+                        if (select) {
+                            select.value = 'kn';
+                            select.dispatchEvent(new Event('change'));
+                            console.log("✅ Google Translate set to Kannada (delayed)");
+                        }
+                    }
+                }, 1500);
+            }
+        }, 500);
+    } else {
+        // Set Google Translate to English
+        window.location.hash = '#googtrans(en)';
         
-        // Card animations on load
-        const cards = document.querySelectorAll('.card');
-        cards.forEach((card, index) => {
-            setTimeout(() => {
-                card.style.opacity = 1;
-                card.style.transform = 'translateY(0)';
-            }, 100 * index);
-        });
+        setTimeout(function() {
+            if (window.google && google.translate) {
+                try {
+                    var select = document.querySelector('.goog-te-combo');
+                    if (select) {
+                        select.value = 'en';
+                        select.dispatchEvent(new Event('change'));
+                        console.log("✅ Google Translate set to English");
+                        translationApplied = true;
+                    }
+                } catch(e) {
+                    console.log('Error applying translation:', e);
+                }
+            }
+        }, 500);
+    }
+}
+
+function setLanguage(lang) {
+    console.log("🎤 Setting language to:", lang);
+    
+    // Update button UI
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.remove('active');
     });
-</script>
+    
+    if (lang === 'en') {
+        const enBtn = document.querySelector('.lang-btn.english');
+        if (enBtn) enBtn.classList.add('active');
+    } else {
+        const knBtn = document.querySelector('.lang-btn.kannada');
+        if (knBtn) knBtn.classList.add('active');
+    }
+    
+    // Update drawer checkmarks immediately
+    const enCheck = document.getElementById('enCheck');
+    const knCheck = document.getElementById('knCheck');
+    if (enCheck) enCheck.style.opacity = lang === 'en' ? '1' : '0';
+    if (knCheck) knCheck.style.opacity = lang === 'kn' ? '1' : '0';
+    
+    // Save preference
+    saveLanguagePreference(lang);
+    
+    // Apply language
+    applyLanguage(lang);
+    
+    // Show confirmation
+    if (lang === 'kn') {
+        alert('ಭಾಷೆ ಕನ್ನಡಕ್ಕೆ ಬದಲಾಯಿಸಲಾಗಿದೆ');
+    } else {
+        alert('Language changed to English');
+    }
+    
+    // Reload to ensure all content is translated
+    setTimeout(() => {
+        window.location.reload();
+    }, 1500);
+}
+
+// For drawer language menu
+function setLanguageFromDrawer(lang) {
+    console.log("📱 Setting language from drawer:", lang);
+    
+    // Update checkmarks
+    const enCheck = document.getElementById('enCheck');
+    const knCheck = document.getElementById('knCheck');
+    if (enCheck) enCheck.style.opacity = lang === 'en' ? '1' : '0';
+    if (knCheck) knCheck.style.opacity = lang === 'kn' ? '1' : '0';
+    
+    // Update button UI
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if ((lang === 'en' && btn.classList.contains('english')) || 
+            (lang === 'kn' && btn.classList.contains('kannada'))) {
+            btn.classList.add('active');
+        }
+    });
+    
+    // Save preference
+    saveLanguagePreference(lang);
+    applyLanguage(lang);
+    
+    // Close language menu
+    const languageMenu = document.getElementById('languageMenu');
+    if (languageMenu) languageMenu.style.display = 'none';
+    
+    const langArrow = document.getElementById('langArrow');
+    if (langArrow) {
+        langArrow.classList.remove('fa-chevron-up');
+        langArrow.classList.add('fa-chevron-down');
+    }
+    
+    // Close drawer
+    setTimeout(() => {
+        closeDrawer();
+    }, 300);
+    
+    // Show confirmation
+    if (lang === 'kn') {
+        alert('ಭಾಷೆ ಕನ್ನಡಕ್ಕೆ ಬದಲಾಯಿಸಲಾಗಿದೆ');
+    } else {
+        alert('Language changed to English');
+    }
+    
+    // Reload to ensure all content is translated
+    setTimeout(() => {
+        window.location.reload();
+    }, 1500);
+}
+
+function googleTranslateElementInit() {
+    console.log("🚀 Google Translate initialized");
+    new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,kn',
+        autoDisplay: false
+    }, 'google_translate_element');
+}
+
+function loadGoogleTranslate() {
+    if (window.google && google.translate) {
+        console.log("✅ Google Translate already loaded");
+        googleTranslateElementInit();
+        return;
+    }
+    console.log("📥 Loading Google Translate...");
+    var script = document.createElement('script');
+    script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+    document.head.appendChild(script);
+}
+
+// ==================== INITIALIZE ON PAGE LOAD ====================
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("📄 Page loaded, initializing language...");
+    
+    // Load Google Translate
+    loadGoogleTranslate();
+    
+    // Get language from hidden input (set by server)
+    let savedLang = document.getElementById('currentLang')?.value || 'en';
+    console.log("📌 Language from hidden input:", savedLang);
+    
+    // Check URL hash for existing translation
+    if (window.location.hash.includes('googtrans')) {
+        if (window.location.hash.includes('kn|en')) {
+            savedLang = 'kn';
+            console.log("📌 Language from URL hash (Kannada)");
+        } else if (window.location.hash.includes('en')) {
+            savedLang = 'en';
+            console.log("📌 Language from URL hash (English)");
+        }
+    }
+    
+    // Also check localStorage for any saved language
+    const localLang = localStorage.getItem('selectedLanguage');
+    if (localLang && (localLang === 'en' || localLang === 'kn')) {
+        savedLang = localLang;
+        console.log("📌 Language from localStorage:", savedLang);
+    }
+    
+    // Also check sessionStorage
+    const sessionLang = sessionStorage.getItem('selectedLanguage');
+    if (sessionLang && (sessionLang === 'en' || sessionLang === 'kn')) {
+        savedLang = sessionLang;
+        console.log("📌 Language from sessionStorage:", savedLang);
+    }
+    
+    console.log("📌 FINAL language to apply:", savedLang);
+    
+    // Set current language
+    currentLang = savedLang;
+    
+    // Update UI buttons
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if ((savedLang === 'en' && btn.classList.contains('english')) || 
+            (savedLang === 'kn' && btn.classList.contains('kannada'))) {
+            btn.classList.add('active');
+        }
+    });
+    
+    // Update drawer checkmarks
+    const enCheck = document.getElementById('enCheck');
+    const knCheck = document.getElementById('knCheck');
+    if (enCheck) enCheck.style.opacity = savedLang === 'en' ? '1' : '0';
+    if (knCheck) knCheck.style.opacity = savedLang === 'kn' ? '1' : '0';
+    
+    // Save to session storage for other pages
+    sessionStorage.setItem('selectedLanguage', savedLang);
+    localStorage.setItem('selectedLanguage', savedLang);
+    
+    // Wait for Google Translate to load and apply language
+    setTimeout(function() {
+        console.log("🔄 Attempting to apply saved language:", savedLang);
+        applyLanguage(savedLang);
+    }, 1000);
+});
+  </script>
 </body>
 </html>

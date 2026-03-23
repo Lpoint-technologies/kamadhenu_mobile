@@ -2,742 +2,794 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Add Geo Tag - Kamadhenu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#043c07">
+  <title>Geo Tagging - Kamadhenu</title>
+  
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent;
+    }
+
     :root {
       --primary: #043c07;
+      --primary-light: #1b5e20;
       --secondary: #ffc107;
-      --light: #f8f9fa;
-      --dark: #343a40;
-      --light-green: #e8f5e9;
+      --success: #28a745;
+      --gray: #6c757d;
+      --border: #e9ecef;
+      --safe-area-top: env(safe-area-inset-top, 0px);
+      --safe-area-bottom: env(safe-area-inset-bottom, 0px);
     }
-    
+
     body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: #f5f9f5;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      overflow-x: hidden;
-    }
-    
-    .dashboard-container {
-      width: 100%;
-      margin: 0;
-    }
-
-    .sidebar {
-      background: linear-gradient(to bottom, var(--primary), #1b5e20);
-      color: white;
+      color: #2c3e2f;
+      overflow: hidden;
       height: 100vh;
-      position: fixed;
-      width: 260px;
-      padding-top: 20px;
-      box-shadow: 3px 0 10px rgba(0,0,0,0.1);
-      overflow-y: auto;
-      z-index: 1000;
-      transition: all 0.3s ease;
-    }
-    
-    .main-content {
-      margin-left: 260px;
-      padding: 20px;
-      transition: all 0.3s ease;
-      width: calc(100% - 260px);
-    }
-    
-    .header {
-      background-color: white;
-      padding: 15px 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .welcome-text {
-      color: var(--primary);
-      font-weight: 600;
-    }
-    
-    .card {
-      border: none;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      transition: transform 0.3s;
-      margin-bottom: 20px;
-    }
-    
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 15px rgba(0,0,0,0.1);
-    }
-    
-    .container-box {
-      background: white;
-      padding: 30px;
-      border-radius: 12px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    
-    .form-select {
-      border: 2px solid #e0e0e0;
-      border-radius: 8px;
-      padding: 12px 15px;
-      transition: all 0.3s;
-    }
-    
-    .form-select:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 0.25rem rgba(4, 60, 7, 0.25);
-    }
-    
-    .cow-list {
-      margin-top: 20px;
-      padding: 20px;
-      border: 2px dashed var(--primary);
-      border-radius: 8px;
-      background: rgba(4, 60, 7, 0.05);
-    }
-    
-    .cow-item {
-      background: white;
-      border-radius: 8px;
-      padding: 12px 15px;
-      margin-bottom: 10px;
-      display: flex;
-      align-items: center;
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
-    }
-    
-    .cow-icon {
-      color: var(--primary);
-      margin-right: 10px;
-      font-size: 1.2rem;
-    }
-    
-    .btn-success {
-      background: linear-gradient(to right, var(--primary), #1b5e20);
-      border: none;
-      padding: 12px 25px;
-      border-radius: 50px;
-      font-weight: 600;
-      transition: all 0.3s;
-    }
-    
-    .btn-success:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(4, 60, 7, 0.4);
-    }
-    
-    .btn-primary {
-      background: linear-gradient(to right, #4361ee, #7209b7);
-      border: none;
-      padding: 12px 25px;
-      border-radius: 50px;
-      font-weight: 600;
-      transition: all 0.3s;
-    }
-    
-    .btn-primary:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 20px rgba(67, 97, 238, 0.4);
-    }
-    
-    .logo {
-      text-align: center;
-      padding: 20px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
-      margin-bottom: 30px;
-    }
-    
-    .nav-item {
-      margin: 10px 0;
-    }
-    
-    .nav-link {
-      color: rgba(255,255,255,0.8);
-      padding: 8px 16px;
-      border-radius: 5px;
-      margin: 5px 15px;
-      transition: all 0.3s;
-    }
-    
-    .nav-link:hover, .nav-link.active {
-      background-color: rgba(255,255,255,0.1);
-      color: white;
-    }
-    
-    .nav-link i {
-      margin-right: 10px;
-      width: 20px;
-      text-align: center;
-    }
-    
-    .cow-background {
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path fill="%232e7d32" fill-opacity="0.05" d="M50,10A40,40 0 1,1 50,90A40,40 0 1,1 50,10z M30,30 Q50,15 70,30 Q65,50 70,70 Q50,85 30,70 Q35,50 30,30 z"></path></svg>');
-      background-repeat: repeat;
-      background-size: 200px;
-    }
-
-    /* Submenu styles */
-    .submenu {
-      list-style: none;
-      padding-left: 30px;
-      display: none;
-    }
-    
-    .submenu .nav-link {
-      font-size: 14px;
-      padding: 6px 14px;
-      color: rgba(255,255,255,0.7);
-    }
-    
-    .submenu .nav-link:hover {
-      color: #fff;
-    }
-    
-    .selection-count {
-      background-color: var(--primary);
-      color: white;
-      border-radius: 50%;
-      width: 25px;
-      height: 25px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      margin-left: 10px;
-      font-size: 0.8rem;
-      font-weight: bold;
-    }
-    
-    /* Mobile menu toggle button */
-    .menu-toggle {
-      display: none;
-      position: fixed;
-      top: 15px;
-      left: 15px;
-      z-index: 1100;
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 5px;
-      width: 40px;
-      height: 40px;
-      font-size: 20px;
-      cursor: pointer;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-
-    /* Overlay for mobile when sidebar is open */
-    .overlay {
-      display: none;
+      width: 100vw;
       position: fixed;
       top: 0;
       left: 0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .app-header {
+      flex-shrink: 0;
+      height: 60px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      padding-top: max(0px, var(--safe-area-top));
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      z-index: 100;
+    }
+
+    .menu-btn {
+      background: none;
+      border: none;
+      color: white;
+      font-size: 1.6rem;
+      cursor: pointer;
+      width: 44px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    /* Main Content - flex column, no scroll */
+    .app-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      padding: 10px 16px;
+      gap: 10px;
+    }
+
+    /* Stats Row - compact */
+    .stats-row {
+      display: flex;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .stat-box {
+      flex: 1;
+      background: white;
+      border-radius: 18px;
+      padding: 8px 12px;
+      text-align: center;
+      border: 1px solid var(--border);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.02);
+    }
+    .stat-box .number {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1.2;
+    }
+    .stat-box .label {
+      font-size: 0.65rem;
+      color: var(--gray);
+      letter-spacing: 0.3px;
+    }
+
+    /* Feature Card - compact */
+    .feature-card {
+      background: white;
+      border-radius: 18px;
+      padding: 12px 16px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .feature-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 24px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.3rem;
+      flex-shrink: 0;
+    }
+    .feature-text {
+      flex: 1;
+    }
+    .feature-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 2px;
+    }
+    .feature-desc {
+      font-size: 0.7rem;
+      color: var(--gray);
+      line-height: 1.3;
+    }
+
+    /* Selection Card - compact with scroll only for selected list if needed */
+    .selection-card {
+      background: white;
+      border-radius: 20px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      max-height: 55%;
+      overflow: hidden;
+    }
+
+    .selection-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-shrink: 0;
+    }
+    .selection-header i {
+      font-size: 1.2rem;
+      color: var(--primary);
+    }
+    .selection-header h3 {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin: 0;
+    }
+
+    /* Cow Select - compact */
+    .cow-select-wrapper {
+      position: relative;
+      margin-bottom: 8px;
+      flex-shrink: 0;
+    }
+    .cow-select {
       width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.5);
-      z-index: 999;
+      padding: 10px 12px;
+      border: 2px solid var(--border);
+      border-radius: 16px;
+      font-size: 0.8rem;
+      background: white;
+      appearance: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+      height: 100px;
     }
-    
-    .overlay.active {
-      display: block;
+    .cow-select:focus {
+      border-color: var(--primary);
+      outline: none;
     }
-    
-    /* Mobile responsive styles */
-    @media (max-width: 768px) {
-      .sidebar {
-        transform: translateX(-100%);
-        width: 70%;
-        max-width: 250px;
-      }
-      
-      .sidebar.active {
-        transform: translateX(0);
-      }
-      
-      .main-content {
-        margin-left: 0;
-        width: 100%;
-      }
-      
-      .menu-toggle {
-        display: block;
-      }
-      
-      .header {
-        padding: 15px 15px 15px 50px;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
-      
-      .container-box {
-        padding: 20px;
-      }
-      
-      .form-select {
-        padding: 10px 12px;
-      }
+    .select-arrow {
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      color: var(--primary);
+      pointer-events: none;
+      font-size: 0.8rem;
     }
 
-    @media (max-width: 576px) {
-      .main-content {
-        padding: 10px;
-      }
-      
-      .container-box {
-        padding: 15px;
-      }
-      
-      .logo h2 {
-        font-size: 1.5rem;
-      }
-      
-      .btn-success, .btn-primary {
-        padding: 10px 20px;
-        font-size: 0.9rem;
-      }
+    /* Info Message */
+    .info-message {
+      background: #e8f5e9;
+      border-radius: 12px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.7rem;
+      color: var(--primary);
+      margin-bottom: 10px;
+      flex-shrink: 0;
     }
-      /* Language Selector Styles - BOTTOM */
+    .info-message i {
+      font-size: 0.8rem;
+    }
+
+    /* Selected Cows Section - scrollable if many */
+    .selected-section {
+      background: #f8f9fa;
+      border-radius: 14px;
+      padding: 10px;
+      margin-top: 8px;
+      flex-shrink: 1;
+      overflow-y: auto;
+      max-height: 120px;
+    }
+    .selected-section::-webkit-scrollbar {
+      width: 3px;
+    }
+    .selected-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      flex-shrink: 0;
+    }
+    .selected-header h4 {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin: 0;
+    }
+    .selected-count {
+      background: var(--primary);
+      color: white;
+      border-radius: 30px;
+      padding: 2px 8px;
+      font-size: 0.65rem;
+      font-weight: 600;
+    }
+    .selected-cows-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .selected-cow-item {
+      background: white;
+      border-radius: 12px;
+      padding: 8px 10px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      border: 1px solid var(--border);
+    }
+    .selected-cow-item i {
+      font-size: 0.9rem;
+      color: var(--primary);
+    }
+    .selected-cow-item span {
+      flex: 1;
+      font-size: 0.75rem;
+      font-weight: 500;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      gap: 10px;
+      margin-top: 12px;
+      flex-shrink: 0;
+    }
+    .btn {
+      border: none;
+      border-radius: 40px;
+      padding: 10px 12px;
+      font-weight: 700;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      flex: 1;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .btn:active {
+      transform: scale(0.97);
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+    }
+    .btn-success {
+      background: linear-gradient(135deg, #28a745, #20c997);
+      color: white;
+    }
+    .btn-outline {
+      background: white;
+      border: 1.5px solid var(--primary);
+      color: var(--primary);
+    }
+
+    /* Empty State - compact */
+    .empty-state {
+      text-align: center;
+      padding: 30px 16px;
+      background: white;
+      border-radius: 20px;
+      margin: auto;
+      width: 100%;
+    }
+    .empty-state i {
+      font-size: 2rem;
+      color: #dee2e6;
+      margin-bottom: 8px;
+    }
+    .empty-state h4 {
+      font-size: 0.9rem;
+      color: var(--gray);
+      margin-bottom: 4px;
+    }
+    .empty-state p {
+      font-size: 0.75rem;
+      color: var(--gray);
+      margin-bottom: 12px;
+    }
+    .empty-state .btn {
+      display: inline-flex;
+      padding: 8px 16px;
+      font-size: 0.7rem;
+    }
+
+    /* Bottom Navigation */
+    .bottom-nav {
+      flex-shrink: 0;
+      height: 62px;
+      background: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding-bottom: max(0px, var(--safe-area-bottom));
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+      border-top: 1px solid var(--border);
+    }
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray);
+      text-decoration: none;
+      font-size: 0.6rem;
+      font-weight: 500;
+    }
+    .nav-item i {
+      font-size: 1.2rem;
+      margin-bottom: 2px;
+    }
+    .nav-item.active {
+      color: var(--primary);
+    }
+    /* Drawer */
+    .drawer-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 2000;
+      display: none;
+    }
+    .drawer-overlay.active { display: block; }
+    .drawer {
+      position: fixed;
+      top: 0;
+      left: -260px;
+      width: 260px;
+      height: 100vh;
+      background: white;
+      z-index: 2001;
+      transition: left 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .drawer.active { left: 0; }
+    .drawer-header {
+      padding: 16px;
+      padding-top: calc(16px + var(--safe-area-top));
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+    }
+    .drawer-header h3 { font-size: 1.1rem; font-weight: 700; }
+    .drawer-header p { font-size: 0.65rem; opacity: 0.9; }
+    .drawer-content { flex: 1; overflow-y: auto; padding: 8px 0; }
+    .drawer-section { margin-bottom: 12px; }
+    .drawer-section-title {
+      padding: 5px 16px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+    .drawer-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      color: var(--dark);
+      text-decoration: none;
+    }
+    .drawer-item i { width: 20px; color: var(--primary); font-size: 0.9rem; }
+    .drawer-item span { font-size: 0.8rem; font-weight: 500; }
+    .language-submenu {
+      background: #f8f9fa;
+      margin-top: 8px;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .lang-option {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 20px 12px 44px;
+      text-decoration: none;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.85rem;
+    }
+
+    /* Language Selector */
     .language-selector {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 10000;
-        background: white;
-        padding: 10px 15px;
-        border-radius: 25px;
-        box-shadow: 0 -4px 15px rgba(0,0,0,0.2);
-        display: flex;
-        gap: 10px;
-        border: 2px solid #27ae60;
+      position: fixed;
+      bottom: 70px;
+      right: 12px;
+      z-index: 999;
+      background: white;
+      padding: 4px 8px;
+      border-radius: 30px;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+      display: flex;
+      gap: 6px;
+      border: 1px solid var(--primary);
     }
-
     .lang-btn {
-        padding: 8px 20px;
-        border: none;
-        border-radius: 20px;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 14px;
-        transition: all 0.3s ease;
+      padding: 4px 10px;
+      border: none;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 0.7rem;
+      cursor: pointer;
     }
+    .lang-btn.english { background: var(--primary); color: white; }
+    .lang-btn.kannada { background: #f0f0f0; color: var(--primary); }
+    .lang-btn.active { background: var(--primary); color: white; }
 
-    .lang-btn.english {
-        background: #007bff;
-        color: white;
-    }
-
-    .lang-btn.kannada {
-        background: #ff9800;
-        color: white;
-    }
-
-    .lang-btn.active {
-        transform: scale(1.05);
-        box-shadow: 0 0 0 2px white, 0 0 0 4px currentColor;
-    }
-
-    /* Hide Google banner */
-    .goog-te-banner-frame { display: none !important; }
+    /* Hide Google Translate Banner */
+    .goog-te-banner-frame, .skiptranslate, #google_translate_element { display: none !important; }
     body { top: 0 !important; }
-
-    /* Mobile responsive */
-    @media (max-width: 768px) {
-        .language-selector {
-            bottom: 10px;
-            right: 10px;
-            padding: 6px 10px;
-        }
-        
-        .lang-btn {
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-    }
-    /* Completely hide ALL Google Translate elements */
-    .goog-te-banner-frame,
-    .goog-te-banner,
-    .goog-te-banner-wrapper,
-    .skiptranslate,
-    #goog-gt-tt,
-    .goog-te-balloon-frame,
-    .goog-tooltip,
-    .goog-tooltip:hover,
-    .goog-text-highlight {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        height: 0 !important;
-        width: 0 !important;
-        position: absolute !important;
-    }
-    
-    /* Prevent body shift */
-    body {
-        top: 0px !important;
-        position: static !important;
-    }
-    
-    /* Hide the translation menu if it appears */
-    .goog-te-menu-frame {
-        display: none !important;
-    }
   </style>
 </head>
-<body class="cow-background">
-  <!-- Mobile menu toggle -->
-  <button class="menu-toggle" id="menuToggle">
-    <i class="fas fa-bars"></i>
-  </button>
-  
-  <!-- Overlay for mobile -->
-  <div class="overlay" id="overlay"></div>
-
-  <div class="dashboard-container">
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-      <div class="logo">
-        <h2><i class="fas fa-cow"></i> Kamadhenu</h2>
-        <p class="mb-0">Cow Management System</p>
-      </div>
-      
-      <ul class="nav flex-column">
-        <li class="nav-item">
-          <a class="nav-link" href="/dashboard">
-            <i class="fas fa-tachometer-alt"></i> Dashboard
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/add_cow">
-            <i class="fas fa-plus-circle"></i> Add New Cow
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/cows">
-            <i class="fas fa-list"></i> View My Cows
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/find_cow">
-            <i class="fas fa-search"></i> Find Cow
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/milk_yield">
-            <i class="fas fa-tint"></i> Milk Yield
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/disease_prediction">
-              <i class="fas fa-stethoscope"></i> Disease Detection
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/book_appointment">
-            <i class="fas fa-syringe"></i> Book Appointment
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('farmer_treatments') }}">
-            <i class="fas fa-syringe"></i> Treatment History
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="{{ url_for('add_geotag') }}">
-            <i class="fas fa-map-marker-alt"></i> Add Geo Tag
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('analytics') }}">
-            <i class="fas fa-chart-bar"></i> Analytics
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#" onclick="toggleSubmenu(event)">
-            <i class="fas fa-chart-line"></i> Market Place <i class="fas fa-caret-down float-end"></i>
-          </a>
-          <ul class="submenu">
-            <li><a class="nav-link" href="/buy_cow"><i class="fas fa-shopping-cart"></i> Buy Cows</a></li>
-            <li><a class="nav-link" href="/sell_cow"><i class="fas fa-hand-holding-usd"></i> Sell Cows</a></li>
-          </ul>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/sold_cows">
-            <i class="fas fa-check-circle"></i> Sale History
-          </a>
-        </li>
-      </ul>
+<body>
+    <input type="hidden" id="currentLang" value="{{ current_lang|default('en') }}">
+<!-- Drawer -->
+<div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-header"><h3 style="font-size:1.2rem;">Kamadhenu</h3><p style="font-size:0.7rem;">Smart Farm Management</p></div>
+  <div style="overflow-y:auto;">
+    <div class="drawer-section"><div class="drawer-section-title">Main Menu</div>
+      <a href="/dashboard" class="drawer-item"><i class="fas fa-home"></i><span>Dashboard</span></a>
+      <a href="/add_cow" class="drawer-item"><i class="fas fa-plus-circle"></i><span>Add New Cow</span></a>
+      <a href="/cows" class="drawer-item"><i class="fas fa-list"></i><span>View My Cows</span></a>
+      <a href="/find_cow" class="drawer-item"><i class="fas fa-search"></i><span>Find Cow</span></a>
     </div>
+    <div class="drawer-section"><div class="drawer-section-title">Farm Operations</div>
+      <a href="/milk_yield" class="drawer-item"><i class="fas fa-tint"></i><span>Milk Yield</span></a>
+      <a href="/disease_prediction" class="drawer-item"><i class="fas fa-stethoscope"></i><span>Disease Detection</span></a>
+      <a href="/book_appointment" class="drawer-item"><i class="fas fa-syringe"></i><span>Book Appointment</span></a>
+      <a href="/farmer/treatments" class="drawer-item"><i class="fas fa-history"></i><span>Treatment History</span></a>
+      <a href="/add_geotag" class="drawer-item"><i class="fas fa-map-marker-alt"></i><span>Add Geo Tag</span></a>
+      <a href="/analytics" class="drawer-item"><i class="fas fa-chart-bar"></i><span>Analytics</span></a>
+    </div>
+    <div class="drawer-section"><div class="drawer-section-title">Marketplace</div>
+      <a href="/buy_cow" class="drawer-item"><i class="fas fa-shopping-cart"></i><span>Buy Cows</span></a>
+      <a href="/sell_cow" class="drawer-item"><i class="fas fa-hand-holding-usd"></i><span>Sell Cows</span></a>
+      <a href="/sold_cows" class="drawer-item"><i class="fas fa-check-circle"></i><span>Sale History</span></a>
+    </div>
+    <div class="drawer-section"><div class="drawer-section-title">Preferences</div>
+      <div class="drawer-item" onclick="toggleLanguageMenu()" style="cursor:pointer;"><i class="fas fa-globe"></i><span>Language</span><i class="fas fa-chevron-down" id="langArrow" style="font-size:0.7rem;"></i></div>
+      <div id="languageMenu" style="display:none;"><div class="language-submenu">
+        <a href="#" class="lang-option" onclick="setLanguageFromDrawer('en'); return false;"><i class="fas fa-check-circle" id="enCheck" style="opacity:0;"></i><span>English</span></a>
+        <a href="#" class="lang-option" onclick="setLanguageFromDrawer('kn'); return false;"><i class="fas fa-check-circle" id="knCheck" style="opacity:0;"></i><span>ಕನ್ನಡ</span></a>
+      </div></div>
+    </div>
+    <div class="drawer-section"><div class="drawer-section-title">Account</div>
+      <a href="#" class="drawer-item" onclick="openProfileModal(); closeDrawer(); return false;"><i class="fas fa-user-circle"></i><span>Profile</span></a>
+      <a href="{{ url_for('farmer_logout') }}" class="drawer-item"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
+    </div>
+  </div>
+</div>
 
-    <!-- Main Content -->
-    <div class="main-content" id="mainContent">
-      <!-- Header -->
-      <div class="header">
-        <div>
-          <h2 class="welcome-text">Add Geo Location Tag</h2>
-          <p class="mb-0 text-muted">Select cows to add geographical location tags</p>
-        </div>
-        <a href="/farmer/logout" class="btn btn-danger">Logout</a>
-      </div>
+<!-- Header -->
+<header class="app-header">
+  <button class="menu-btn" onclick="toggleDrawer()"><i class="fas fa-bars"></i></button>
+  <span class="header-title">Geo Tagging</span>
+  <div style="width:44px;"></div>
+</header>
 
-      <div class="container-box">
-        <div class="text-center mb-4">
-          <div class="header-icon" style="background: linear-gradient(135deg, var(--primary), #1b5e20); width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: white; font-size: 1.5rem;">
-            <i class="fas fa-map-marker-alt"></i>
-          </div>
-          <h3 style="color: var(--primary);">Select Cows for Geo Tagging</h3>
-        </div>
-        
-        <!-- Multi Select Dropdown -->
-        <div class="mb-4">
-          <label for="cowSelect" class="form-label fw-bold">
-            <i class="fas fa-cow me-2" style="color: var(--primary);"></i>Select Cow IDs:
-          </label>
-          <select id="cowSelect" class="form-select" multiple size="5">
-            {% for cow in cows %}
-              <option value="{{ cow['cow_id'] }}">
-                {{ cow['cow_id'] }} - {{ cow['breed'] }} (Age: {{ cow['age'] }})
-              </option>
-            {% endfor %}
-          </select>
-          <div class="form-text">
-            <i class="fas fa-info-circle me-1"></i> Hold CTRL (Windows) or CMD (Mac) to select multiple cows
-          </div>
-        </div>
+<!-- Main Content -->
+<main class="app-content">
+  <!-- Quick Stats -->
+  <div class="stats-row">
+    <div class="stat-box"><div class="number" id="totalCowsCount">0</div><div class="label">Total Cows</div></div>
+    <div class="stat-box"><div class="number" id="selectedCountDisplay">0</div><div class="label">Selected</div></div>
+  </div>
 
-        <!-- Selected Cows List -->
-        <div id="selectedCows" class="cow-list" style="display:none;">
-          <h5 class="mb-3">
-            <i class="fas fa-check-circle me-2" style="color: var(--primary);"></i>
-            Selected Cows <span id="selectionCount" class="selection-count">0</span>
-          </h5>
-          <div id="cowList" class="d-flex flex-column gap-2"></div>
-        </div>
-
-        <!-- Buttons -->
-        <div class="d-flex gap-3 mt-4 justify-content-center">
-          <button id="doneBtn" class="btn btn-success">
-            <i class="fas fa-check me-2"></i> Confirm Selection
-          </button>
-          <button id="geoTagBtn" class="btn btn-primary" style="display:none;">
-            <i class="fas fa-map-marker-alt me-2"></i> Add Geo Tag
-          </button>
-        </div>
-      </div>
+  <!-- Feature Card - Compact -->
+  <div class="feature-card">
+    <div class="feature-icon"><i class="fas fa-map-marker-alt"></i></div>
+    <div class="feature-text">
+      <div class="feature-title">Geo-Fencing for Cattle</div>
+      <div class="feature-desc">Create virtual boundaries. Get alerts when cattle wander outside safe zone.</div>
     </div>
   </div>
 
-  <script>
-    // Mobile sidebar toggle functionality
-    const menuToggle = document.getElementById('menuToggle');
-    const sidebar = document.getElementById('sidebar');
-    const mainContent = document.getElementById('mainContent');
-    const overlay = document.getElementById('overlay');
+  <!-- Cow Selection Card -->
+  <div class="selection-card">
+    <div class="selection-header">
+      <i class="fas fa-cow"></i>
+      <h3>Select Cattle for Geo-Tagging</h3>
+    </div>
+
+    <!-- Cow Selection -->
+    <div class="cow-select-wrapper">
+      <select id="cowSelect" class="cow-select" multiple size="3">
+        {% for cow in cows %}
+        <option value="{{ cow['cow_id'] }}">{{ cow['cow_id'] }} - {{ cow['breed'] }} ({{ cow['age'] }} months)</option>
+        {% endfor %}
+      </select>
+      <i class="fas fa-chevron-down select-arrow"></i>
+    </div>
+
+    <!-- Info Message -->
+    <div class="info-message">
+      <i class="fas fa-info-circle"></i>
+      <span>Tap and hold to select multiple cows</span>
+    </div>
+
+    <!-- Selected Cows List -->
+    <div id="selectedCows" class="selected-section" style="display: none;">
+      <div class="selected-header">
+        <h4><i class="fas fa-check-circle me-1"></i> Selected Cattle</h4>
+        <span class="selected-count" id="selectionCount">0</span>
+      </div>
+      <div id="cowList" class="selected-cows-list"></div>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button id="doneBtn" class="btn btn-success"><i class="fas fa-check"></i> Confirm</button>
+      <button id="geoTagBtn" class="btn btn-primary" style="display: none;"><i class="fas fa-map-marker-alt"></i> Start Tagging</button>
+    </div>
+  </div>
+
+  <!-- Empty State (if no cows) -->
+  {% if not cows %}
+  <div class="empty-state">
+    <i class="fas fa-cow"></i>
+    <h4>No Cattle Found</h4>
+    <p>Add cows to your farm before geo-tagging</p>
+    <a href="/add_cow" class="btn btn-primary"><i class="fas fa-plus-circle"></i> Add Cow</a>
+  </div>
+  {% endif %}
+</main>
+
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+  <a href="/dashboard" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+  <a href="/cows" class="nav-item"><i class="fas fa-cow"></i><span>My Cows</span></a>
+  <a href="/add_cow" class="nav-item"><i class="fas fa-plus-circle"></i><span>Add</span></a>
+  <a href="/milk_yield" class="nav-item"><i class="fas fa-tint"></i><span>Milk</span></a>
+  <a href="/find_cow" class="nav-item"><i class="fas fa-search"></i><span>Find</span></a>
+</nav>
+
+
+
+<script>
+  // ==================== Set Total Cows Count ====================
+  const totalCows = {{ cows|length }};
+  document.getElementById('totalCowsCount').innerText = totalCows;
+
+  // ==================== Selection Functions ====================
+  const cowSelect = document.getElementById("cowSelect");
+  const doneBtn = document.getElementById("doneBtn");
+  const geoTagBtn = document.getElementById("geoTagBtn");
+  const selectedCowsDiv = document.getElementById("selectedCows");
+  const cowList = document.getElementById("cowList");
+  const selectionCount = document.getElementById("selectionCount");
+  const selectedCountDisplay = document.getElementById("selectedCountDisplay");
+
+  function updateSelectionDisplay() {
+    const selectedCount = [...cowSelect.selectedOptions].length;
+    selectionCount.textContent = selectedCount;
+    selectedCountDisplay.textContent = selectedCount;
+  }
+
+  cowSelect.addEventListener("change", function() {
+    updateSelectionDisplay();
+  });
+
+  doneBtn.addEventListener("click", function() {
+    const selectedOptions = [...cowSelect.selectedOptions];
     
-    menuToggle.addEventListener('click', function() {
-      sidebar.classList.toggle('active');
-      overlay.classList.toggle('active');
-      
-      // Change icon based on sidebar state
-      const icon = menuToggle.querySelector('i');
-      if (sidebar.classList.contains('active')) {
-        icon.classList.remove('fa-bars');
-        icon.classList.add('fa-times');
-      } else {
-        icon.classList.remove('fa-times');
-        icon.classList.add('fa-bars');
+    if (selectedOptions.length === 0) {
+      alert("Please select at least one cow.");
+      return;
+    }
+    
+    cowList.innerHTML = "";
+    selectedOptions.forEach(opt => {
+      let div = document.createElement("div");
+      div.className = "selected-cow-item";
+      div.innerHTML = `<i class="fas fa-cow"></i><span>${opt.text}</span>`;
+      cowList.appendChild(div);
+    });
+    
+    selectedCowsDiv.style.display = "block";
+    geoTagBtn.style.display = "flex";
+    doneBtn.style.display = "none";
+    updateSelectionDisplay();
+  });
+
+  geoTagBtn.addEventListener("click", function() {
+    const selectedOptions = [...cowSelect.selectedOptions];
+    if (selectedOptions.length === 0) {
+      alert("Please select at least one cow.");
+      return;
+    }
+    const cowId = selectedOptions[0].value;
+    window.location.href = "/geo-tag/" + cowId;
+  });
+
+  // Initialize selection count
+  updateSelectionDisplay();
+
+  // ==================== Drawer Functions ====================
+  function toggleDrawer() {
+    const drawer = document.getElementById('drawer');
+    const overlay = document.getElementById('drawerOverlay');
+    drawer.classList.toggle('active');
+    overlay.classList.toggle('active');
+  }
+
+  function closeDrawer() {
+    const drawer = document.getElementById('drawer');
+    const overlay = document.getElementById('drawerOverlay');
+    drawer.classList.remove('active');
+    overlay.classList.remove('active');
+    const languageMenu = document.getElementById('languageMenu');
+    const langArrow = document.getElementById('langArrow');
+    if (languageMenu) languageMenu.style.display = 'none';
+    if (langArrow) {
+      langArrow.classList.remove('fa-chevron-up');
+      langArrow.classList.add('fa-chevron-down');
+    }
+  }
+
+  function toggleLanguageMenu() {
+    const menu = document.getElementById('languageMenu');
+    const arrow = document.getElementById('langArrow');
+    if (menu.style.display === 'none' || menu.style.display === '') {
+      menu.style.display = 'block';
+      arrow.classList.remove('fa-chevron-down');
+      arrow.classList.add('fa-chevron-up');
+    } else {
+      menu.style.display = 'none';
+      arrow.classList.remove('fa-chevron-up');
+      arrow.classList.add('fa-chevron-down');
+    }
+  }
+
+  function setLanguageFromDrawer(lang) {
+    const enCheck = document.getElementById('enCheck');
+    const knCheck = document.getElementById('knCheck');
+    if (enCheck) enCheck.style.opacity = lang === 'en' ? '1' : '0';
+    if (knCheck) knCheck.style.opacity = lang === 'kn' ? '1' : '0';
+    saveLanguagePreference(lang);
+    applyLanguage(lang);
+    const languageMenu = document.getElementById('languageMenu');
+    if (languageMenu) languageMenu.style.display = 'none';
+    const langArrow = document.getElementById('langArrow');
+    if (langArrow) {
+      langArrow.classList.remove('fa-chevron-up');
+      langArrow.classList.add('fa-chevron-down');
+    }
+    setTimeout(closeDrawer, 300);
+  }
+
+  function openProfileModal() {
+    alert("Profile section - integrate as needed");
+    closeDrawer();
+  }
+
+  // ==================== Language Functions ====================
+  function saveLanguagePreference(lang) {
+    localStorage.setItem('selectedLanguage', lang);
+    document.cookie = `user_language=${lang}; path=/; max-age=31536000`;
+  }
+
+  function applyLanguage(lang) {
+    if (lang === 'kn') {
+      window.location.hash = '#googtrans(kn|en)';
+    } else {
+      window.location.hash = '#googtrans(en)';
+    }
+  }
+
+  function setLanguage(lang) {
+    document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+    if (lang === 'en') document.querySelector('.lang-btn.english').classList.add('active');
+    else document.querySelector('.lang-btn.kannada').classList.add('active');
+    saveLanguagePreference(lang);
+    applyLanguage(lang);
+  }
+
+  function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+      pageLanguage: 'en',
+      includedLanguages: 'en,kn',
+      autoDisplay: false
+    }, 'google_translate_element');
+  }
+
+  function loadGoogleTranslate() {
+    if (window.google && google.translate) {
+      googleTranslateElementInit();
+      return;
+    }
+    var script = document.createElement('script');
+    script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+    document.head.appendChild(script);
+  }
+
+  // ==================== Initialize ====================
+  document.addEventListener('DOMContentLoaded', function() {
+    loadGoogleTranslate();
+    
+    // Lock body scroll
+    document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
+    
+    const savedLang = localStorage.getItem('selectedLanguage') || 'en';
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+      btn.classList.remove('active');
+      if ((savedLang === 'en' && btn.classList.contains('english')) || 
+          (savedLang === 'kn' && btn.classList.contains('kannada'))) {
+        btn.classList.add('active');
       }
     });
     
-    // Close sidebar when clicking on overlay
-    overlay.addEventListener('click', function() {
-      sidebar.classList.remove('active');
-      overlay.classList.remove('active');
-      const icon = menuToggle.querySelector('i');
-      icon.classList.remove('fa-times');
-      icon.classList.add('fa-bars');
-    });
-    
-    // Close sidebar when clicking on a nav link (mobile)
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach(link => {
-      link.addEventListener('click', function() {
-        if (window.innerWidth <= 768) {
-          sidebar.classList.remove('active');
-          overlay.classList.remove('active');
-          const icon = menuToggle.querySelector('i');
-          icon.classList.remove('fa-times');
-          icon.classList.add('fa-bars');
-        }
-      });
-    });
-
-    // Existing functions from your code
-    function toggleSubmenu(event) {
-      event.preventDefault();
-      const submenu = event.target.closest("li").querySelector(".submenu");
-      submenu.style.display = submenu.style.display === "block" ? "none" : "block";
-    }
-
-    const cowSelect = document.getElementById("cowSelect");
-    const doneBtn = document.getElementById("doneBtn");
-    const geoTagBtn = document.getElementById("geoTagBtn");
-    const selectedCowsDiv = document.getElementById("selectedCows");
-    const cowList = document.getElementById("cowList");
-    const selectionCount = document.getElementById("selectionCount");
-
-    // Update selection count when selection changes
-    cowSelect.addEventListener("change", function() {
-      const selectedCount = [...cowSelect.selectedOptions].length;
-      selectionCount.textContent = selectedCount;
-      
-      if (selectedCount > 0) {
-        selectionCount.style.display = "inline-flex";
-      } else {
-        selectionCount.style.display = "none";
-      }
-    });
-
-    doneBtn.addEventListener("click", function() {
-      cowList.innerHTML = "";
-      const selectedOptions = [...cowSelect.selectedOptions].map(opt => ({
-        id: opt.value,
-        text: opt.text
-      }));
-      
-      if (selectedOptions.length > 0) {
-        selectedCowsDiv.style.display = "block";
-        
-        selectedOptions.forEach(cow => {
-          let div = document.createElement("div");
-          div.className = "cow-item";
-          div.innerHTML = `
-            <i class="fas fa-cow cow-icon"></i>
-            <span>${cow.text}</span>
-          `;
-          cowList.appendChild(div);
-        });
-        
-        geoTagBtn.style.display = "inline-block";
-      } else {
-        selectedCowsDiv.style.display = "none";
-        geoTagBtn.style.display = "none";
-        alert("Please select at least one cow.");
-      }
-    });
-
-    geoTagBtn.addEventListener("click", function() {
-      const selectedOptions = [...cowSelect.selectedOptions].map(opt => opt.value);
-
-      if (selectedOptions.length === 0) {
-        alert("Please select at least one cow.");
-        return;
-      }
-
-      // Redirect to geo tag map page for the first selected cow
-      const cowId = selectedOptions[0];
-      window.location.href = "/geo-tag/" + cowId;
-    });
-
-    // Initialize selection count
-    const initialSelection = [...cowSelect.selectedOptions].length;
-    selectionCount.textContent = initialSelection;
-    if (initialSelection > 0) {
-      selectionCount.style.display = "inline-flex";
-    }
-  </script>
-  
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-  <script>
-    // Language translation functions
-    function googleTranslateElementInit() {
-        if (typeof google !== 'undefined' && google.translate) {
-            new google.translate.TranslateElement({
-                pageLanguage: 'en',
-                includedLanguages: 'en,kn',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                autoDisplay: false
-            }, 'google_translate_element');
-            
-            const savedLang = localStorage.getItem('selectedLanguage');
-            if(savedLang === 'kn') {
-                setTimeout(() => applyKannada(), 1000);
-            }
-        }
-    }
-
-    window.onload = function() {
-        if (typeof google !== 'undefined' && google.translate) {
-            googleTranslateElementInit();
-        } else {
-            var script = document.createElement('script');
-            script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-            document.body.appendChild(script);
-        }
-        
-        const savedLang = localStorage.getItem('selectedLanguage');
-        if(savedLang === 'kn') {
-            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector('.lang-btn.kannada').classList.add('active');
-            setTimeout(() => applyKannada(), 2000);
-        }
-    };
-
-    function applyKannada() {
-        var iframe = document.querySelector('.goog-te-menu-frame');
-        if(iframe && iframe.contentDocument) {
-            var select = iframe.contentDocument.querySelector('.goog-te-menu2-select');
-            if(select) {
-                select.value = 'kn';
-                select.dispatchEvent(new Event('change'));
-                return true;
-            }
-        }
-        
-        var elements = document.querySelectorAll('.goog-te-menu2-select');
-        if(elements.length > 0) {
-            elements[0].value = 'kn';
-            elements[0].dispatchEvent(new Event('change'));
-            return true;
-        }
-        
-        return false;
-    }
-
-    function setLanguage(lang) {
-        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-        localStorage.setItem('selectedLanguage', lang);
-        
-        if(lang === 'kn') {
-            window.location.hash = '#googtrans(kn)';
-            if(applyKannada()) {
-                console.log('ಭಾಷೆ ಕನ್ನಡಕ್ಕೆ ಬದಲಾಯಿಸಲಾಗಿದೆ');
-            } else {
-                setTimeout(() => location.reload(), 500);
-            }
-        } else {
-            window.location.hash = '#googtrans(en)';
-            var iframe = document.querySelector('.goog-te-menu-frame');
-            if(iframe && iframe.contentDocument) {
-                var select = iframe.contentDocument.querySelector('.goog-te-menu2-select');
-                if(select) {
-                    select.value = 'en';
-                    select.dispatchEvent(new Event('change'));
-                    console.log('Language changed to English');
-                    return;
-                }
-            }
-            setTimeout(() => location.reload(), 500);
-        }
-    }
+    setTimeout(() => applyLanguage(savedLang), 500);
+  });
 </script>
 </body>
 </html>

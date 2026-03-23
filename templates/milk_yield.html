@@ -2,838 +2,377 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#043c07">
+    
     <title>Milk Yield - Kamadhenu</title>
+    
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
         :root {
             --primary: #043c07;
+            --primary-light: #1b5e20;
             --secondary: #ffc107;
-            --light: #f8f9fa;
-            --dark: #343a40;
-            --light-green: #e8f5e9;
+            --gray: #6c757d;
+            --border: #e9ecef;
+            --safe-area-top: env(safe-area-inset-top, 0px);
+            --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+            --header-height: 56px;
+            --bottom-nav-height: 60px;
         }
-        
-        body {
-            background-color: #f5f9f5;
-            font-family: 'Nunito', sans-serif;
-            overflow-x: hidden;
-        }
-        
-        .dashboard-container {
-            width: 100%;
+
+        * {
             margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        .sidebar {
-            background: linear-gradient(to bottom, var(--primary), #1b5e20);
-            color: white;
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f5f9f5;
+            color: #343a40;
+            overflow: hidden;
             height: 100vh;
-            position: fixed;
-            width: 260px;
-            padding-top: 20px;
-            box-shadow: 3px 0 10px rgba(0,0,0,0.1);
-            overflow-y: auto;
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-        
-        .main-content {
-            margin-left: 260px;
-            padding: 20px;
-            transition: all 0.3s ease;
-            width: calc(100% - 260px);
-        }
-        
-        .header {
-            background-color: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .welcome-text {
-            color: var(--primary);
-            font-weight: 600;
-        }
-        
-        .card {
-            border: none;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            transition: transform 0.3s;
-            margin-bottom: 20px;
-            height: 100%;
-        }
-        
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
-        }
-        
-        .cow-card {
-            padding: 15px;
-        }
-        
-        .cow-image {
-            height: 120px;
-            object-fit: cover;
-            border-radius: 10px;
-            width: 100%;
-        }
-        
-        .milk-input {
-            border: 2px solid #e9ecef;
-            border-radius: 8px;
-            padding: 8px 12px;
-            font-size: 0.9rem;
-        }
-        
-        .milk-input:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 0.2rem rgba(4, 60, 7, 0.25);
-        }
-        
-        .btn-success {
-            background: linear-gradient(to right, var(--primary), #1b5e20);
-            border: none;
-            border-radius: 8px;
-            padding: 10px 15px;
-            font-weight: 600;
-            transition: all 0.3s;
-        }
-        
-        .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(4, 60, 7, 0.3);
-        }
-        
-        .logo {
-            text-align: center;
-            padding: 20px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            margin-bottom: 30px;
-        }
-        
-        .nav-item {
-            margin: 10px 0;
-        }
-        
-        .nav-link {
-            color: rgba(255,255,255,0.8);
-            padding: 8px 16px;
-            border-radius: 5px;
-            margin: 5px 15px;
-            transition: all 0.3s;
-        }
-        
-        .nav-link:hover, .nav-link.active {
-            background-color: rgba(255,255,255,0.1);
-            color: white;
-        }
-        
-        .nav-link i {
-            margin-right: 10px;
-            width: 20px;
-            text-align: center;
-        }
-        
-        .stats-card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            text-align: center;
-            margin-bottom: 20px;
-        }
-        
-        .stats-number {
-            font-size: 2rem;
-            font-weight: bold;
-            color: var(--primary);
-            margin-bottom: 5px;
-        }
-        
-        .stats-label {
-            color: #6c757d;
-            font-size: 0.9rem;
-        }
-        
-        .cow-background {
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path fill="%232e7d32" fill-opacity="0.05" d="M50,10A40,40 0 1,1 50,90A40,40 0 1,1 50,10z M30,30 Q50,15 70,30 Q65,50 70,70 Q50,85 30,70 Q35,50 30,30 z"></path></svg>');
-            background-repeat: repeat;
-            background-size: 200px;
-        }
-        
-        .history-table {
-            max-height: 400px;
-            overflow-y: auto;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-        }
-        
-        .history-table thead th {
-            background: linear-gradient(to right, var(--primary), #1b5e20);
-            color: white;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-        }
-        
-        .filter-section {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            margin-bottom: 20px;
-        }
-        
-        /* Submenu styles */
-        .submenu {
-            list-style: none;
-            padding-left: 30px;
-            display: none;
-        }
-        
-        .submenu .nav-link {
-            font-size: 14px;
-            padding: 6px 14px;
-            color: rgba(255,255,255,0.7);
-        }
-        
-        .submenu .nav-link:hover {
-            color: #fff;
-        }
-        
-        .cow-id-badge {
-            background-color: var(--primary);
-            color: white;
-            padding: 4px 8px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 600;
-        }
-        
-        .milk-time-label {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: #495057;
-            margin-bottom: 5px;
-        }
-        
-        /* Mobile menu toggle button */
-        .menu-toggle {
-            display: none;
-            position: fixed;
-            top: 15px;
-            left: 15px;
-            z-index: 1100;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            width: 40px;
-            height: 40px;
-            font-size: 20px;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            padding-top: var(--header-height);
+            padding-bottom: calc(var(--bottom-nav-height) + var(--safe-area-bottom));
         }
 
-        /* Overlay for mobile when sidebar is open */
-        .overlay {
-            display: none;
+        /* App Header */
+        .app-header {
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 999;
-        }
-        
-        .overlay.active {
-            display: block;
-        }
-        
-        .milk-yield-badge {
-            background: linear-gradient(45deg, #28a745, #20c997);
+            right: 0;
+            height: var(--header-height);
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
             color: white;
-            padding: 4px 8px;
-            border-radius: 15px;
-            font-size: 0.75rem;
-            font-weight: 600;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px;
+            padding-top: var(--safe-area-top);
+            z-index: 1000;
         }
+        .menu-btn { background: none; border: none; color: white; font-size: 1.4rem; cursor: pointer; width: 36px; height: 36px; }
+        .header-title { font-size: 1rem; font-weight: 600; }
 
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: var(--bottom-nav-height);
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding-bottom: var(--safe-area-bottom);
+            border-top: 1px solid var(--border);
+            z-index: 1000;
+        }
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 0.55rem;
+            padding: 5px 0;
+        }
+        .nav-item i { font-size: 1.1rem; margin-bottom: 1px; }
+        .nav-item.active { color: var(--primary); }
+
+        /* Main Content */
+        .app-content {
+            padding: 8px 12px;
+            height: calc(100vh - var(--header-height) - var(--bottom-nav-height));
+            overflow-y: auto;
+        }
+        .app-content::-webkit-scrollbar { display: none; }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 10px;
+            border: 1px solid var(--border);
+        }
+        .stat-label { font-size: 0.6rem; color: var(--gray); margin-bottom: 2px; }
+        .stat-value { font-size: 1.2rem; font-weight: 700; color: var(--primary); line-height: 1.2; }
+        .stat-unit { font-size: 0.7rem; color: var(--gray); }
+
+        /* Section Header */
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+        .section-header h3 { font-size: 0.8rem; font-weight: 700; color: var(--primary); margin: 0; display: flex; align-items: center; gap: 4px; }
+
+        /* Cow Cards - 2 columns */
+        .cows-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            margin-bottom: 12px;
+        }
         .cow-card {
-            border-left: 4px solid #28a745;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+        .cow-image { height: 90px; width: 100%; object-fit: cover; }
+        .cow-image-placeholder { height: 90px; background: linear-gradient(135deg, #e8f5e9, #c8e6c9); display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 1.8rem; }
+        .cow-info { padding: 8px; }
+        .cow-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
+        .cow-breed { font-weight: 700; color: var(--primary); font-size: 0.7rem; }
+        .cow-badge { background: rgba(4,60,7,0.1); color: var(--primary); padding: 2px 6px; border-radius: 12px; font-size: 0.55rem; }
+        .cow-id { font-size: 0.55rem; color: var(--gray); margin-bottom: 6px; }
+
+        /* Milk Input Form */
+        .milk-form { margin-top: 6px; }
+        .input-group { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+        .input-icon { width: 28px; height: 28px; border-radius: 14px; background: rgba(4,60,7,0.1); display: flex; align-items: center; justify-content: center; color: var(--primary); font-size: 0.7rem; }
+        .input-field { flex: 1; padding: 6px 8px; border: 1px solid var(--border); border-radius: 16px; font-size: 0.65rem; background: white; }
+        .input-field:focus { border-color: var(--secondary); outline: none; }
+        .save-btn {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white; border: none; border-radius: 20px; padding: 6px;
+            font-weight: 600; font-size: 0.6rem; width: 100%;
+            display: flex; align-items: center; justify-content: center; gap: 4px;
+            cursor: pointer;
         }
 
-        .no-milk-animal {
-            opacity: 0.6;
-            background-color: #f8f9fa;
+        /* History Card */
+        .history-card { background: white; border-radius: 12px; padding: 10px; border: 1px solid var(--border); }
+        .filter-bar { background: #f8f9fa; border-radius: 12px; padding: 8px; margin-bottom: 10px; }
+        .date-filter { display: flex; gap: 6px; align-items: center; }
+        .date-input { flex: 1; padding: 6px 10px; border: 1px solid var(--border); border-radius: 16px; font-size: 0.65rem; }
+        .filter-btn { background: var(--primary); color: white; border: none; border-radius: 16px; padding: 6px 12px; font-size: 0.6rem; font-weight: 600; }
+        .clear-btn { background: var(--gray); color: white; border: none; border-radius: 16px; padding: 6px 12px; font-size: 0.6rem; font-weight: 600; text-decoration: none; }
+        .total-badge { background: var(--info); color: white; border-radius: 12px; padding: 4px 8px; margin-bottom: 8px; font-size: 0.6rem; display: inline-block; }
+
+        /* History List */
+        .history-list { display: flex; flex-direction: column; gap: 6px; max-height: 180px; overflow-y: auto; }
+        .history-item {
+            background: #f8f9fa; border-radius: 10px; padding: 8px;
+            display: flex; align-items: center; justify-content: space-between;
+            border-left: 3px solid var(--primary);
         }
-        
-        /* Mobile responsive styles */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                width: 70%;
-                max-width: 250px;
-            }
-            
-            .sidebar.active {
-                transform: translateX(0);
-            }
-            
-            .main-content {
-                margin-left: 0;
-                width: 100%;
-            }
-            
-            .menu-toggle {
-                display: block;
-            }
-            
-            .header {
-                padding: 15px 15px 15px 50px;
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-            
-            .stats-card {
-                margin-bottom: 15px;
-            }
-        }
+        .history-date { font-weight: 600; color: var(--primary); font-size: 0.6rem; margin-bottom: 2px; }
+        .history-cow { font-size: 0.55rem; color: #343a40; }
+        .history-values { text-align: right; }
+        .history-morning, .history-evening { font-size: 0.55rem; color: var(--gray); }
+        .history-total { font-weight: 700; color: var(--primary); font-size: 0.7rem; }
 
-        @media (max-width: 576px) {
-            .main-content {
-                padding: 10px;
-            }
-            
-            .card {
-                padding: 15px;
-            }
-            
-            .logo h2 {
-                font-size: 1.5rem;
-            }
-            
-            .stats-number {
-                font-size: 1.7rem;
-            }
-        }
-          /* Language Selector Styles - BOTTOM */
-    .language-selector {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 10000;
-        background: white;
-        padding: 10px 15px;
-        border-radius: 25px;
-        box-shadow: 0 -4px 15px rgba(0,0,0,0.2);
-        display: flex;
-        gap: 10px;
-        border: 2px solid #27ae60;
-    }
+        /* Empty State */
+        .empty-state { text-align: center; padding: 20px; }
+        .empty-state i { font-size: 2rem; color: #dee2e6; margin-bottom: 8px; }
+        .empty-state h4 { font-size: 0.8rem; color: var(--gray); margin-bottom: 4px; }
+        .empty-state p { font-size: 0.6rem; margin-bottom: 10px; }
+        .empty-state .btn { background: var(--primary); color: white; border-radius: 20px; padding: 6px 12px; font-size: 0.6rem; text-decoration: none; }
 
-    .lang-btn {
-        padding: 8px 20px;
-        border: none;
-        border-radius: 20px;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 14px;
-        transition: all 0.3s ease;
+    /* Drawer */
+    .drawer-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 2000;
+      display: none;
     }
+    .drawer-overlay.active { display: block; }
+    .drawer {
+      position: fixed;
+      top: 0;
+      left: -260px;
+      width: 260px;
+      height: 100vh;
+      background: white;
+      z-index: 2001;
+      transition: left 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .drawer.active { left: 0; }
+    .drawer-header {
+      padding: 16px;
+      padding-top: calc(16px + var(--safe-area-top));
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+    }
+    .drawer-header h3 { font-size: 1.1rem; font-weight: 700; }
+    .drawer-header p { font-size: 0.65rem; opacity: 0.9; }
+    .drawer-content { flex: 1; overflow-y: auto; padding: 8px 0; }
+    .drawer-section { margin-bottom: 12px; }
+    .drawer-section-title {
+      padding: 5px 16px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+    .drawer-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      color: var(--dark);
+      text-decoration: none;
+    }
+    .drawer-item i { width: 20px; color: var(--primary); font-size: 0.9rem; }
+    .drawer-item span { font-size: 0.8rem; font-weight: 500; }
+        .language-submenu { background: #f8f9fa; margin-top: 4px; border-radius: 6px; }
+        .lang-option { display: flex; align-items: center; gap: 10px; padding: 6px 12px 6px 32px; text-decoration: none; font-size: 0.65rem; }
 
-    .lang-btn.english {
-        background: #007bff;
-        color: white;
-    }
-
-    .lang-btn.kannada {
-        background: #ff9800;
-        color: white;
-    }
-
-    .lang-btn.active {
-        transform: scale(1.05);
-        box-shadow: 0 0 0 2px white, 0 0 0 4px currentColor;
-    }
-
-    /* Hide Google banner */
-    .goog-te-banner-frame { display: none !important; }
-    body { top: 0 !important; }
-
-    /* Mobile responsive */
-    @media (max-width: 768px) {
-        .language-selector {
-            bottom: 10px;
-            right: 10px;
-            padding: 6px 10px;
-        }
-        
-        .lang-btn {
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-    }
-    /* Completely hide ALL Google Translate elements */
-    .goog-te-banner-frame,
-    .goog-te-banner,
-    .goog-te-banner-wrapper,
-    .skiptranslate,
-    #goog-gt-tt,
-    .goog-te-balloon-frame,
-    .goog-tooltip,
-    .goog-tooltip:hover,
-    .goog-text-highlight {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        height: 0 !important;
-        width: 0 !important;
-        position: absolute !important;
-    }
-    
-    /* Prevent body shift */
-    body {
-        top: 0px !important;
-        position: static !important;
-    }
-    
-    /* Hide the translation menu if it appears */
-    .goog-te-menu-frame {
-        display: none !important;
-    }
+        .goog-te-banner-frame, .goog-te-banner, .skiptranslate, #google_translate_element { display: none !important; }
+        body { top: 0 !important; }
     </style>
 </head>
-<body class="cow-background">
-    <!-- Mobile menu toggle -->
-    <button class="menu-toggle" id="menuToggle">
-        <i class="fas fa-bars"></i>
-    </button>
-    
-    <!-- Overlay for mobile -->
-    <div class="overlay" id="overlay"></div>
-    
-    <div class="dashboard-container">
-        <!-- Sidebar -->
-        <div class="sidebar" id="sidebar">
-            <div class="logo">
-                <h2><i class="fas fa-cow"></i> Kamadhenu</h2>
-                <p class="mb-0">Cow Management System</p>
+<body>
+        <input type="hidden" id="currentLang" value="{{ current_lang|default('en') }}">
+
+    <!-- Drawer -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+    <div class="drawer" id="drawer">
+        <div class="drawer-header"><h3>Kamadhenu</h3><p>Smart Farm Management</p></div>
+        <div class="drawer-content">
+            <div class="drawer-section"><div class="drawer-section-title">Main Menu</div>
+                <a href="/dashboard" class="drawer-item"><i class="fas fa-home"></i><span>Dashboard</span></a>
+                <a href="/add_cow" class="drawer-item"><i class="fas fa-plus-circle"></i><span>Add New Cow</span></a>
+                <a href="/cows" class="drawer-item"><i class="fas fa-list"></i><span>View My Cows</span></a>
+                <a href="/find_cow" class="drawer-item"><i class="fas fa-search"></i><span>Find Cow</span></a>
             </div>
-            
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link" href="/dashboard">
-                        <i class="fas fa-tachometer-alt"></i> Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/add_cow">
-                        <i class="fas fa-plus-circle"></i> Add New Cow
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/cows">
-                        <i class="fas fa-list"></i> View My Cows
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/find_cow">
-                        <i class="fas fa-search"></i> Find Cow
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="/milk_yield">
-                        <i class="fas fa-tint"></i> Milk Yield
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/disease_prediction">
-                        <i class="fas fa-stethoscope"></i> Disease Detection
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/book_appointment">
-                        <i class="fas fa-syringe"></i> Book Appointment
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('farmer_treatments') }}">
-                        <i class="fas fa-syringe"></i> Treatment History
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('add_geotag') }}">
-                        <i class="fas fa-map-marker-alt"></i> Add Geo Tag
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('analytics') }}">
-                        <i class="fas fa-chart-bar"></i> Analytics
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#" onclick="toggleSubmenu(event)">
-                        <i class="fas fa-chart-line"></i> Market Place <i class="fas fa-caret-down float-end"></i>
-                    </a>
-                    <ul class="submenu">
-                        <li><a class="nav-link" href="/buy_cow"><i class="fas fa-shopping-cart"></i> Buy Cows</a></li>
-                        <li><a class="nav-link" href="/sell_cow"><i class="fas fa-hand-holding-usd"></i> Sell Cows</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/sold_cows">
-                        <i class="fas fa-check-circle"></i> Sale History
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <!-- Main Content -->
-        <div class="main-content" id="mainContent">
-            <!-- Header -->
-            <div class="header">
-                <div>
-                    <h2 class="welcome-text">Milk Yield Management</h2>
-                    <p class="mb-0 text-muted">Track and manage daily milk production</p>
-                </div>
-                <a href="{{ url_for('farmer_logout') }}" class="btn btn-danger">
-                    <i class="fas fa-sign-out-alt me-1"></i> Logout
-                </a>
+            <div class="drawer-section"><div class="drawer-section-title">Farm Operations</div>
+                <a href="/milk_yield" class="drawer-item"><i class="fas fa-tint"></i><span>Milk Yield</span></a>
+                <a href="/disease_prediction" class="drawer-item"><i class="fas fa-stethoscope"></i><span>Disease Detection</span></a>
+                <a href="/book_appointment" class="drawer-item"><i class="fas fa-syringe"></i><span>Book Appointment</span></a>
+                <a href="/farmer/treatments" class="drawer-item"><i class="fas fa-history"></i><span>Treatment History</span></a>
+                <a href="/add_geotag" class="drawer-item"><i class="fas fa-map-marker-alt"></i><span>Add Geo Tag</span></a>
+                <a href="/analytics" class="drawer-item"><i class="fas fa-chart-bar"></i><span>Analytics</span></a>
             </div>
-
-            <!-- Stats Overview -->
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="stats-card">
-                        <div class="stats-number">{{ daily_total }} L</div>
-                        <div class="stats-label">Today's Total Yield</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stats-card">
-                        <div class="stats-number">{{ monthly_total }} L</div>
-                        <div class="stats-label">Monthly Total Yield</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stats-card">
-                        <div class="stats-number">{{ cows|length }}</div>
-                        <div class="stats-label">Total Cows</div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stats-card">
-                        <div class="stats-number">Show Visuals</div>
-                        <div class="stats-label">Analytics</div>
-                    </div>
-                </div>
+            <div class="drawer-section"><div class="drawer-section-title">Marketplace</div>
+                <a href="/buy_cow" class="drawer-item"><i class="fas fa-shopping-cart"></i><span>Buy Cows</span></a>
+                <a href="/sell_cow" class="drawer-item"><i class="fas fa-hand-holding-usd"></i><span>Sell Cows</span></a>
+                <a href="/sold_cows" class="drawer-item"><i class="fas fa-check-circle"></i><span>Sale History</span></a>
             </div>
-
-            <!-- Daily Entry Section -->
-            <div class="card">
-                <div class="card-header bg-white">
-                    <h4 class="mb-0"><i class="fas fa-pen-alt me-2 text-success"></i>Daily Milk Entry</h4>
-                </div>
-                <div class="card-body">
-                    <div class="row">
-                        {% for cow in cows %}
-                        <div class="col-xl-3 col-lg-4 col-md-6 mb-4">
-                            <div class="card cow-card">
-                                {% if cow.photo %}
-                                    <img src="{{ url_for('static', filename='uploads/cow/' ~ cow.photo) }}" 
-                                         class="cow-image mb-3" alt="Cow Photo">
-                                {% else %}
-                                    <div class="cow-image mb-3 bg-light d-flex align-items-center justify-content-center">
-                                        <i class="fas fa-cow text-muted" style="font-size: 3rem;"></i>
-                                    </div>
-                                {% endif %}
-
-                                <h6 class="mb-2">{{ cow.breed }}</h6>
-                                <div class="d-flex justify-content-between align-items-center mb-2">
-                                    <span class="cow-id-badge">ID: {{ cow.cow_id }}</span>
-                                    <span class="badge bg-success">
-                                        <i class="fas fa-tint me-1"></i>
-                                        {{ cow.cattle_type|title }}
-                                    </span>
-                                </div>
-                                
-                                <form method="POST">
-                                    <input type="hidden" name="cow_id" value="{{ cow.cow_id }}">
-                                    
-                                    <div class="mb-3">
-                                        <div class="milk-time-label">
-                                            <i class="fas fa-sun me-1 text-warning"></i> Morning
-                                        </div>
-                                        <input type="number" step="0.1" name="morning" class="form-control milk-input" placeholder="0 L" value="0" min="0">
-                                    </div>
-                                    
-                                    <div class="mb-3">
-                                        <div class="milk-time-label">
-                                            <i class="fas fa-moon me-1 text-secondary"></i> Evening
-                                        </div>
-                                        <input type="number" step="0.1" name="evening" class="form-control milk-input" placeholder="0 L" value="0" min="0">
-                                    </div>
-
-                                    <button type="submit" class="btn btn-success w-100">
-                                        <i class="fas fa-save me-1"></i> Save Entry
-                                    </button>
-                                </form>
-                            </div>
-                        </div>
-                        {% else %}
-                        <div class="col-12">
-                            <div class="text-center py-4">
-                                <i class="fas fa-cow text-muted" style="font-size: 3rem;"></i>
-                                <h5 class="mt-3 text-muted">No milk-yielding cattle found</h5>
-                                <p class="text-muted">Add cows or buffaloes to track milk production</p>
-                                <a href="{{ url_for('add_cow') }}" class="btn btn-primary">
-                                    <i class="fas fa-plus me-1"></i> Add Milk-Yielding Cattle
-                                </a>
-                            </div>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
+            <div class="drawer-section"><div class="drawer-section-title">Preferences</div>
+                <div class="drawer-item" onclick="toggleLanguageMenu()" style="cursor:pointer;"><i class="fas fa-globe"></i><span>Language</span><i class="fas fa-chevron-down" id="langArrow" style="font-size:0.6rem;"></i></div>
+                <div id="languageMenu" style="display:none;"><div class="language-submenu">
+                    <a href="#" class="lang-option" onclick="setLanguageFromDrawer('en'); return false;"><i class="fas fa-check-circle" id="enCheck" style="opacity:0;"></i><span>English</span></a>
+                    <a href="#" class="lang-option" onclick="setLanguageFromDrawer('kn'); return false;"><i class="fas fa-check-circle" id="knCheck" style="opacity:0;"></i><span>ಕನ್ನಡ</span></a>
+                </div></div>
             </div>
-
-            <!-- History Section -->
-            <div class="card">
-                <div class="card-header bg-white">
-                    <h4 class="mb-0"><i class="fas fa-history me-2 text-primary"></i>Milk Yield History</h4>
-                </div>
-                <div class="card-body">
-                    <!-- Filter Section -->
-                    <div class="filter-section">
-                        <form method="get" class="row align-items-end">
-                            <div class="col-md-4">
-                                <label class="form-label fw-bold">Filter by Date</label>
-                                <input type="date" name="date" value="{{ selected_date or '' }}" 
-                                       class="form-control" max="{{ current_date }}">
-                            </div>
-                            <div class="col-md-4">
-                                <button type="submit" class="btn btn-primary w-100">
-                                    <i class="fas fa-filter me-1"></i> Apply Filter
-                                </button>
-                            </div>
-                            <div class="col-md-4">
-                                {% if selected_date %}
-                                    <a href="{{ url_for('milk_yield') }}" class="btn btn-secondary w-100">
-                                        <i class="fas fa-times me-1"></i> Clear Filter
-                                    </a>
-                                {% endif %}
-                            </div>
-                        </form>
-                    </div>
-
-                    {% if daily_total is not none %}
-                    <div class="alert alert-info">
-                        <i class="fas fa-info-circle me-2"></i>
-                        <b>Total for {{ selected_date }}:</b> {{ daily_total }} L
-                    </div>
-                    {% endif %}
-
-                    <div class="history-table">
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th>Date</th>
-                                    <th>Cow</th>
-                                    <th>Morning</th>
-                                    <th>Evening</th>
-                                    <th>Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                {% if history %}
-                                    {% for row in history %}
-                                    <tr>
-                                        <td>{{ row.date }}</td>
-                                        <td>{{ row.cow_name }}</td>
-                                        <td>{{ row.morning }} L</td>
-                                        <td>{{ row.evening }} L</td>
-                                        <td><b>{{ row.total }} L</b></td>
-                                    </tr>
-                                    {% endfor %}
-                                {% else %}
-                                    <tr>
-                                        <td colspan="5" class="text-center text-muted py-4">
-                                            <i class="fas fa-inbox me-2" style="font-size: 2rem;"></i>
-                                            <p class="mt-2 mb-0">No milk yield records found</p>
-                                        </td>
-                                    </tr>
-                                {% endif %}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+            <div class="drawer-section"><div class="drawer-section-title">Account</div>
+                <a href="#" class="drawer-item" onclick="closeDrawer(); return false;"><i class="fas fa-user-circle"></i><span>Profile</span></a>
+                <a href="{{ url_for('farmer_logout') }}" class="drawer-item"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
             </div>
         </div>
     </div>
 
+    <!-- App Header -->
+    <header class="app-header">
+        <button class="menu-btn" onclick="toggleDrawer()"><i class="fas fa-bars"></i></button>
+        <span class="header-title">Milk Yield</span>
+        <div style="width: 36px;"></div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="app-content">
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-label">Today's Total</div><div class="stat-value">{{ daily_total }}<span class="stat-unit">L</span></div></div>
+            <div class="stat-card"><div class="stat-label">Monthly Total</div><div class="stat-value">{{ monthly_total }}<span class="stat-unit">L</span></div></div>
+            <div class="stat-card"><div class="stat-label">Active Cows</div><div class="stat-value">{{ cows|length }}</div></div>
+            <div class="stat-card"><div class="stat-label">Avg/Cow</div><div class="stat-value">{% if cows|length > 0 %}{{ "%.1f"|format(daily_total / cows|length) }}{% else %}0{% endif %}<span class="stat-unit">L</span></div></div>
+        </div>
+
+        <div class="section-header"><h3><i class="fas fa-pen-alt"></i> Today's Entry</h3></div>
+
+        <!-- Cow Cards - 2 columns -->
+        <div class="cows-grid">
+            {% for cow in cows %}
+            <div class="cow-card">
+                {% if cow.photo %}<img src="{{ url_for('static', filename='uploads/cow/' ~ cow.photo) }}" class="cow-image">
+                {% else %}<div class="cow-image-placeholder"><i class="fas fa-cow"></i></div>{% endif %}
+                <div class="cow-info">
+                    <div class="cow-header"><span class="cow-breed">{{ cow.breed }}</span><span class="cow-badge"><i class="fas fa-tint"></i> {{ cow.cattle_type|title }}</span></div>
+                    <div class="cow-id">ID: {{ cow.cow_id[:8] }}</div>
+                    <form method="POST" class="milk-form">
+                        <input type="hidden" name="cow_id" value="{{ cow.cow_id }}">
+                        <div class="input-group"><div class="input-icon"><i class="fas fa-sun"></i></div><input type="number" step="0.1" name="morning" class="input-field" placeholder="Morning" value="0" min="0"></div>
+                        <div class="input-group"><div class="input-icon"><i class="fas fa-moon"></i></div><input type="number" step="0.1" name="evening" class="input-field" placeholder="Evening" value="0" min="0"></div>
+                        <button type="submit" class="save-btn"><i class="fas fa-save"></i> Save</button>
+                    </form>
+                </div>
+            </div>
+            {% else %}
+            <div class="empty-state" style="grid-column:1/-1"><i class="fas fa-cow"></i><h4>No milk-yielding cattle</h4><p>Add cows or buffaloes</p><a href="/add_cow" class="btn">Add Cattle</a></div>
+            {% endfor %}
+        </div>
+
+        <!-- History -->
+        <div class="section-header"><h3><i class="fas fa-history"></i> History</h3></div>
+        <div class="history-card">
+            <div class="filter-bar">
+                <form method="get" class="date-filter">
+                    <input type="date" name="date" value="{{ selected_date or '' }}" class="date-input" max="{{ current_date }}">
+                    <button type="submit" class="filter-btn"><i class="fas fa-filter"></i> Filter</button>
+                    {% if selected_date %}<a href="{{ url_for('milk_yield') }}" class="clear-btn"><i class="fas fa-times"></i> Clear</a>{% endif %}
+                </form>
+            </div>
+            {% if selected_date %}<div class="total-badge"><i class="fas fa-info-circle"></i> Total: {{ daily_total }}L</div>{% endif %}
+            <div class="history-list">
+                {% if history %}{% for row in history %}
+                <div class="history-item">
+                    <div><div class="history-date">{{ row.date }}</div><div class="history-cow">{{ row.cow_name[:15] }}</div></div>
+                    <div class="history-values"><div class="history-morning">🌅 {{ row.morning }}L</div><div class="history-evening">🌙 {{ row.evening }}L</div><div class="history-total">{{ row.total }}L</div></div>
+                </div>
+                {% endfor %}{% else %}<div class="empty-state"><i class="fas fa-inbox"></i><p>No records found</p></div>{% endif %}
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <nav class="bottom-nav">
+        <a href="/dashboard" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+        <a href="/cows" class="nav-item"><i class="fas fa-cow"></i><span>My Cows</span></a>
+        <a href="/add_cow" class="nav-item"><i class="fas fa-plus-circle"></i><span>Add</span></a>
+        <a href="/milk_yield" class="nav-item active"><i class="fas fa-tint"></i><span>Milk</span></a>
+        <a href="/find_cow" class="nav-item"><i class="fas fa-search"></i><span>Find</span></a>
+    </nav>
+
+    <div id="google_translate_element" style="display:none;"></div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script>
-        // Mobile sidebar toggle functionality
-        const menuToggle = document.getElementById('menuToggle');
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('mainContent');
-        const overlay = document.getElementById('overlay');
-        
-        menuToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
-            
-            // Change icon based on sidebar state
-            const icon = menuToggle.querySelector('i');
-            if (sidebar.classList.contains('active')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
-            } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
-            }
-        });
-        
-        // Close sidebar when clicking on overlay
-        overlay.addEventListener('click', function() {
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
-            const icon = menuToggle.querySelector('i');
-            icon.classList.remove('fa-times');
-            icon.classList.add('fa-bars');
-        });
-        
-        // Close sidebar when clicking on a nav link (mobile)
-        const navLinks = document.querySelectorAll('.nav-link');
-        navLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                if (window.innerWidth <= 768) {
-                    sidebar.classList.remove('active');
-                    overlay.classList.remove('active');
-                    const icon = menuToggle.querySelector('i');
-                    icon.classList.remove('fa-times');
-                    icon.classList.add('fa-bars');
-                }
-            });
-        });
-
-        // Existing functions from your code
-        function toggleSubmenu(event) {
-            event.preventDefault();
-            const submenu = event.target.closest("li").querySelector(".submenu");
-            submenu.style.display = submenu.style.display === "block" ? "none" : "block";
-        }
-
-        // Add animation to cards on page load
-        document.addEventListener('DOMContentLoaded', function() {
-            const cards = document.querySelectorAll('.card');
-            cards.forEach((card, index) => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
-                setTimeout(() => {
-                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
-                    card.style.opacity = '1';
-                    card.style.transform = 'translateY(0)';
-                }, index * 100);
-            });
-        });
+        function toggleDrawer() { document.getElementById('drawer').classList.toggle('active'); document.getElementById('drawerOverlay').classList.toggle('active'); }
+        function closeDrawer() { document.getElementById('drawer').classList.remove('active'); document.getElementById('drawerOverlay').classList.remove('active'); document.getElementById('languageMenu').style.display='none'; document.getElementById('langArrow').classList.remove('fa-chevron-up'); document.getElementById('langArrow').classList.add('fa-chevron-down'); }
+        function toggleLanguageMenu() { const m=document.getElementById('languageMenu'),a=document.getElementById('langArrow'); if(m.style.display==='none'){m.style.display='block';a.classList.remove('fa-chevron-down');a.classList.add('fa-chevron-up');}else{m.style.display='none';a.classList.remove('fa-chevron-up');a.classList.add('fa-chevron-down');} }
+        function setLanguageFromDrawer(lang) { document.getElementById('enCheck').style.opacity=lang==='en'?'1':'0'; document.getElementById('knCheck').style.opacity=lang==='kn'?'1':'0'; saveLanguagePreference(lang); applyLanguage(lang); document.getElementById('languageMenu').style.display='none'; document.getElementById('langArrow').classList.remove('fa-chevron-up'); document.getElementById('langArrow').classList.add('fa-chevron-down'); setTimeout(closeDrawer,200); }
+        function saveLanguagePreference(lang) { localStorage.setItem('selectedLanguage',lang); document.cookie=`user_language=${lang}; path=/; max-age=31536000`; }
+        function applyLanguage(lang) { if(lang==='kn'){window.location.hash='#googtrans(kn|en)';}else{window.location.hash='#googtrans(en)';} }
+        function googleTranslateElementInit() { new google.translate.TranslateElement({pageLanguage:'en',includedLanguages:'en,kn',autoDisplay:false},'google_translate_element'); }
+        function loadGoogleTranslate() { if(window.google&&google.translate){googleTranslateElementInit();return;} var s=document.createElement('script');s.src='https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';document.head.appendChild(s); }
+        document.addEventListener('DOMContentLoaded',function(){ loadGoogleTranslate(); const saved=localStorage.getItem('selectedLanguage')||'en'; setTimeout(()=>applyLanguage(saved),1000); });
     </script>
-
-    <script>
-    // Language translation functions
-    function googleTranslateElementInit() {
-        if (typeof google !== 'undefined' && google.translate) {
-            new google.translate.TranslateElement({
-                pageLanguage: 'en',
-                includedLanguages: 'en,kn',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                autoDisplay: false
-            }, 'google_translate_element');
-            
-            const savedLang = localStorage.getItem('selectedLanguage');
-            if(savedLang === 'kn') {
-                setTimeout(() => applyKannada(), 1000);
-            }
-        }
-    }
-
-    window.onload = function() {
-        if (typeof google !== 'undefined' && google.translate) {
-            googleTranslateElementInit();
-        } else {
-            var script = document.createElement('script');
-            script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-            document.body.appendChild(script);
-        }
-        
-        const savedLang = localStorage.getItem('selectedLanguage');
-        if(savedLang === 'kn') {
-            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector('.lang-btn.kannada').classList.add('active');
-            setTimeout(() => applyKannada(), 2000);
-        }
-    };
-
-    function applyKannada() {
-        var iframe = document.querySelector('.goog-te-menu-frame');
-        if(iframe && iframe.contentDocument) {
-            var select = iframe.contentDocument.querySelector('.goog-te-menu2-select');
-            if(select) {
-                select.value = 'kn';
-                select.dispatchEvent(new Event('change'));
-                return true;
-            }
-        }
-        
-        var elements = document.querySelectorAll('.goog-te-menu2-select');
-        if(elements.length > 0) {
-            elements[0].value = 'kn';
-            elements[0].dispatchEvent(new Event('change'));
-            return true;
-        }
-        
-        return false;
-    }
-
-    function setLanguage(lang) {
-        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-        localStorage.setItem('selectedLanguage', lang);
-        
-        if(lang === 'kn') {
-            window.location.hash = '#googtrans(kn)';
-            if(applyKannada()) {
-                console.log('ಭಾಷೆ ಕನ್ನಡಕ್ಕೆ ಬದಲಾಯಿಸಲಾಗಿದೆ');
-            } else {
-                setTimeout(() => location.reload(), 500);
-            }
-        } else {
-            window.location.hash = '#googtrans(en)';
-            var iframe = document.querySelector('.goog-te-menu-frame');
-            if(iframe && iframe.contentDocument) {
-                var select = iframe.contentDocument.querySelector('.goog-te-menu2-select');
-                if(select) {
-                    select.value = 'en';
-                    select.dispatchEvent(new Event('change'));
-                    console.log('Language changed to English');
-                    return;
-                }
-            }
-            setTimeout(() => location.reload(), 500);
-        }
-    }
-</script>
 </body>
 </html>

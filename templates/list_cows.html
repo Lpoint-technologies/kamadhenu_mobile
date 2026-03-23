@@ -2,1373 +2,563 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>My Cows - Kamadhenu</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#043c07">
+  
+  <title>My Cattle - Kamadhenu</title>
+  
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
   <style>
     :root {
       --primary: #043c07;
+      --primary-light: #1b5e20;
       --secondary: #ffc107;
-      --light: #f8f9fa;
-      --dark: #343a40;
-      --light-green: #e8f5e9;
+      --danger: #dc3545;
+      --success: #28a745;
+      --info: #17a2b8;
+      --gray: #6c757d;
+      --border: #e9ecef;
+      --safe-area-top: env(safe-area-inset-top, 0px);
+      --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+      --header-height: 56px;
+      --bottom-nav-height: 60px;
     }
-    
-    body {
-      background-color: #f5f9f5;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      overflow-x: hidden;
-    }
-    
-    .dashboard-container {
-      width: 100%;
+
+    * {
       margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
-    .sidebar {
-      background: linear-gradient(to bottom, var(--primary), #1b5e20);
-      color: white;
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f5f9f5;
+      color: #343a40;
+      overflow: hidden;
       height: 100vh;
-      position: fixed;
-      width: 260px;
-      padding-top: 20px;
-      box-shadow: 3px 0 10px rgba(0,0,0,0.1);
-      overflow-y: auto;
-      z-index: 1000;
-      transition: all 0.3s ease;
-    }
-    
-    .main-content { 
-      margin-left: 250px; 
-      padding: 20px;
-      transition: all 0.3s ease;
-    }
-    
-    .header {
-      background-color: white;
-      padding: 15px 20px;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      margin-bottom: 20px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .welcome-text { 
-      color: var(--primary); 
-      font-weight: 600; 
+      padding-top: var(--header-height);
+      padding-bottom: calc(var(--bottom-nav-height) + var(--safe-area-bottom));
     }
 
-    .cow-card {
-      background: white;
-      border-radius: 10px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      margin-bottom: 20px;
-      padding: 15px;
-      transition: all 0.3s ease;
-      position: relative; /* For QR code positioning */
-    }
-
-    .cow-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.1);
-    }
-
-    .cow-card img.photo {
-      width: 200px;
-      height: 150px;
-      object-fit: cover;
-      border-radius: 8px;
-    }
-
-    .cow-details p { 
-      margin: 5px 0; 
-      font-size: 0.95rem; 
-    }
-
-    .btn-sm { 
-      margin: 3px; 
-    }
-
-    /* QR Code Positioning */
-    .qr-box-absolute {
-      position: absolute;
-      top: 15px;
-      right: 15px;
-      text-align: center;
-      z-index: 10;
-    }
-
-    .qr-box-absolute img {
-      width: 100px;
-      height: 100px;
-      border: 2px solid var(--primary);
-      border-radius: 6px;
-      padding: 2px;
-      background: white;
-    }
-
-    /* Cattle Type Badges */
-    .cattle-type-badge {
-      font-size: 0.8rem;
-      padding: 4px 8px;
-      border-radius: 12px;
-      font-weight: 600;
-    }
-    
-    .badge-cow { background-color: #28a745; color: white; }
-    .badge-buffalo { background-color: #007bff; color: white; }
-    .badge-bull { background-color: #dc3545; color: white; }
-    .badge-male_buffalo { background-color: #6f42c1; color: white; }
-    .badge-calf { background-color: #fd7e14; color: white; }
-
-    .logo {
-      text-align: center;
-      padding: 20px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.2);
-      margin-bottom: 30px;
-    }
-    
-    .nav-item { 
-      margin: 10px 0; 
-    }
-
-    .nav-link {
-      color: rgba(255,255,255,0.8);
-      padding: 8px 16px;
-      border-radius: 5px;
-      margin: 5px 15px;
-      transition: all 0.3s;
-    }
-
-    .nav-link:hover, .nav-link.active { 
-      background-color: rgba(255,255,255,0.1); 
-      color: white; 
-    }
-
-    .nav-link i { 
-      margin-right: 10px; 
-      width: 20px; 
-      text-align: center; 
-    }
-
-    .logout-btn {
-      background-color: var(--secondary);
-      color: var(--dark);
-      border: none;
-      padding: 8px 15px;
-      border-radius: 5px;
-      font-weight: 500;
-      transition: all 0.3s;
-    }
-
-    .logout-btn:hover { 
-      background-color: #e0a800; 
-      transform: translateY(-2px); 
-    }
-
-    .cow-background {
-      background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path fill="%232e7d32" fill-opacity="0.05" d="M50,10A40,40 0 1,1 50,90A40,40 0 1,1 50,10z M30,30 Q50,15 70,30 Q65,50 70,70 Q50,85 30,70 Q35,50 30,30 z"></path></svg>');
-      background-repeat: repeat;
-      background-size: 200px;
-    }
-
-    /* Submenu styles */
-    .submenu {
-      list-style: none;
-      padding-left: 30px;
-      display: none;
-    }
-    
-    .submenu .nav-link {
-      font-size: 14px;
-      padding: 6px 14px;
-      color: rgba(255,255,255,0.7);
-    }
-    
-    .submenu .nav-link:hover {
-      color: #fff;
-    }
-
-    /* Mobile menu toggle button */
-    .menu-toggle {
-      display: none;
-      position: fixed;
-      top: 15px;
-      left: 15px;
-      z-index: 1100;
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 5px;
-      width: 40px;
-      height: 40px;
-      font-size: 20px;
-      cursor: pointer;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
-
-    /* Overlay for mobile when sidebar is open */
-    .overlay {
-      display: none;
+    /* App Header */
+    .app-header {
       position: fixed;
       top: 0;
       left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0,0,0,0.5);
-      z-index: 999;
+      right: 0;
+      height: var(--header-height);
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      padding-top: var(--safe-area-top);
+      z-index: 1000;
     }
-    
-    .overlay.active {
-      display: block;
-    }
+    .menu-btn { background: none; border: none; color: white; font-size: 1.4rem; cursor: pointer; width: 36px; height: 36px; }
+    .header-title { font-size: 1rem; font-weight: 600; }
 
-    /* Filter Section */
-    .filter-section {
+    /* Bottom Navigation */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: var(--bottom-nav-height);
       background: white;
-      padding: 15px;
-      border-radius: 10px;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding-bottom: var(--safe-area-bottom);
+      border-top: 1px solid var(--border);
+      z-index: 1000;
     }
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray);
+      text-decoration: none;
+      font-size: 0.55rem;
+      padding: 5px 0;
+    }
+    .nav-item i { font-size: 1.1rem; margin-bottom: 1px; }
+    .nav-item.active { color: var(--primary); }
 
-    .stats-card {
-      background: linear-gradient(135deg, var(--primary), #1b5e20);
-      color: white;
-      padding: 15px;
-      border-radius: 10px;
+    /* Main Content */
+    .app-content {
+      padding: 8px 12px;
+      height: calc(100vh - var(--header-height) - var(--bottom-nav-height));
+      overflow-y: auto;
+    }
+    .app-content::-webkit-scrollbar { display: none; }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .stat-pill {
+      background: white;
+      border-radius: 20px;
+      padding: 6px;
       text-align: center;
-      margin-bottom: 15px;
-      transition: all 0.3s ease;
+      border: 1px solid var(--border);
     }
+    .stat-pill .number { font-size: 1rem; font-weight: 700; color: var(--primary); }
+    .stat-pill .label { font-size: 0.55rem; color: var(--gray); }
 
-    .stats-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    /* Search Bar */
+    .search-container {
+      background: white;
+      border-radius: 25px;
+      padding: 3px 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 8px;
+      border: 1px solid var(--border);
     }
+    .search-container i { color: var(--gray); font-size: 0.8rem; }
+    .search-container input { flex: 1; border: none; padding: 8px 0; font-size: 0.75rem; background: transparent; }
+    .search-container input:focus { outline: none; }
+    .clear-btn { background: none; border: none; color: var(--gray); font-size: 0.8rem; padding: 4px; }
 
-    .stats-card .number {
-      font-size: 2rem;
-      font-weight: bold;
-      margin-bottom: 5px;
+    /* Filter Chips */
+    .filter-chips {
+      display: flex;
+      gap: 5px;
+      overflow-x: auto;
+      padding-bottom: 5px;
+      margin-bottom: 8px;
     }
-
-    .stats-card .label {
-      font-size: 0.9rem;
-      opacity: 0.9;
+    .chip {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 25px;
+      padding: 4px 10px;
+      font-size: 0.65rem;
+      font-weight: 500;
+      color: var(--gray);
+      white-space: nowrap;
+      cursor: pointer;
     }
+    .chip.active { background: var(--primary); color: white; }
 
-    .search-highlight {
-      background-color: #fff3cd;
-      padding: 2px 4px;
-      border-radius: 3px;
-      font-weight: bold;
+    /* Cattle Cards - Compact */
+    .cattle-list { display: flex; flex-direction: column; gap: 8px; }
+    .cattle-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
     }
-
-    .no-results {
-      text-align: center;
-      padding: 40px;
-      color: #6c757d;
+    .card-header {
+      display: flex;
+      align-items: center;
+      padding: 8px;
+      border-bottom: 1px solid var(--border);
     }
-
-    .no-results i {
-      font-size: 3rem;
-      margin-bottom: 15px;
-      color: #dee2e6;
-    }
-
-    /* Edit Button Styles */
-    .btn-edit {
-      background: linear-gradient(45deg, #17a2b8, #138496);
-      color: white;
-      border: none;
-    }
-
-    .btn-edit:hover {
-      background: linear-gradient(45deg, #138496, #117a8b);
-      color: white;
-      transform: translateY(-1px);
-    }
-
-    /* Modal Styles */
-    .modal-header {
-      background: linear-gradient(to right, var(--primary), #1b5e20);
-      color: white;
-    }
-
-    .modal-footer {
-      background-color: #f8f9fa;
-    }
-
-    .form-section {
-      background: #f8f9fa;
-      padding: 15px;
-      border-radius: 8px;
-      margin-bottom: 20px;
-      border-left: 4px solid var(--primary);
-    }
-
-    .form-section h6 {
-      color: var(--primary);
-      border-bottom: 1px solid #dee2e6;
-      padding-bottom: 8px;
-      margin-bottom: 15px;
-      font-weight: 600;
-    }
-
-    .photo-preview {
-      width: 150px;
-      height: 150px;
+    .cattle-photo {
+      width: 45px;
+      height: 45px;
+      border-radius: 22px;
       object-fit: cover;
-      border-radius: 8px;
-      border: 2px solid #dee2e6;
-      margin-bottom: 10px;
+      margin-right: 10px;
+      border: 2px solid var(--primary);
     }
-
-    .photo-placeholder-small {
-      width: 150px;
-      height: 150px;
-      border-radius: 8px;
-      background: #e9ecef;
+    .cattle-photo-placeholder {
+      width: 45px;
+      height: 45px;
+      border-radius: 22px;
+      background: rgba(4, 60, 7, 0.1);
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #6c757d;
-      margin-bottom: 10px;
+      margin-right: 10px;
+      color: var(--primary);
+      font-size: 1.2rem;
     }
+    .cattle-info { flex: 1; }
+    .cattle-name { font-size: 0.8rem; font-weight: 700; color: var(--primary); margin-bottom: 2px; }
+    .cattle-id { font-size: 0.6rem; color: var(--gray); margin-bottom: 2px; }
+    .type-badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.55rem; font-weight: 600; }
+    .type-cow { background: #e8f5e9; color: var(--success); }
+    .type-buffalo { background: #e3f2fd; color: #1976d2; }
+    .type-bull { background: #ffebee; color: var(--danger); }
+    .type-calf { background: #fff3e0; color: #f57c00; }
 
-    /* Details Grid */
-    .cow-card .details-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px 20px;
+    /* QR Code */
+    .qr-code-small { width: 35px; height: 35px; border: 1px solid var(--border); border-radius: 6px; padding: 2px; }
+
+    /* Card Details - 4 items */
+    .card-details {
+      display: flex;
+      padding: 6px 8px;
+      background: #f8f9fa;
+      gap: 10px;
+      justify-content: space-around;
     }
+    .detail-item { text-align: center; }
+    .detail-label { font-size: 0.5rem; color: var(--gray); margin-bottom: 1px; }
+    .detail-value { font-weight: 600; font-size: 0.65rem; }
 
-    /* Responsive styles */
-    @media (max-width: 992px) {
-      .cow-card {
-        flex-direction: column;
-        align-items: flex-start;
-      }
+    /* Card Actions */
+    .card-actions {
+      display: flex;
+      border-top: 1px solid var(--border);
     }
-
-    @media (max-width: 768px) {
-      .sidebar {
-        transform: translateX(-100%);
-        width: 70%;
-        max-width: 250px;
-      }
-      
-      .sidebar.active {
-        transform: translateX(0);
-      }
-      
-      .main-content {
-        margin-left: 0;
-        width: 100%;
-      }
-      
-      .menu-toggle {
-        display: block;
-      }
-      
-      .header {
-        padding: 15px 15px 15px 50px;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 10px;
-      }
-      
-      .cow-card img.photo {
-        width: 100%;
-        height: auto;
-        max-width: 300px;
-        margin: 0 auto 15px;
-        display: block;
-      }
-      
-      .cow-details {
-        width: 100%;
-      }
-      
-      .cow-details .btn-group {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        margin-top: 10px;
-      }
-      
-      .btn-sm {
-        margin: 5px;
-      }
-
-      .stats-card .number {
-        font-size: 1.5rem;
-      }
-
-      .modal-dialog {
-        margin: 20px;
-      }
-
-      .qr-box-absolute {
-        position: relative;
-        top: auto;
-        right: auto;
-        margin-bottom: 15px;
-        text-align: center;
-      }
-      
-      .qr-box-absolute img {
-        width: 80px;
-        height: 80px;
-      }
-      
-      .cow-card .details-grid {
-        grid-template-columns: 1fr;
-        gap: 5px;
-      }
-      
-      .cow-card {
-        padding: 15px 15px 15px 15px;
-      }
+    .action-btn {
+      flex: 1;
+      padding: 8px;
+      text-align: center;
+      text-decoration: none;
+      color: var(--gray);
+      font-size: 0.65rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
     }
+    .action-btn:not(:last-child) { border-right: 1px solid var(--border); }
+    .action-btn.view { color: var(--primary); }
+    .action-btn.edit { color: var(--info); }
+    .action-btn.delete { color: var(--danger); }
 
-    @media (max-width: 576px) {
-      .main-content {
-        padding: 10px;
-      }
-      
-      .cow-card {
-        padding: 10px;
-      }
-      
-      .logo h2 {
-        font-size: 1.5rem;
-      }
+    /* Empty State */
+    .empty-state { text-align: center; padding: 30px 20px; }
+    .empty-state i { font-size: 2.5rem; color: #dee2e6; margin-bottom: 8px; }
+    .empty-state h4 { font-size: 1rem; color: var(--gray); margin-bottom: 4px; }
+    .empty-state p { font-size: 0.7rem; color: var(--gray); margin-bottom: 12px; }
+    .empty-state .btn { background: var(--primary); color: white; border-radius: 20px; padding: 8px 16px; font-size: 0.7rem; text-decoration: none; }
 
-      .filter-section .row > div {
-        margin-bottom: 10px;
-      }
+    /* Search Info */
+    .search-info { background: #e8f5e9; border-radius: 12px; padding: 6px 10px; margin-bottom: 8px; font-size: 0.65rem; display: flex; align-items: center; gap: 6px; }
 
-      .photo-preview, .photo-placeholder-small {
-        width: 120px;
-        height: 120px;
-      }
-
-      .qr-box-absolute img {
-        width: 70px;
-        height: 70px;
-      }
+   
+    /* Drawer */
+    .drawer-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 2000;
+      display: none;
     }
-     /* Language Selector Styles - BOTTOM */
-    .language-selector {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 10000;
-        background: white;
-        padding: 10px 15px;
-        border-radius: 25px;
-        box-shadow: 0 -4px 15px rgba(0,0,0,0.2);
-        display: flex;
-        gap: 10px;
-        border: 2px solid #27ae60;
+    .drawer-overlay.active { display: block; }
+    .drawer {
+      position: fixed;
+      top: 0;
+      left: -260px;
+      width: 260px;
+      height: 100vh;
+      background: white;
+      z-index: 2001;
+      transition: left 0.3s ease;
+      display: flex;
+      flex-direction: column;
     }
-
-    .lang-btn {
-        padding: 8px 20px;
-        border: none;
-        border-radius: 20px;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 14px;
-        transition: all 0.3s ease;
+    .drawer.active { left: 0; }
+    .drawer-header {
+      padding: 16px;
+      padding-top: calc(16px + var(--safe-area-top));
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
     }
-
-    .lang-btn.english {
-        background: #007bff;
-        color: white;
+    .drawer-header h3 { font-size: 1.1rem; font-weight: 700; }
+    .drawer-header p { font-size: 0.65rem; opacity: 0.9; }
+    .drawer-content { flex: 1; overflow-y: auto; padding: 8px 0; }
+    .drawer-section { margin-bottom: 12px; }
+    .drawer-section-title {
+      padding: 5px 16px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--gray);
     }
-
-    .lang-btn.kannada {
-        background: #ff9800;
-        color: white;
+    .drawer-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      color: var(--dark);
+      text-decoration: none;
     }
+    .drawer-item i { width: 20px; color: var(--primary); font-size: 0.9rem; }
+    .drawer-item span { font-size: 0.8rem; font-weight: 500; }
+    .language-submenu { background: #f8f9fa; margin-top: 4px; border-radius: 6px; }
+    .lang-option { display: flex; align-items: center; gap: 10px; padding: 6px 12px 6px 32px; text-decoration: none; font-size: 0.65rem; }
 
-    .lang-btn.active {
-        transform: scale(1.05);
-        box-shadow: 0 0 0 2px white, 0 0 0 4px currentColor;
+    /* Modal */
+    .modal-overlay {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0,0,0,0.5); display: none; align-items: flex-end; z-index: 2000;
     }
+    .modal-overlay.active { display: flex; }
+    .modal-sheet {
+      background: white; width: 100%; border-radius: 16px 16px 0 0;
+      max-height: 70vh; overflow-y: auto; animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .modal-header { padding: 12px; background: linear-gradient(135deg, var(--primary), var(--primary-light)); color: white; display: flex; justify-content: space-between; align-items: center; }
+    .modal-header h5 { font-size: 0.9rem; margin: 0; }
+    .close-btn { background: none; border: none; color: white; font-size: 1.1rem; cursor: pointer; }
+    .modal-body { padding: 12px; }
+    .modal-footer { padding: 10px 12px; border-top: 1px solid var(--border); display: flex; gap: 8px; }
+    .form-section { background: #f8f9fa; border-radius: 12px; padding: 10px; margin-bottom: 10px; }
+    .form-section h6 { font-size: 0.7rem; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+    .form-group { margin-bottom: 8px; }
+    .form-group label { font-size: 0.6rem; font-weight: 600; color: var(--primary); margin-bottom: 2px; display: block; }
+    .form-control { width: 100%; padding: 6px 10px; border: 1px solid var(--border); border-radius: 10px; font-size: 0.7rem; }
+    .photo-preview { width: 60px; height: 60px; border-radius: 30px; object-fit: cover; margin: 0 auto 8px; }
+    .photo-placeholder-small { width: 60px; height: 60px; border-radius: 30px; background: #e9ecef; display: flex; align-items: center; justify-content: center; margin: 0 auto 8px; }
+    .btn-secondary { background: var(--gray); color: white; border: none; border-radius: 20px; padding: 8px; font-size: 0.7rem; font-weight: 600; }
+    .btn-primary { background: var(--primary); color: white; border: none; border-radius: 20px; padding: 8px; font-size: 0.7rem; font-weight: 600; }
+    .btn-danger { background: var(--danger); color: white; border: none; border-radius: 20px; padding: 8px; font-size: 0.7rem; font-weight: 600; }
+    .delete-confirm { text-align: center; padding: 16px; }
+    .delete-confirm i { font-size: 2rem; color: var(--danger); margin-bottom: 8px; }
+    .delete-confirm h4 { font-size: 0.9rem; }
 
-    /* Hide Google banner */
-    .goog-te-banner-frame { display: none !important; }
+    .goog-te-banner-frame, .goog-te-banner, .skiptranslate, #google_translate_element { display: none !important; }
     body { top: 0 !important; }
-
-    /* Mobile responsive */
-    @media (max-width: 768px) {
-        .language-selector {
-            bottom: 10px;
-            right: 10px;
-            padding: 6px 10px;
-        }
-        
-        .lang-btn {
-            padding: 5px 10px;
-            font-size: 12px;
-        }
-    }
-    /* Completely hide ALL Google Translate elements */
-    .goog-te-banner-frame,
-    .goog-te-banner,
-    .goog-te-banner-wrapper,
-    .skiptranslate,
-    #goog-gt-tt,
-    .goog-te-balloon-frame,
-    .goog-tooltip,
-    .goog-tooltip:hover,
-    .goog-text-highlight {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        height: 0 !important;
-        width: 0 !important;
-        position: absolute !important;
-    }
-    
-    /* Prevent body shift */
-    body {
-        top: 0px !important;
-        position: static !important;
-    }
-    
-    /* Hide the translation menu if it appears */
-    .goog-te-menu-frame {
-        display: none !important;
-    }
   </style>
-
 </head>
-<body class="cow-background">
-  <!-- Mobile menu toggle -->
-  <button class="menu-toggle" id="menuToggle">
-    <i class="fas fa-bars"></i>
-  </button>
-  
-  <!-- Overlay for mobile -->
-  <div class="overlay" id="overlay"></div>
+<body>
+      <input type="hidden" id="currentLang" value="{{ current_lang|default('en') }}">
 
-  <div class="dashboard-container">
-    <!-- Sidebar -->
-    <div class="sidebar" id="sidebar">
-      <div class="logo">
-        <h2><i class="fas fa-cow"></i> Kamadhenu</h2>
-        <p class="mb-0">Cow Management System</p>
+  <!-- Drawer -->
+  <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+  <div class="drawer" id="drawer">
+    <div class="drawer-header"><h3>Kamadhenu</h3><p>Smart Farm Management</p></div>
+    <div class="drawer-content">
+      <div class="drawer-section"><div class="drawer-section-title">Main Menu</div>
+        <a href="/dashboard" class="drawer-item"><i class="fas fa-home"></i><span>Dashboard</span></a>
+        <a href="/add_cow" class="drawer-item"><i class="fas fa-plus-circle"></i><span>Add New Cow</span></a>
+        <a href="/cows" class="drawer-item"><i class="fas fa-list"></i><span>View My Cows</span></a>
+        <a href="/find_cow" class="drawer-item"><i class="fas fa-search"></i><span>Find Cow</span></a>
       </div>
-      
-      <ul class="nav flex-column">
-        <li class="nav-item">
-          <a class="nav-link" href="/dashboard">
-            <i class="fas fa-tachometer-alt"></i> Dashboard
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/add_cow">
-            <i class="fas fa-plus-circle"></i> Add New Cow
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link active" href="/cows">
-            <i class="fas fa-list"></i> View My Cows
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/find_cow">
-            <i class="fas fa-search"></i> Find Cow
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/milk_yield">
-            <i class="fas fa-tint"></i> Milk Yield
-          </a>
-        </li>
-           <li class="nav-item">
-                    <a class="nav-link " href="/disease_prediction">
-                        <i class="fas fa-stethoscope"></i> Disease Detection
-                    </a>
-                </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/book_appointment">
-            <i class="fas fa-syringe"></i> Book Appointment
-          </a>
-        </li>
-         <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('farmer_treatments') }}">
-            <i class="fas fa-syringe"></i> Treatment History
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('add_geotag') }}">
-            <i class="fas fa-map-marker-alt"></i> Add Geo Tag
-          </a>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="{{ url_for('analytics') }}">
-           <i class="fas fa-chart-bar"></i> Analytics
-          </a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="#" onclick="toggleSubmenu(event)">
-            <i class="fas fa-chart-line"></i> Market Place <i class="fas fa-caret-down float-end"></i>
-          </a>
-          <ul class="submenu">
-            <li><a class="nav-link" href="/buy_cow"><i class="fas fa-shopping-cart"></i> Buy Cows</a></li>
-            <li><a class="nav-link" href="/sell_cow"><i class="fas fa-hand-holding-usd"></i> Sell Cows</a></li>
-          </ul>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="/sold_cows">
-            <i class="fas fa-check-circle"></i> Sale History
-          </a>
-        </li>
-      </ul>
-    </div>
-
-    <!-- Main Content -->
-    <div class="main-content" id="mainContent">
-      <!-- Header -->
-      <div class="header">
-        <div>
-          <h2 class="welcome-text">My Cattle Profiles</h2>
-          <p class="mb-0 text-muted">Manage and view all your cattle</p>
-        </div>
-        <a href="{{ url_for('farmer_logout') }}" class="btn btn-danger">Logout</a>
+      <div class="drawer-section"><div class="drawer-section-title">Farm Operations</div>
+        <a href="/milk_yield" class="drawer-item"><i class="fas fa-tint"></i><span>Milk Yield</span></a>
+        <a href="/disease_prediction" class="drawer-item"><i class="fas fa-stethoscope"></i><span>Disease Detection</span></a>
+        <a href="/book_appointment" class="drawer-item"><i class="fas fa-syringe"></i><span>Book Appointment</span></a>
+        <a href="/farmer/treatments" class="drawer-item"><i class="fas fa-history"></i><span>Treatment History</span></a>
+        <a href="/add_geotag" class="drawer-item"><i class="fas fa-map-marker-alt"></i><span>Add Geo Tag</span></a>
+        <a href="/analytics" class="drawer-item"><i class="fas fa-chart-bar"></i><span>Analytics</span></a>
       </div>
-
-      <!-- Statistics and Filters Section -->
-      <div class="filter-section">
-        <div class="row">
-          <div class="col-md-4 col-6">
-            <div class="stats-card">
-              <div class="number">{{ cows|length }}</div>
-              <div class="label">Total Cattle</div>
-            </div>
-          </div>
-          <div class="col-md-4 col-6">
-            <div class="stats-card">
-              <div class="number">{{ cattle_stats.get('cow', 0) }}</div>
-              <div class="label">Cows</div>
-            </div>
-          </div>
-          <div class="col-md-4 col-6">
-            <div class="stats-card">
-              <div class="number">{{ cattle_stats.get('buffalo', 0) }}</div>
-              <div class="label">Buffaloes</div>
-            </div>
-          </div>
-        </div>
-        
-        <div class="row mt-2">
-          <div class="col-md-4 col-6">
-            <div class="stats-card">
-              <div class="number">{{ cattle_stats.get('male_buffalo', 0) }}</div>
-              <div class="label">Male Buffaloes</div>
-            </div>
-          </div>
-          <div class="col-md-4 col-6">
-            <div class="stats-card">
-              <div class="number">{{ cattle_stats.get('bull', 0) }}</div>
-              <div class="label">Bulls</div>
-            </div>
-          </div>
-          <div class="col-md-4 col-6">
-            <div class="stats-card">
-              <div class="number">{{ cattle_stats.get('calf', 0) }}</div>
-              <div class="label">Calves</div>
-            </div>
-          </div>
-        </div>
-        
-        <!-- Search and Filter Controls -->
-        <div class="row mt-3">
-          <div class="col-md-6">
-            <label for="cattleTypeFilter" class="form-label">Filter by Cattle Type:</label>
-            <select class="form-select" id="cattleTypeFilter" onchange="filterCattle()">
-              <option value="all">All Types</option>
-              <option value="cow">Cows</option>
-              <option value="buffalo">Buffaloes</option>
-              <option value="bull">Bulls</option>
-              <option value="male_buffalo">Male Buffaloes</option>
-              <option value="calf">Calves</option>
-            </select>
-          </div>
-          <div class="col-md-6">
-            <label for="searchInput" class="form-label">Search Cattle:</label>
-            <div class="input-group">
-              <input type="text" class="form-control" id="searchInput" placeholder="Search by ID, breed, color, type..." onkeyup="searchCattle()">
-              <button class="btn btn-outline-secondary" type="button" onclick="clearSearch()">
-                <i class="fas fa-times"></i>
-              </button>
-            </div>
-            <small class="text-muted">Search by cow ID, breed name, color, or cattle type</small>
-          </div>
-        </div>
-
-        <!-- Search Results Info -->
-        <div class="row mt-2">
-          <div class="col-12">
-            <div id="searchInfo" class="alert alert-info" style="display: none;">
-              <i class="fas fa-info-circle"></i> <span id="searchInfoText"></span>
-            </div>
-          </div>
-        </div>
+      <div class="drawer-section"><div class="drawer-section-title">Marketplace</div>
+        <a href="/buy_cow" class="drawer-item"><i class="fas fa-shopping-cart"></i><span>Buy Cows</span></a>
+        <a href="/sell_cow" class="drawer-item"><i class="fas fa-hand-holding-usd"></i><span>Sell Cows</span></a>
+        <a href="/sold_cows" class="drawer-item"><i class="fas fa-check-circle"></i><span>Sale History</span></a>
       </div>
-
-      <!-- Cow Cards Section -->
-      <div id="cowsContainer">
-        {% if cows %}
-          {% for cow in cows %}
-          <div class="cow-card" 
-               data-cattle-type="{{ cow.cattle_type }}" 
-               data-cow-id="{{ cow.cow_id.lower() }}"
-               data-breed="{{ cow.breed.lower() if cow.breed else '' }}"
-               data-color="{{ cow.color.lower() if cow.color else '' }}"
-               data-cattle-type-name="{{ cow.cattle_type.lower() }}">
-            
-            <!-- QR Code in Top-Right Corner -->
-            <div class="qr-box-absolute">
-              <img src="{{ url_for('static', filename='qrcodes/' ~ cow.cow_id ~ '.png') }}" alt="QR Code">
-              <p class="small text-muted mt-1">{{ cow.cow_id }}</p>
-            </div>
-
-            <!-- Content Area -->
-            <div class="d-flex align-items-start">
-              {% if cow.photo %}
-              <img src="{{ url_for('static', filename='uploads/cow/' ~ cow.photo) }}" class="photo me-3" alt="Cow Photo">
-              {% else %}
-              <div class="photo me-3 bg-light d-flex align-items-center justify-content-center" style="width: 200px; height: 150px; border-radius: 8px;">
-                <i class="fas fa-cow" style="font-size: 3rem; color: var(--primary);"></i>
-              </div>
-              {% endif %}
-
-              <div class="cow-details flex-grow-1">
-                <div class="d-flex align-items-center mb-2">
-                  <h5 style="color: var(--primary); font-weight: bold; margin-right: 10px;">
-                    <span class="cow-breed">{{ cow.breed }}</span> (<span class="cow-id">{{ cow.cow_id }}</span>)
-                  </h5>
-                  <span class="cattle-type-badge badge-{{ cow.cattle_type }}">
-                    {% if cow.cattle_type == 'cow' %}Cow
-                    {% elif cow.cattle_type == 'buffalo' %}Buffalo
-                    {% elif cow.cattle_type == 'bull' %}Bull
-                    {% elif cow.cattle_type == 'male_buffalo' %}Male Buffalo
-                    {% elif cow.cattle_type == 'calf' %}Calf
-                    {% else %}{{ cow.cattle_type|title }}{% endif %}
-                  </span>
-                </div>
-                
-                <div class="details-grid mb-3">
-                  <p><b>Age:</b> <span class="cow-age">{{ cow.age }}</span> months</p>
-                  <p><b>Weight:</b> <span class="cow-weight">{{ cow.weight }}</span> kg</p>
-                  <p><b>Color:</b> <span class="cow-color">{{ cow.color }}</span></p>
-                  
-                  <!-- Milk Yield (only for cows and buffaloes) -->
-                  {% if cow.cattle_type in ['cow', 'buffalo'] and cow.milk_yield %}
-                  <p><b>Milk Yield:</b> <span class="cow-milk">{{ cow.milk_yield }}</span> L/day</p>
-                  {% endif %}
-                </div>
-                
-                <!-- Parent Information (only for calves) -->
-                {% if cow.cattle_type == 'calf' %}
-                <div class="parent-info mb-3 p-2 bg-light rounded">
-                  <small>
-                    {% if cow.father_id %}
-                    <p class="mb-1"><b>Father:</b> {{ cow.father_id }}</p>
-                    {% endif %}
-                    {% if cow.mother_id %}
-                    <p class="mb-0"><b>Mother:</b> {{ cow.mother_id }}</p>
-                    {% endif %}
-                  </small>
-                </div>
-                {% endif %}
-                
-                <!-- Muzzle ID (if available) -->
-                {% if cow.muzzle_id %}
-                <p class="mb-2"><small><b>Muzzle ID:</b> {{ cow.muzzle_id }}</small></p>
-                {% endif %}
-
-                <!-- Action Buttons -->
-                <div class="d-flex flex-wrap">
-                  <a href="/cow/{{ cow.cow_id }}" class="btn btn-sm btn-success m-1">
-                    <i class="fas fa-eye"></i> View Details
-                  </a>
-                  <button class="btn btn-sm btn-edit m-1" onclick="openEditModal('{{ cow.cow_id }}')">
-                    <i class="fas fa-edit"></i> Edit
-                  </button>
-                  <form action="/delete_cow/{{ cow.cow_id }}" method="POST" class="m-1">
-                    <button type="submit" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure you want to delete this cattle?');">
-                      <i class="fas fa-trash"></i> Delete
-                    </button>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-          {% endfor %}
-        {% else %}
-          <div class="card">
-            <div class="card-body text-center py-5">
-              <div class="cow-icon mb-3">
-                <i class="fas fa-cow" style="font-size: 3rem; color: var(--primary);"></i>
-              </div>
-              <h4 class="text-muted">No Cattle Added Yet</h4>
-              <p class="text-muted mb-3">You haven't added any cattle to your farm yet.</p>
-              <a href="/add_cow" class="btn btn-primary">
-                <i class="fas fa-plus-circle"></i> Add Your First Cattle
-              </a>
-            </div>
-          </div>
-        {% endif %}
+      <div class="drawer-section"><div class="drawer-section-title">Preferences</div>
+        <div class="drawer-item" onclick="toggleLanguageMenu()" style="cursor:pointer;"><i class="fas fa-globe"></i><span>Language</span><i class="fas fa-chevron-down" id="langArrow" style="font-size:0.6rem;"></i></div>
+        <div id="languageMenu" style="display:none;"><div class="language-submenu">
+          <a href="#" class="lang-option" onclick="setLanguageFromDrawer('en'); return false;"><i class="fas fa-check-circle" id="enCheck" style="opacity:0;"></i><span>English</span></a>
+          <a href="#" class="lang-option" onclick="setLanguageFromDrawer('kn'); return false;"><i class="fas fa-check-circle" id="knCheck" style="opacity:0;"></i><span>ಕನ್ನಡ</span></a>
+        </div></div>
       </div>
-
-      <!-- No Results Message (hidden by default) -->
-      <div id="noResults" class="no-results" style="display: none;">
-        <i class="fas fa-search"></i>
-        <h4>No cattle found</h4>
-        <p>Try adjusting your search or filter criteria</p>
-        <button class="btn btn-primary mt-2" onclick="clearSearch()">
-          <i class="fas fa-times"></i> Clear Search
-        </button>
-      </div>
-
-      <!-- Back to Dashboard -->
-      <a href="/dashboard" class="btn btn-primary mt-3">
-        <i class="fas fa-arrow-left"></i> Back to Dashboard
-      </a>
-    </div>
-  </div>
-
-  <!-- Edit Cattle Modal -->
-  <div class="modal fade" id="editCattleModal" tabindex="-1" aria-labelledby="editCattleModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-lg">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h5 class="modal-title" id="editCattleModalLabel">
-            <i class="fas fa-edit me-2"></i>Edit Cattle Details
-          </h5>
-          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-        </div>
-        <div class="modal-body">
-          <form id="editCattleForm" enctype="multipart/form-data" action="/update_cow" method="POST">
-            <input type="hidden" id="editCowId" name="cow_id">
-            
-            <!-- Basic Information Section -->
-            <div class="form-section">
-              <h6><i class="fas fa-info-circle me-2"></i>Basic Information</h6>
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="editCattleType" class="form-label">Cattle Type *</label>
-                  <select class="form-select" id="editCattleType" name="cattle_type" required>
-                    <option value="cow">Cow</option>
-                    <option value="buffalo">Buffalo</option>
-                    <option value="bull">Bull</option>
-                    <option value="male_buffalo">Male Buffalo</option>
-                    <option value="calf">Calf</option>
-                  </select>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="editBreed" class="form-label">Breed *</label>
-                  <input type="text" class="form-control" id="editBreed" name="breed" required>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="editDateOfBirth" class="form-label">Date of Birth</label>
-                  <input type="date" class="form-control" id="editDateOfBirth" name="date_of_birth">
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="editAge" class="form-label">Age (months) *</label>
-                  <input type="number" class="form-control" id="editAge" name="age" min="0" readonly style="background-color: #f8f9fa;">
-                  <small class="text-muted">Age is calculated automatically from date of birth</small>
-              </div>
-              </div>
-            </div>
-
-            <!-- Physical Details Section -->
-            <div class="form-section">
-              <h6><i class="fas fa-weight me-2"></i>Physical Details</h6>
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="editWeight" class="form-label">Weight (kg) *</label>
-                  <input type="number" class="form-control" id="editWeight" name="weight" step="0.1" min="0" required>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="editColor" class="form-label">Color</label>
-                  <input type="text" class="form-control" id="editColor" name="color" placeholder="e.g., Black, Brown, White">
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="editMilkYield" class="form-label">Milk Yield (L/day)</label>
-                  <input type="number" class="form-control" id="editMilkYield" name="milk_yield" step="0.1" min="0">
-                  <small class="text-muted">Only for cows and buffaloes</small>
-                </div>
-              </div>
-            </div>
-
-            <!-- Health & Medical Section -->
-            <div class="form-section">
-              <h6><i class="fas fa-heartbeat me-2"></i>Health & Medical Information</h6>
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="editHealthRecords" class="form-label">Health Records</label>
-                  <textarea class="form-control" id="editHealthRecords" name="health_records" rows="3" placeholder="Any health issues, treatments, etc."></textarea>
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="editVaccinationHistory" class="form-label">Vaccination History</label>
-                  <textarea class="form-control" id="editVaccinationHistory" name="vaccination_history" rows="3" placeholder="Vaccination details and dates"></textarea>
-                </div>
-              </div>
-              <div class="row">
-                <div class="col-12 mb-3">
-                  <label for="editSpecialNotes" class="form-label">Special Notes</label>
-                  <textarea class="form-control" id="editSpecialNotes" name="special_notes" rows="2" placeholder="Any additional notes or observations"></textarea>
-                </div>
-              </div>
-            </div>
-
-            <!-- Parent Information (for calves) -->
-            <div class="form-section" id="parentInfoSection" style="display: none;">
-              <h6><i class="fas fa-family me-2"></i>Parent Information</h6>
-              <div class="row">
-                <div class="col-md-6 mb-3">
-                  <label for="editMotherId" class="form-label">Mother ID</label>
-                  <input type="text" class="form-control" id="editMotherId" name="mother_id" placeholder="Mother's Cow ID">
-                </div>
-                <div class="col-md-6 mb-3">
-                  <label for="editFatherId" class="form-label">Father ID</label>
-                  <input type="text" class="form-control" id="editFatherId" name="father_id" placeholder="Father's Cow ID">
-                </div>
-              </div>
-            </div>
-
-            <!-- Insurance Details Section -->
-            <div class="form-section">
-              <h6><i class="fas fa-shield-alt me-2"></i>Insurance Details</h6>
-              <div class="row">
-                <div class="col-md-4 mb-3">
-                  <label for="editInsuranceBy" class="form-label">Insurance Company</label>
-                  <input type="text" class="form-control" id="editInsuranceBy" name="insurance_by" placeholder="Insurance provider name">
-                </div>
-                <div class="col-md-4 mb-3">
-                  <label for="editInsurancePolicyNumber" class="form-label">Policy Number</label>
-                  <input type="text" class="form-control" id="editInsurancePolicyNumber" name="insurance_policy_number" placeholder="Policy number">
-                </div>
-                <div class="col-md-4 mb-3">
-                  <label for="editInsuranceValidUpto" class="form-label">Valid Until</label>
-                  <input type="date" class="form-control" id="editInsuranceValidUpto" name="insurance_valid_upto">
-                </div>
-              </div>
-            </div>
-
-            <!-- Photo Upload Section -->
-            <div class="form-section">
-              <h6><i class="fas fa-camera me-2"></i>Photo</h6>
-              <div class="row">
-                <div class="col-md-4 mb-3">
-                  <div id="currentPhotoPreview">
-                    <!-- Current photo will be displayed here -->
-                  </div>
-                </div>
-                <div class="col-md-8 mb-3">
-                  <label for="editPhoto" class="form-label">Update Photo</label>
-                  <input type="file" class="form-control" id="editPhoto" name="photo" accept="image/*">
-                  <small class="text-muted">Leave empty to keep current photo</small>
-                </div>
-              </div>
-            </div>
-          </form>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
-            <i class="fas fa-times me-1"></i> Cancel
-          </button>
-          <button type="submit" form="editCattleForm" class="btn btn-primary">
-            <i class="fas fa-save me-1"></i> Save Changes
-          </button>
-        </div>
+      <div class="drawer-section"><div class="drawer-section-title">Account</div>
+        <a href="#" class="drawer-item" onclick="closeDrawer(); return false;"><i class="fas fa-user-circle"></i><span>Profile</span></a>
+        <a href="{{ url_for('farmer_logout') }}" class="drawer-item"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
       </div>
     </div>
   </div>
 
-  <!-- Bootstrap JS -->
+  <!-- App Header -->
+  <header class="app-header">
+    <button class="menu-btn" onclick="toggleDrawer()"><i class="fas fa-bars"></i></button>
+    <span class="header-title">My Cattle</span>
+    <div style="width: 36px;"></div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="app-content">
+    <!-- Stats -->
+    <div class="stats-grid">
+      <div class="stat-pill"><div class="number">{{ cows|length }}</div><div class="label">Total</div></div>
+      <div class="stat-pill"><div class="number">{{ cattle_stats.get('cow', 0) + cattle_stats.get('buffalo', 0) }}</div><div class="label">Milking</div></div>
+      <div class="stat-pill"><div class="number">{{ cattle_stats.get('calf', 0) }}</div><div class="label">Calves</div></div>
+    </div>
+
+    <!-- Search -->
+    <div class="search-container">
+      <i class="fas fa-search"></i>
+      <input type="text" id="searchInput" placeholder="Search by ID, breed..." onkeyup="searchCattle()">
+      <button class="clear-btn" onclick="clearSearch()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <!-- Filters -->
+    <div class="filter-chips">
+      <span class="chip active" data-filter="all" onclick="filterCattle('all')">All</span>
+      <span class="chip" data-filter="cow" onclick="filterCattle('cow')">Cows</span>
+      <span class="chip" data-filter="buffalo" onclick="filterCattle('buffalo')">Buffalo</span>
+      <span class="chip" data-filter="bull" onclick="filterCattle('bull')">Bulls</span>
+      <span class="chip" data-filter="male_buffalo" onclick="filterCattle('male_buffalo')">Male Buffalo</span>
+      <span class="chip" data-filter="calf" onclick="filterCattle('calf')">Calves</span>
+    </div>
+
+    <!-- Search Info -->
+    <div id="searchInfo" class="search-info" style="display:none;"><i class="fas fa-info-circle"></i><span id="searchInfoText"></span></div>
+
+    <!-- Cattle List -->
+    <div id="cattleContainer" class="cattle-list">
+      {% if cows %}
+        {% for cow in cows %}
+        <div class="cattle-card" data-cattle-type="{{ cow.cattle_type }}" data-cow-id="{{ cow.cow_id.lower() }}" data-breed="{{ cow.breed.lower() }}" data-color="{{ cow.color.lower() }}">
+          <div class="card-header">
+            {% if cow.photo %}<img src="{{ url_for('static', filename='uploads/cow/' ~ cow.photo) }}" class="cattle-photo">
+            {% else %}<div class="cattle-photo-placeholder"><i class="fas fa-cow"></i></div>{% endif %}
+            <div class="cattle-info">
+              <div class="cattle-name">{{ cow.breed }}</div>
+              <div class="cattle-id">{{ cow.cow_id[:12] }}</div>
+              <span class="type-badge type-{{ cow.cattle_type }}">
+                {% if cow.cattle_type == 'cow' %}Cow{% elif cow.cattle_type == 'buffalo' %}Buffalo{% elif cow.cattle_type == 'bull' %}Bull{% elif cow.cattle_type == 'calf' %}Calf{% else %}{{ cow.cattle_type|title }}{% endif %}
+              </span>
+            </div>
+            <div class="qr-section"><img src="{{ url_for('static', filename='qrcodes/' ~ cow.cow_id ~ '.png') }}" class="qr-code-small"></div>
+          </div>
+          <div class="card-details">
+            <div class="detail-item"><div class="detail-label">Age</div><div class="detail-value">{{ cow.age }}mo</div></div>
+            <div class="detail-item"><div class="detail-label">Weight</div><div class="detail-value">{{ cow.weight }}kg</div></div>
+            <div class="detail-item"><div class="detail-label">Color</div><div class="detail-value">{{ cow.color|truncate(5, True, '') or '-' }}</div></div>
+            {% if cow.cattle_type in ['cow', 'buffalo'] and cow.milk_yield %}
+            <div class="detail-item"><div class="detail-label">Milk</div><div class="detail-value">{{ cow.milk_yield }}L</div></div>
+            {% endif %}
+            {% if cow.muzzle_id %}
+            <div class="detail-item"><div class="detail-label">Muzzle</div><div class="detail-value">✓</div></div>
+            {% endif %}
+          </div>
+          <div class="card-actions">
+            <a href="/cow/{{ cow.cow_id }}" class="action-btn view"><i class="fas fa-eye"></i> View</a>
+            <button class="action-btn edit" onclick="openEditModal('{{ cow.cow_id }}')"><i class="fas fa-edit"></i> Edit</button>
+            <button class="action-btn delete" onclick="confirmDelete('{{ cow.cow_id }}', '{{ cow.breed }}')"><i class="fas fa-trash"></i> Del</button>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+      <div class="empty-state"><i class="fas fa-cow"></i><h4>No Cattle Added</h4><p>Add your first cattle</p><a href="/add_cow" class="btn"><i class="fas fa-plus-circle"></i> Add Cattle</a></div>
+      {% endif %}
+    </div>
+
+    <div id="noResults" class="empty-state" style="display:none;"><i class="fas fa-search"></i><h4>No cattle found</h4><button class="btn" onclick="clearAllFilters()">Clear All</button></div>
+  </main>
+
+  <!-- Bottom Navigation -->
+  <nav class="bottom-nav">
+    <a href="/dashboard" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+    <a href="/cows" class="nav-item active"><i class="fas fa-cow"></i><span>My Cows</span></a>
+    <a href="/add_cow" class="nav-item"><i class="fas fa-plus-circle"></i><span>Add</span></a>
+    <a href="/milk_yield" class="nav-item"><i class="fas fa-tint"></i><span>Milk</span></a>
+    <a href="/find_cow" class="nav-item"><i class="fas fa-search"></i><span>Find</span></a>
+  </nav>
+
+  <!-- Edit Modal -->
+  <div class="modal-overlay" id="editCattleModal" onclick="closeEditModal(event)">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-header"><h5><i class="fas fa-edit"></i> Edit Cattle</h5><button class="close-btn" onclick="closeEditModal()">&times;</button></div>
+      <div class="modal-body">
+        <form id="editCattleForm" action="/update_cow" method="POST" enctype="multipart/form-data">
+          <input type="hidden" id="editCowId" name="cow_id">
+          <div class="form-section"><h6>Basic Info</h6>
+            <div class="form-group"><label>Cattle Type</label><select class="form-control" id="editCattleType" name="cattle_type"><option value="cow">Cow</option><option value="buffalo">Buffalo</option><option value="bull">Bull</option><option value="male_buffalo">Male Buffalo</option><option value="calf">Calf</option></select></div>
+            <div class="form-group"><label>Breed</label><input type="text" class="form-control" id="editBreed" name="breed"></div>
+            <div class="form-group"><label>Date of Birth</label><input type="date" class="form-control" id="editDateOfBirth" name="date_of_birth"></div>
+            <div class="form-group"><label>Age (months)</label><input type="number" class="form-control" id="editAge" name="age" readonly></div>
+          </div>
+          <div class="form-section"><h6>Physical Details</h6>
+            <div class="form-group"><label>Weight (kg)</label><input type="number" step="0.1" class="form-control" id="editWeight" name="weight"></div>
+            <div class="form-group"><label>Color</label><input type="text" class="form-control" id="editColor" name="color"></div>
+            <div class="form-group" id="milkYieldGroup"><label>Milk Yield (L/day)</label><input type="number" step="0.1" class="form-control" id="editMilkYield" name="milk_yield"></div>
+          </div>
+          <div class="form-section" id="parentInfoSection" style="display:none;"><h6>Parent Info</h6>
+            <div class="form-group"><label>Mother ID</label><input type="text" class="form-control" id="editMotherId" name="mother_id"></div>
+            <div class="form-group"><label>Father ID</label><input type="text" class="form-control" id="editFatherId" name="father_id"></div>
+          </div>
+          <div class="form-section"><h6>Health</h6>
+            <div class="form-group"><textarea class="form-control" id="editHealthRecords" name="health_records" rows="1" placeholder="Health records"></textarea></div>
+            <div class="form-group"><textarea class="form-control" id="editVaccinationHistory" name="vaccination_history" rows="1" placeholder="Vaccination history"></textarea></div>
+            <div class="form-group"><textarea class="form-control" id="editSpecialNotes" name="special_notes" rows="1" placeholder="Special notes"></textarea></div>
+          </div>
+          <div class="form-section"><h6>Insurance</h6>
+            <div class="form-group"><input type="text" class="form-control" id="editInsuranceBy" name="insurance_by" placeholder="Insurance company"></div>
+            <div class="form-group"><input type="text" class="form-control" id="editInsurancePolicyNumber" name="insurance_policy_number" placeholder="Policy #"></div>
+            <div class="form-group"><input type="date" class="form-control" id="editInsuranceValidUpto" name="insurance_valid_upto"></div>
+          </div>
+          <div class="form-section"><h6>Photo</h6><div id="currentPhotoPreview" class="text-center"></div><div class="form-group"><input type="file" class="form-control" id="editPhoto" name="photo" accept="image/*"></div></div>
+        </form>
+      </div>
+      <div class="modal-footer"><button class="btn-secondary" style="flex:1" onclick="closeEditModal()">Cancel</button><button type="submit" form="editCattleForm" class="btn-primary" style="flex:1">Save</button></div>
+    </div>
+  </div>
+
+  <!-- Delete Modal -->
+  <div class="modal-overlay" id="deleteModal" onclick="closeDeleteModal(event)">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-header" style="background:var(--danger);"><h5><i class="fas fa-exclamation-triangle"></i> Delete</h5><button class="close-btn" onclick="closeDeleteModal()">&times;</button></div>
+      <div class="delete-confirm"><i class="fas fa-trash-alt"></i><h4>Delete this cattle?</h4><p id="deleteCowName"></p><p class="small text-muted">Cannot be undone</p></div>
+      <div class="modal-footer"><button class="btn-secondary" style="flex:1" onclick="closeDeleteModal()">Cancel</button><form id="deleteForm" method="POST" style="flex:1"><button type="submit" class="btn-danger" style="width:100%">Delete</button></form></div>
+    </div>
+  </div>
+
+  <div id="google_translate_element" style="display:none;"></div>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+  
   <script>
-    function toggleSubmenu(event) {
-      event.preventDefault();
-      const submenu = event.target.closest("li").querySelector(".submenu");
-      submenu.style.display = submenu.style.display === "block" ? "none" : "block";
-    }
-
-    // Toggle mobile sidebar
-    const menuToggle = document.getElementById('menuToggle');
-    const sidebar = document.getElementById('sidebar');
-    const mainContent = document.getElementById('mainContent');
-    const overlay = document.getElementById('overlay');
-    
-    menuToggle.addEventListener('click', function() {
-      sidebar.classList.toggle('active');
-      overlay.classList.toggle('active');
-      
-      // Change icon based on sidebar state
-      const icon = menuToggle.querySelector('i');
-      if (sidebar.classList.contains('active')) {
-        icon.classList.remove('fa-bars');
-        icon.classList.add('fa-times');
-      } else {
-        icon.classList.remove('fa-times');
-        icon.classList.add('fa-bars');
-      }
-    });
-    
-    // Close sidebar when clicking on overlay
-    overlay.addEventListener('click', function() {
-      sidebar.classList.remove('active');
-      overlay.classList.remove('active');
-      const icon = menuToggle.querySelector('i');
-      icon.classList.remove('fa-times');
-      icon.classList.add('fa-bars');
-    });
-    
-    // Close sidebar when clicking on a nav link (mobile)
-    const navLinks = document.querySelectorAll('.nav-link');
-    navLinks.forEach(link => {
-      link.addEventListener('click', function() {
-        if (window.innerWidth <= 768) {
-          sidebar.classList.remove('active');
-          overlay.classList.remove('active');
-          const icon = menuToggle.querySelector('i');
-          icon.classList.remove('fa-times');
-          icon.classList.add('fa-bars');
-        }
-      });
-    });
-
-    // Filter and Search Functions
-    let currentSearchTerm = '';
-    let currentFilter = 'all';
-
-    function filterCattle() {
-      currentFilter = document.getElementById('cattleTypeFilter').value;
-      applyFilters();
-    }
-
-    function searchCattle() {
-      currentSearchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-      applyFilters();
-    }
-
-    function clearSearch() {
-      document.getElementById('searchInput').value = '';
-      currentSearchTerm = '';
-      applyFilters();
-      document.getElementById('searchInput').focus();
-    }
-
+    let currentFilter = 'all', currentSearchTerm = '';
+    function filterCattle(type) { document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active')); event.target.classList.add('active'); currentFilter=type; applyFilters(); }
+    function searchCattle() { currentSearchTerm=document.getElementById('searchInput').value.toLowerCase().trim(); applyFilters(); }
+    function clearSearch() { document.getElementById('searchInput').value=''; currentSearchTerm=''; applyFilters(); }
+    function clearAllFilters() { filterCattle('all'); clearSearch(); }
     function applyFilters() {
-      const cowCards = document.querySelectorAll('.cow-card');
-      let visibleCount = 0;
-      
-      cowCards.forEach(card => {
-        const cattleType = card.getAttribute('data-cattle-type');
-        const cowId = card.getAttribute('data-cow-id');
-        const breed = card.getAttribute('data-breed');
-        const color = card.getAttribute('data-color');
-        const cattleTypeName = card.getAttribute('data-cattle-type-name');
-        
-        let typeMatch = currentFilter === 'all' || cattleType === currentFilter;
-        let searchMatch = true;
-        
-        if (currentSearchTerm) {
-          searchMatch = cowId.includes(currentSearchTerm) || 
-                       breed.includes(currentSearchTerm) || 
-                       color.includes(currentSearchTerm) ||
-                       cattleTypeName.includes(currentSearchTerm);
-        }
-        
-        if (typeMatch && searchMatch) {
-          card.style.display = 'block';
-          visibleCount++;
-          
-          // Highlight search terms
-          if (currentSearchTerm) {
-            highlightSearchTerms(card, currentSearchTerm);
-          } else {
-            removeHighlights(card);
-          }
-        } else {
-          card.style.display = 'none';
-          removeHighlights(card);
-        }
+      const cards = document.querySelectorAll('.cattle-card');
+      let visible=0;
+      cards.forEach(c=>{ const ct=c.dataset.cattleType, id=c.dataset.cowId||'', br=c.dataset.breed||'', cl=c.dataset.color||'';
+        let typeMatch=currentFilter==='all'||ct===currentFilter;
+        let searchMatch=!currentSearchTerm||id.includes(currentSearchTerm)||br.includes(currentSearchTerm)||cl.includes(currentSearchTerm);
+        if(typeMatch&&searchMatch){c.style.display='block';visible++;}else{c.style.display='none';}
       });
-      
-      updateSearchInfo(visibleCount);
-      toggleNoResultsMessage(visibleCount);
+      const info=document.getElementById('searchInfo'), total=document.querySelectorAll('.cattle-card').length;
+      if(currentSearchTerm||currentFilter!=='all'){info.style.display='flex';document.getElementById('searchInfoText').textContent=`Showing ${visible} of ${total}`;}else{info.style.display='none';}
+      const noRes=document.getElementById('noResults'), cont=document.getElementById('cattleContainer');
+      if(visible===0&&(currentSearchTerm||currentFilter!=='all')){noRes.style.display='block';cont.style.display='none';}else{noRes.style.display='none';cont.style.display='block';}
     }
 
-    function highlightSearchTerms(card, searchTerm) {
-      const elements = card.querySelectorAll('.cow-id, .cow-breed, .cow-color');
-      
-      elements.forEach(element => {
-        const text = element.textContent;
-        const regex = new RegExp(`(${searchTerm})`, 'gi');
-        const highlightedText = text.replace(regex, '<span class="search-highlight">$1</span>');
-        element.innerHTML = highlightedText;
-      });
-    }
+    function toggleDrawer() { document.getElementById('drawer').classList.toggle('active'); document.getElementById('drawerOverlay').classList.toggle('active'); }
+    function closeDrawer() { document.getElementById('drawer').classList.remove('active'); document.getElementById('drawerOverlay').classList.remove('active'); document.getElementById('languageMenu').style.display='none'; document.getElementById('langArrow').classList.remove('fa-chevron-up'); document.getElementById('langArrow').classList.add('fa-chevron-down'); }
+    function toggleLanguageMenu() { const m=document.getElementById('languageMenu'),a=document.getElementById('langArrow'); if(m.style.display==='none'){m.style.display='block';a.classList.remove('fa-chevron-down');a.classList.add('fa-chevron-up');}else{m.style.display='none';a.classList.remove('fa-chevron-up');a.classList.add('fa-chevron-down');} }
+    function setLanguageFromDrawer(lang) { document.getElementById('enCheck').style.opacity=lang==='en'?'1':'0'; document.getElementById('knCheck').style.opacity=lang==='kn'?'1':'0'; saveLanguagePreference(lang); applyLanguage(lang); document.getElementById('languageMenu').style.display='none'; document.getElementById('langArrow').classList.remove('fa-chevron-up'); document.getElementById('langArrow').classList.add('fa-chevron-down'); setTimeout(closeDrawer,200); }
 
-    function removeHighlights(card) {
-      const elements = card.querySelectorAll('.cow-id, .cow-breed, .cow-color');
-      
-      elements.forEach(element => {
-        element.innerHTML = element.textContent;
-      });
-    }
+    function openEditModal(cowId) { fetch(`/get_cow_details/${cowId}`).then(r=>r.json()).then(c=>{
+      document.getElementById('editCowId').value=c.cow_id; document.getElementById('editCattleType').value=c.cattle_type||''; document.getElementById('editBreed').value=c.breed||''; document.getElementById('editDateOfBirth').value=c.date_of_birth||''; document.getElementById('editAge').value=c.age||''; document.getElementById('editWeight').value=c.weight||''; document.getElementById('editColor').value=c.color||''; document.getElementById('editMilkYield').value=c.milk_yield||''; document.getElementById('editHealthRecords').value=c.health_records||''; document.getElementById('editVaccinationHistory').value=c.vaccination_history||''; document.getElementById('editSpecialNotes').value=c.special_notes||''; document.getElementById('editMotherId').value=c.mother_id||''; document.getElementById('editFatherId').value=c.father_id||''; document.getElementById('editInsuranceBy').value=c.insurance_by||''; document.getElementById('editInsurancePolicyNumber').value=c.insurance_policy_number||''; document.getElementById('editInsuranceValidUpto').value=c.insurance_valid_upto||'';
+      const p=document.getElementById('parentInfoSection'), m=document.getElementById('milkYieldGroup');
+      if(c.cattle_type==='calf'){p.style.display='block';m.style.display='none';}else if(['cow','buffalo'].includes(c.cattle_type)){p.style.display='none';m.style.display='block';}else{p.style.display='none';m.style.display='none';}
+      const ph=document.getElementById('currentPhotoPreview'); if(c.photo){ph.innerHTML=`<img src="/static/uploads/cow/${c.photo}" class="photo-preview">`;}else{ph.innerHTML=`<div class="photo-placeholder-small"><i class="fas fa-cow fa-2x"></i></div>`;}
+      document.getElementById('editCattleModal').classList.add('active');
+    }).catch(()=>alert('Error loading details')); }
+    function closeEditModal(e){ if(e&&e.target.classList.contains('modal-overlay')||!e) document.getElementById('editCattleModal').classList.remove('active'); }
+    function confirmDelete(id,breed){ document.getElementById('deleteCowName').innerHTML=`${breed} (${id})`; document.getElementById('deleteForm').action=`/delete_cow/${id}`; document.getElementById('deleteModal').classList.add('active'); }
+    function closeDeleteModal(e){ if(e&&e.target.classList.contains('modal-overlay')||!e) document.getElementById('deleteModal').classList.remove('active'); }
+    document.getElementById('editDateOfBirth').addEventListener('change',function(){ if(this.value){ const d=new Date(this.value),t=new Date(); let m=(t.getFullYear()-d.getFullYear())*12+(t.getMonth()-d.getMonth()); if(t.getDate()<d.getDate())m--; document.getElementById('editAge').value=Math.max(0,m); } });
+    document.getElementById('editCattleType').addEventListener('change',function(){ const p=document.getElementById('parentInfoSection'), m=document.getElementById('milkYieldGroup'); if(this.value==='calf'){p.style.display='block';m.style.display='none';}else if(['cow','buffalo'].includes(this.value)){p.style.display='none';m.style.display='block';}else{p.style.display='none';m.style.display='none';} });
 
-    function updateSearchInfo(visibleCount) {
-      const searchInfo = document.getElementById('searchInfo');
-      const searchInfoText = document.getElementById('searchInfoText');
-      const totalCows = document.querySelectorAll('.cow-card').length;
-      
-      if (currentSearchTerm || currentFilter !== 'all') {
-        let message = `Showing ${visibleCount} of ${totalCows} cattle`;
-        
-        if (currentSearchTerm) {
-          message += ` for "${currentSearchTerm}"`;
-        }
-        
-        if (currentFilter !== 'all') {
-          message += ` (Filtered by: ${document.getElementById('cattleTypeFilter').options[document.getElementById('cattleTypeFilter').selectedIndex].text})`;
-        }
-        
-        searchInfoText.textContent = message;
-        searchInfo.style.display = 'block';
-      } else {
-        searchInfo.style.display = 'none';
-      }
-    }
-
-    function toggleNoResultsMessage(visibleCount) {
-      const noResults = document.getElementById('noResults');
-      const cowsContainer = document.getElementById('cowsContainer');
-      
-      if (visibleCount === 0 && (currentSearchTerm || currentFilter !== 'all')) {
-        noResults.style.display = 'block';
-        cowsContainer.style.display = 'none';
-      } else {
-        noResults.style.display = 'none';
-        cowsContainer.style.display = 'block';
-      }
-    }
-
-    // Edit Modal Functions
-    // Edit Modal Functions
-function openEditModal(cowId) {
-    // Fetch cattle data from server
-    fetch(`/get_cow_details/${cowId}`)
-        .then(response => {
-            if (!response.ok) {
-                throw new Error('Network response was not ok');
-            }
-            return response.json();
-        })
-        .then(cow => {
-            // Populate the form with fetched data
-            document.getElementById('editCowId').value = cow.cow_id;
-            document.getElementById('editCattleType').value = cow.cattle_type || '';
-            document.getElementById('editBreed').value = cow.breed || '';
-            document.getElementById('editDateOfBirth').value = cow.date_of_birth || '';
-            document.getElementById('editAge').value = cow.age || '';
-            document.getElementById('editWeight').value = cow.weight || '';
-            document.getElementById('editColor').value = cow.color || '';
-            document.getElementById('editMilkYield').value = cow.milk_yield || '';
-            document.getElementById('editHealthRecords').value = cow.health_records || '';
-            document.getElementById('editVaccinationHistory').value = cow.vaccination_history || '';
-            document.getElementById('editSpecialNotes').value = cow.special_notes || '';
-            document.getElementById('editMotherId').value = cow.mother_id || '';
-            document.getElementById('editFatherId').value = cow.father_id || '';
-            document.getElementById('editInsuranceBy').value = cow.insurance_by || '';
-            document.getElementById('editInsurancePolicyNumber').value = cow.insurance_policy_number || '';
-            document.getElementById('editInsuranceValidUpto').value = cow.insurance_valid_upto || '';
-            
-            // Show/hide parent info section based on cattle type
-            const parentSection = document.getElementById('parentInfoSection');
-            const milkYieldField = document.getElementById('editMilkYield').closest('.mb-3');
-            
-            if (cow.cattle_type === 'calf') {
-                parentSection.style.display = 'block';
-                milkYieldField.style.display = 'none';
-            } else if (cow.cattle_type === 'cow' || cow.cattle_type === 'buffalo') {
-                parentSection.style.display = 'none';
-                milkYieldField.style.display = 'block';
-            } else {
-                parentSection.style.display = 'none';
-                milkYieldField.style.display = 'none';
-            }
-            
-            // Display current photo
-            const photoPreview = document.getElementById('currentPhotoPreview');
-            if (cow.photo) {
-                photoPreview.innerHTML = `<img src="/static/uploads/cow/${cow.photo}" class="photo-preview" alt="Current Photo">`;
-            } else {
-                photoPreview.innerHTML = `
-                    <div class="photo-placeholder-small">
-                        <i class="fas fa-cow" style="font-size: 2rem;"></i>
-                        <div class="small mt-1">No Photo</div>
-                    </div>
-                `;
-            }
-            
-            // Show the modal
-            const modal = new bootstrap.Modal(document.getElementById('editCattleModal'));
-            modal.show();
-        })
-        .catch(error => {
-            console.error('Error fetching cow details:', error);
-            alert('Error loading cattle details. Please try again.');
-        });
-}
-    // Initialize filters and search on page load
-    document.addEventListener('DOMContentLoaded', function() {
-      applyFilters();
-      
-      // Add keyboard shortcut for clearing search (Esc key)
-      document.getElementById('searchInput').addEventListener('keydown', function(e) {
-        if (e.key === 'Escape') {
-          clearSearch();
-        }
-      });
-// Add this to your JavaScript to update age when date of birth changes
-document.getElementById('editDateOfBirth').addEventListener('change', function() {
-    if (this.value) {
-        const dob = new Date(this.value);
-        const today = new Date();
-        let ageInMonths = (today.getFullYear() - dob.getFullYear()) * 12 + (today.getMonth() - dob.getMonth());
-        
-        // Adjust if the day of month hasn't occurred yet
-        if (today.getDate() < dob.getDate()) {
-            ageInMonths--;
-        }
-        
-        document.getElementById('editAge').value = Math.max(0, ageInMonths);
-    } else {
-        document.getElementById('editAge').value = '';
-    }
-});
-      // Toggle parent info section based on cattle type selection
-      document.getElementById('editCattleType').addEventListener('change', function() {
-        const parentSection = document.getElementById('parentInfoSection');
-        const milkYieldField = document.getElementById('editMilkYield').closest('.mb-3');
-        
-        if (this.value === 'calf') {
-          parentSection.style.display = 'block';
-          milkYieldField.style.display = 'none';
-        } else if (this.value === 'cow' || this.value === 'buffalo') {
-          parentSection.style.display = 'none';
-          milkYieldField.style.display = 'block';
-        } else {
-          parentSection.style.display = 'none';
-          milkYieldField.style.display = 'none';
-        }
-      });
-    });
+    function saveLanguagePreference(lang){ localStorage.setItem('selectedLanguage',lang); document.cookie=`user_language=${lang}; path=/; max-age=31536000`; }
+    function applyLanguage(lang){ if(lang==='kn'){window.location.hash='#googtrans(kn|en)';}else{window.location.hash='#googtrans(en)';} }
+    function googleTranslateElementInit(){ new google.translate.TranslateElement({pageLanguage:'en',includedLanguages:'en,kn',autoDisplay:false},'google_translate_element'); }
+    function loadGoogleTranslate(){ if(window.google&&google.translate){googleTranslateElementInit();return;} var s=document.createElement('script');s.src='https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';document.head.appendChild(s); }
+    document.addEventListener('DOMContentLoaded',function(){ loadGoogleTranslate(); applyFilters(); const saved=localStorage.getItem('selectedLanguage')||'en'; setTimeout(()=>applyLanguage(saved),1000); });
   </script>
-  <script>
-    // Language translation functions
-    function googleTranslateElementInit() {
-        if (typeof google !== 'undefined' && google.translate) {
-            new google.translate.TranslateElement({
-                pageLanguage: 'en',
-                includedLanguages: 'en,kn',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                autoDisplay: false
-            }, 'google_translate_element');
-            
-            const savedLang = localStorage.getItem('selectedLanguage');
-            if(savedLang === 'kn') {
-                setTimeout(() => applyKannada(), 1000);
-            }
-        }
-    }
-
-    window.onload = function() {
-        if (typeof google !== 'undefined' && google.translate) {
-            googleTranslateElementInit();
-        } else {
-            var script = document.createElement('script');
-            script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-            document.body.appendChild(script);
-        }
-        
-        const savedLang = localStorage.getItem('selectedLanguage');
-        if(savedLang === 'kn') {
-            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector('.lang-btn.kannada').classList.add('active');
-            setTimeout(() => applyKannada(), 2000);
-        }
-    };
-
-    function applyKannada() {
-        var iframe = document.querySelector('.goog-te-menu-frame');
-        if(iframe && iframe.contentDocument) {
-            var select = iframe.contentDocument.querySelector('.goog-te-menu2-select');
-            if(select) {
-                select.value = 'kn';
-                select.dispatchEvent(new Event('change'));
-                return true;
-            }
-        }
-        
-        var elements = document.querySelectorAll('.goog-te-menu2-select');
-        if(elements.length > 0) {
-            elements[0].value = 'kn';
-            elements[0].dispatchEvent(new Event('change'));
-            return true;
-        }
-        
-        return false;
-    }
-
-    function setLanguage(lang) {
-        document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-        localStorage.setItem('selectedLanguage', lang);
-        
-        if(lang === 'kn') {
-            window.location.hash = '#googtrans(kn)';
-            if(applyKannada()) {
-                console.log('ಭಾಷೆ ಕನ್ನಡಕ್ಕೆ ಬದಲಾಯಿಸಲಾಗಿದೆ');
-            } else {
-                setTimeout(() => location.reload(), 500);
-            }
-        } else {
-            window.location.hash = '#googtrans(en)';
-            var iframe = document.querySelector('.goog-te-menu-frame');
-            if(iframe && iframe.contentDocument) {
-                var select = iframe.contentDocument.querySelector('.goog-te-menu2-select');
-                if(select) {
-                    select.value = 'en';
-                    select.dispatchEvent(new Event('change'));
-                    console.log('Language changed to English');
-                    return;
-                }
-            }
-            setTimeout(() => location.reload(), 500);
-        }
-    }
-</script>
 </body>
 </html>

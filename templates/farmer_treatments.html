@@ -2,832 +2,1243 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#043c07">
     <title>Treatment History - Kamadhenu</title>
+    
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <style>
-        :root {
-            --primary: #043c07;
-            --secondary: #ffc107;
-            --light: #f8f9fa;
-            --dark: #343a40;
-            --light-green: #e8f5e9;
-        }
-        
-        body {
-            background-color: #f5f9f5;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            overflow-x: hidden;
-        }
-        
-        .dashboard-container {
-            width: 100%;
-            margin: 0;
-        }
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-        .sidebar {
-            background: linear-gradient(to bottom, var(--primary), #1b5e20);
-            color: white;
-            height: 100vh;
-            position: fixed;
-            width: 260px;
-            padding-top: 20px;
-            box-shadow: 3px 0 10px rgba(0,0,0,0.1);
-            overflow-y: auto;
-            z-index: 1000;
-            transition: all 0.3s ease;
-        }
-        
-       .main-content { 
-    margin-left: 250px; 
-    padding: 20px;
-    transition: all 0.3s ease;
+    <style>
+ 
+
+.language-submenu {
+    background: #f8f9fa;
+    margin-top: 8px;
+    border-radius: 12px;
+    overflow: hidden;
+}
+  /* Drawer */
+    .drawer-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 2000;
+      display: none;
+    }
+    .drawer-overlay.active { display: block; }
+    .drawer {
+      position: fixed;
+      top: 0;
+      left: -260px;
+      width: 260px;
+      height: 100vh;
+      background: white;
+      z-index: 2001;
+      transition: left 0.3s ease;
+      display: flex;
+      flex-direction: column;
+    }
+    .drawer.active { left: 0; }
+    .drawer-header {
+      padding: 16px;
+      padding-top: calc(16px + var(--safe-area-top));
+      background: linear-gradient(135deg, var(--primary), var(--primary-light));
+      color: white;
+    }
+    .drawer-header h3 { font-size: 1.1rem; font-weight: 700; }
+    .drawer-header p { font-size: 0.65rem; opacity: 0.9; }
+    .drawer-content { flex: 1; overflow-y: auto; padding: 8px 0; }
+    .drawer-section { margin-bottom: 12px; }
+    .drawer-section-title {
+      padding: 5px 16px;
+      font-size: 0.6rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      color: var(--gray);
+    }
+    .drawer-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      color: var(--dark);
+      text-decoration: none;
+    }
+    .drawer-item i { width: 20px; color: var(--primary); font-size: 0.9rem; }
+    .drawer-item span { font-size: 0.8rem; font-weight: 500; }
+.lang-option {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 14px 20px 14px 44px;
+    color: var(--dark);
+    text-decoration: none;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.9rem;
 }
 
-        
-        .header {
-            background-color: white;
-            padding: 15px 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .welcome-text { 
-            color: var(--primary); 
-            font-weight: 600; 
+.lang-option:last-child {
+    border-bottom: none;
+}
+
+.lang-option:active {
+    background: #e9ecef;
+}
+
+.lang-option i {
+    width: 20px;
+    color: var(--primary);
+}
+
+/* ==================== Menu Button ==================== */
+.menu-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.8rem;
+    cursor: pointer;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: opacity 0.2s;
+}
+
+.menu-btn:active {
+    opacity: 0.7;
+}
+
+/* ==================== App Header ==================== */
+.app-header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: var(--header-height);
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 16px;
+    padding-top: var(--safe-area-top);
+    z-index: 1000;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.header-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+}
+
+/* ==================== Bottom Navigation ==================== */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: var(--bottom-nav-height);
+    background: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding-bottom: var(--safe-area-bottom);
+    box-shadow: 0 -4px 12px rgba(0,0,0,0.05);
+    z-index: 1000;
+    border-top: 1px solid var(--border);
+}
+
+.nav-item {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: var(--gray);
+    text-decoration: none;
+    font-size: 0.7rem;
+    font-weight: 500;
+    padding: 8px 0;
+}
+
+.nav-item i {
+    font-size: 1.4rem;
+    margin-bottom: 2px;
+}
+
+.nav-item.active {
+    color: var(--primary);
+}
+
+/* ==================== Language Selector ==================== */
+.language-selector {
+    position: fixed;
+    bottom: calc(90px + var(--safe-area-bottom));
+    right: 16px;
+    z-index: 999;
+    background: white;
+    padding: 6px 10px;
+    border-radius: 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    display: flex;
+    gap: 6px;
+    border: 2px solid var(--primary);
+}
+
+.lang-btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.lang-btn.english {
+    background: var(--primary);
+    color: white;
+}
+
+.lang-btn.kannada {
+    background: var(--secondary);
+    color: var(--primary);
+}
+
+.lang-btn:active {
+    transform: scale(0.95);
+}
+
+/* ==================== Hide Google Translate Banner ==================== */
+.goog-te-banner-frame,
+.goog-te-banner,
+.skiptranslate,
+#google_translate_element {
+    display: none !important;
+}
+
+body {
+    top: 0 !important;
+}
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
-        .card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
+        :root {
+            --primary: #043c07;
+            --primary-light: #1b5e20;
+            --secondary: #ffc107;
+            --success: #28a745;
+            --gray: #6c757d;
+            --border: #e9ecef;
+            --safe-area-top: env(safe-area-inset-top, 0px);
+            --safe-area-bottom: env(safe-area-inset-bottom, 0px);
         }
 
-        .card-header {
-            background: linear-gradient(to right, var(--primary), #1b5e20);
-            color: white;
-            border-radius: 10px 10px 0 0 !important;
-            font-weight: 600;
-            padding: 15px 20px;
-        }
-
-        .treatment-card {
-            border-left: 4px solid var(--primary);
-            transition: all 0.3s;
-        }
-        
-        .treatment-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
-        }
-        
-        .vet-info {
-            background: rgba(139, 195, 74, 0.1);
-            border-radius: 8px;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
-        
-        .treatment-detail {
-            margin-bottom: 10px;
-        }
-        
-        .detail-label {
-            font-weight: 600;
-            color: var(--primary);
-            margin-bottom: 4px;
-        }
-        
-        .detail-content {
-            color: #333;
-            line-height: 1.5;
-        }
-        
-        .badge-completed {
-            background-color: var(--primary);
-        }
-
-        .logo {
-            text-align: center;
-            padding: 20px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.2);
-            margin-bottom: 30px;
-        }
-        
-        .nav-item { 
-            margin: 10px 0; 
-        }
-
-        .nav-link {
-            color: rgba(255,255,255,0.8);
-            padding: 8px 16px;
-            border-radius: 5px;
-            margin: 5px 15px;
-            transition: all 0.3s;
-        }
-
-        .nav-link:hover, .nav-link.active { 
-            background-color: rgba(255,255,255,0.1); 
-            color: white; 
-        }
-
-        .nav-link i { 
-            margin-right: 10px; 
-            width: 20px; 
-            text-align: center; 
-        }
-
-        .logout-btn {
-            background-color: var(--secondary);
-            color: var(--dark);
-            border: none;
-            padding: 8px 15px;
-            border-radius: 5px;
-            font-weight: 500;
-            transition: all 0.3s;
-        }
-
-        .logout-btn:hover { 
-            background-color: #e0a800; 
-            transform: translateY(-2px); 
-        }
-
-        .cow-background {
-            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><path fill="%232e7d32" fill-opacity="0.05" d="M50,10A40,40 0 1,1 50,90A40,40 0 1,1 50,10z M30,30 Q50,15 70,30 Q65,50 70,70 Q50,85 30,70 Q35,50 30,30 z"></path></svg>');
-            background-repeat: repeat;
-            background-size: 200px;
-        }
-
-        /* Submenu styles */
-        .submenu {
-            list-style: none;
-            padding-left: 30px;
-            display: none;
-        }
-        
-        .submenu .nav-link {
-            font-size: 14px;
-            padding: 6px 14px;
-            color: rgba(255,255,255,0.7);
-        }
-        
-        .submenu .nav-link:hover {
-            color: #fff;
-        }
-
-        /* Mobile menu toggle button */
-        .menu-toggle {
-            display: none;
-            position: fixed;
-            top: 15px;
-            left: 15px;
-            z-index: 1100;
-            background-color: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            width: 40px;
-            height: 40px;
-            font-size: 20px;
-            cursor: pointer;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-        }
-
-        /* Overlay for mobile when sidebar is open */
-        .overlay {
-            display: none;
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f5f9f5;
+            color: #2c3e2f;
+            overflow: hidden;
+            height: 100vh;
+            width: 100vw;
             position: fixed;
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            z-index: 999;
-        }
-        
-        .overlay.active {
-            display: block;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Search Bar Styles */
+        /* Header */
+        .app-header {
+            flex-shrink: 0;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 16px;
+            padding-top: max(0px, var(--safe-area-top));
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            z-index: 100;
+        }
+
+        .back-btn {
+            color: white;
+            font-size: 1.4rem;
+            text-decoration: none;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .header-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+
+        /* Main Content - flex column, scroll only for grid */
+        .app-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            padding: 12px 16px;
+            gap: 10px;
+        }
+
+        /* Stats Grid - compact 3 columns */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 16px;
+            padding: 10px 6px;
+            text-align: center;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+        }
+
+        .stat-number {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--primary);
+            line-height: 1.2;
+        }
+
+        .stat-label {
+            font-size: 0.6rem;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+        }
+
+        /* Search Bar */
         .search-container {
             background: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-            margin-bottom: 20px;
+            border-radius: 40px;
+            padding: 6px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: 1px solid var(--border);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+            flex-shrink: 0;
         }
 
-        .search-input-group {
-            position: relative;
+        .search-container i {
+            color: var(--gray);
+            font-size: 0.9rem;
         }
 
-        .search-input-group .form-control {
-            padding-left: 45px;
-            border-radius: 25px;
-            border: 2px solid var(--light-green);
+        .search-container input {
+            flex: 1;
+            border: none;
+            padding: 10px 0;
+            font-size: 0.85rem;
+            background: transparent;
+            outline: none;
         }
 
-        .search-input-group .search-icon {
-            position: absolute;
-            left: 15px;
-            top: 50%;
-            transform: translateY(-50%);
+        .clear-btn {
+            background: none;
+            border: none;
+            color: var(--gray);
+            font-size: 0.9rem;
+            padding: 6px;
+            cursor: pointer;
+        }
+
+        /* Filter Chips */
+        .filter-chips {
+            display: flex;
+            gap: 8px;
+            overflow-x: auto;
+            padding-bottom: 6px;
+            flex-shrink: 0;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .filter-chips::-webkit-scrollbar {
+            display: none;
+        }
+
+        .chip {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 40px;
+            padding: 6px 14px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            color: var(--gray);
+            white-space: nowrap;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+
+        .chip.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Scrollable Treatments Container */
+        .treatments-scroll {
+            flex: 1;
+            overflow-y: auto;
+            min-height: 0;
+            padding-bottom: 4px;
+        }
+
+
+        .treatments-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        /* Compact Treatment Card */
+        .treatment-card {
+            background: white;
+            border-radius: 18px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+
+        .card-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-light));
+            color: white;
+            padding: 10px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .header-left i {
+            font-size: 1rem;
+        }
+
+        .animal-info {
+            font-weight: 700;
+            font-size: 0.85rem;
+        }
+
+        .animal-id {
+            font-size: 0.65rem;
+            opacity: 0.9;
+        }
+
+        .completed-badge {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 10px;
+            border-radius: 30px;
+            font-size: 0.65rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .card-body {
+            padding: 12px;
+        }
+
+        /* Vet Info Compact */
+        .vet-info {
+            background: #f8f9fa;
+            border-radius: 14px;
+            padding: 8px 12px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .vet-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 18px;
+            background: rgba(4, 60, 7, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
             color: var(--primary);
-            z-index: 10;
+            font-size: 1.1rem;
         }
 
-        .no-results {
+        .vet-details {
+            flex: 1;
+        }
+
+        .vet-name {
+            font-weight: 700;
+            color: var(--primary);
+            font-size: 0.8rem;
+            margin-bottom: 1px;
+        }
+
+        .vet-clinic {
+            font-size: 0.65rem;
+            color: var(--gray);
+        }
+
+        /* Details Grid - 2 columns compact */
+        .details-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+
+        .detail-box {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 8px;
+        }
+
+        .detail-box.full-width {
+            grid-column: span 2;
+        }
+
+        .detail-icon {
+            color: var(--primary);
+            font-size: 0.8rem;
+            margin-bottom: 4px;
+        }
+
+        .detail-label {
+            font-size: 0.55rem;
+            color: var(--gray);
+            text-transform: uppercase;
+            letter-spacing: 0.4px;
+            margin-bottom: 2px;
+        }
+
+        .detail-content {
+            font-size: 0.7rem;
+            font-weight: 500;
+            color: var(--dark);
+            line-height: 1.3;
+        }
+
+        /* Date Info Compact */
+        .date-info {
+            display: flex;
+            gap: 12px;
+            padding: 8px 0;
+            border-top: 1px solid var(--border);
+            border-bottom: 1px solid var(--border);
+            margin-bottom: 10px;
+            font-size: 0.7rem;
+            color: var(--gray);
+            flex-wrap: wrap;
+        }
+
+        .date-info i {
+            margin-right: 4px;
+            color: var(--primary);
+            font-size: 0.7rem;
+        }
+
+        /* View Button */
+        .card-footer {
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .view-btn {
+            background: white;
+            border: 1.5px solid var(--primary);
+            color: var(--primary);
+            border-radius: 30px;
+            padding: 8px 16px;
+            font-weight: 600;
+            font-size: 0.7rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.1s;
+        }
+
+        .view-btn:active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Empty & No Results States */
+        .empty-state, .no-results {
             text-align: center;
             padding: 40px 20px;
-            color: #6c757d;
+            background: white;
+            border-radius: 24px;
+            margin: auto;
+            width: 100%;
         }
 
-        .no-results i {
-            font-size: 3rem;
-            margin-bottom: 15px;
+        .empty-state i, .no-results i {
+            font-size: 2.5rem;
             color: #dee2e6;
+            margin-bottom: 12px;
         }
 
-        /* Responsive styles */
-        @media (max-width: 768px) {
-            .sidebar {
-                transform: translateX(-100%);
-                width: 70%;
-                max-width: 250px;
-            }
-            
-            .sidebar.active {
-                transform: translateX(0);
-            }
-            
-           .main-content {
-    margin-left: 0;
-    padding: 20px;
-    transition: all 0.3s ease;
-}
-
-            
-            .menu-toggle {
-                display: block;
-            }
-            
-            .header {
-                padding: 15px 15px 15px 50px;
-                flex-direction: column;
-                align-items: flex-start;
-                gap: 10px;
-            }
-            
-            .treatment-card {
-                margin-bottom: 15px;
-            }
+        .empty-state h4, .no-results h4 {
+            font-size: 1rem;
+            color: var(--gray);
+            margin-bottom: 6px;
         }
 
-        @media (max-width: 576px) {
-            .main-content {
-                padding: 10px;
-            }
-            
-            .logo h2 {
-                font-size: 1.5rem;
-            }
-            
-            .card-header {
-                padding: 12px 15px;
-            }
-            
-            .search-container {
-                padding: 15px;
-            }
+        .empty-state p, .no-results p {
+            font-size: 0.8rem;
+            color: var(--gray);
+            margin-bottom: 16px;
         }
-         /* Language Selector Styles - BOTTOM */
-    .language-selector {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        z-index: 10000;
-        background: white;
-        padding: 10px 15px;
-        border-radius: 25px;
-        box-shadow: 0 -4px 15px rgba(0,0,0,0.2);
-        display: flex;
-        gap: 10px;
-        border: 2px solid #27ae60;
-    }
 
-    .lang-btn {
-        padding: 8px 20px;
-        border: none;
-        border-radius: 20px;
-        cursor: pointer;
-        font-weight: bold;
-        font-size: 14px;
-        transition: all 0.3s ease;
-    }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
 
-    .lang-btn.english {
-        background: #007bff;
-        color: white;
-    }
+        .btn {
+            border: none;
+            border-radius: 30px;
+            padding: 10px 18px;
+            font-weight: 600;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            text-decoration: none;
+            cursor: pointer;
+        }
 
-    .lang-btn.kannada {
-        background: #ff9800;
-        color: white;
-    }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
 
-    .lang-btn.active {
-        transform: scale(1.05);
-        box-shadow: 0 0 0 2px white, 0 0 0 4px currentColor;
-    }
+        .btn-secondary {
+            background: white;
+            border: 1.5px solid var(--primary);
+            color: var(--primary);
+        }
 
-    /* Hide Google banner */
-    .goog-te-banner-frame { display: none !important; }
-    body { top: 0 !important; }
+        /* Bottom Navigation */
+        .bottom-nav {
+            flex-shrink: 0;
+            height: 62px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            padding-bottom: max(0px, var(--safe-area-bottom));
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+            border-top: 1px solid var(--border);
+        }
 
-    /* Mobile responsive */
-    @media (max-width: 768px) {
+        .nav-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            text-decoration: none;
+            font-size: 0.6rem;
+            font-weight: 500;
+        }
+
+        .nav-item i {
+            font-size: 1.2rem;
+            margin-bottom: 2px;
+        }
+
+        .nav-item.active {
+            color: var(--primary);
+        }
+
+        /* Language Selector */
         .language-selector {
-            bottom: 10px;
-            right: 10px;
-            padding: 6px 10px;
+            position: fixed;
+            bottom: 70px;
+            right: 12px;
+            z-index: 999;
+            background: white;
+            padding: 4px 8px;
+            border-radius: 30px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+            display: flex;
+            gap: 6px;
+            border: 1px solid var(--primary);
         }
-        
+
         .lang-btn {
-            padding: 5px 10px;
-            font-size: 12px;
+            padding: 4px 10px;
+            border: none;
+            border-radius: 30px;
+            font-weight: 600;
+            font-size: 0.7rem;
+            cursor: pointer;
         }
-    }
-    /* Completely hide ALL Google Translate elements */
-    .goog-te-banner-frame,
-    .goog-te-banner,
-    .goog-te-banner-wrapper,
-    .skiptranslate,
-    #goog-gt-tt,
-    .goog-te-balloon-frame,
-    .goog-tooltip,
-    .goog-tooltip:hover,
-    .goog-text-highlight {
-        display: none !important;
-        visibility: hidden !important;
-        opacity: 0 !important;
-        height: 0 !important;
-        width: 0 !important;
-        position: absolute !important;
-    }
-    
-    /* Prevent body shift */
-    body {
-        top: 0px !important;
-        position: static !important;
-    }
-    
-    /* Hide the translation menu if it appears */
-    .goog-te-menu-frame {
-        display: none !important;
-    }
+
+        .lang-btn.english {
+            background: var(--primary);
+            color: white;
+        }
+
+        .lang-btn.kannada {
+            background: #f0f0f0;
+            color: var(--primary);
+        }
+
+        .lang-btn.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* Hide Google Translate Banner */
+        .goog-te-banner-frame, .skiptranslate, #google_translate_element {
+            display: none !important;
+        }
+        body { top: 0 !important; }
     </style>
 </head>
-<body class="cow-background">
-    <!-- Mobile menu toggle -->
-    <button class="menu-toggle" id="menuToggle">
-        <i class="fas fa-bars"></i>
-    </button>
-    
-    <!-- Overlay for mobile -->
-    <div class="overlay" id="overlay"></div>
+<body>
+        <input type="hidden" id="currentLang" value="{{ current_lang|default('en') }}">
 
-    <div class="dashboard-container">
-        <!-- Sidebar -->
-        <div class="sidebar" id="sidebar">
-            <div class="logo">
-                <h2><i class="fas fa-cow"></i> Kamadhenu</h2>
-                <p class="mb-0">Cow Management System</p>
+       <!-- Drawer -->
+    <div class="drawer-overlay" id="drawerOverlay" onclick="closeDrawer()"></div>
+    <div class="drawer" id="drawer">
+        <div class="drawer-header"><h3>Kamadhenu</h3><p>Smart Farm Management</p></div>
+        <div class="drawer-content">
+            <div class="drawer-section"><div class="drawer-section-title">Main Menu</div>
+                <a href="/dashboard" class="drawer-item"><i class="fas fa-home"></i><span>Dashboard</span></a>
+                <a href="/add_cow" class="drawer-item"><i class="fas fa-plus-circle"></i><span>Add New Cow</span></a>
+                <a href="/cows" class="drawer-item"><i class="fas fa-list"></i><span>View My Cows</span></a>
+                <a href="/find_cow" class="drawer-item"><i class="fas fa-search"></i><span>Find Cow</span></a>
             </div>
-            
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a class="nav-link" href="/dashboard">
-                        <i class="fas fa-tachometer-alt"></i> Dashboard
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/add_cow">
-                        <i class="fas fa-plus-circle"></i> Add New Cow
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/cows">
-                        <i class="fas fa-list"></i> View My Cows
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/find_cow">
-                        <i class="fas fa-search"></i> Find Cow
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/milk_yield">
-                        <i class="fas fa-tint"></i> Milk Yield
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/disease_prediction">
-                        <i class="fas fa-stethoscope"></i> Disease Detection
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/book_appointment">
-                        <i class="fas fa-syringe"></i> Book Appointment
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link active" href="/farmer_treatments">
-                        <i class="fas fa-syringe"></i> Treatment History
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('add_geotag') }}">
-                        <i class="fas fa-map-marker-alt"></i> Add Geo Tag
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{ url_for('analytics') }}">
-                        <i class="fas fa-chart-bar"></i> Analytics
-                    </a>
-                </li>
-
-                <li class="nav-item">
-                    <a class="nav-link" href="#" onclick="toggleSubmenu(event)">
-                        <i class="fas fa-chart-line"></i> Market Place <i class="fas fa-caret-down float-end"></i>
-                    </a>
-                    <ul class="submenu">
-                        <li><a class="nav-link" href="/buy_cow"><i class="fas fa-shopping-cart"></i> Buy Cows</a></li>
-                        <li><a class="nav-link" href="/sell_cow"><i class="fas fa-hand-holding-usd"></i> Sell Cows</a></li>
-                    </ul>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/sold_cows">
-                        <i class="fas fa-check-circle"></i> Sale History
-                    </a>
-                </li>
-            </ul>
-        </div>
-
-        <!-- Main Content -->
-        <div class="main-content" id="mainContent">
-            <!-- Header -->
-            <div class="header">
-                <div>
-                    <h2 class="welcome-text">Treatment History</h2>
-                    <p class="mb-0 text-muted">Complete medical history and treatment records for all your animals</p>
-                </div>
-                <a href="{{ url_for('farmer_logout') }}" class="btn btn-danger">Logout</a>
+            <div class="drawer-section"><div class="drawer-section-title">Farm Operations</div>
+                <a href="/milk_yield" class="drawer-item"><i class="fas fa-tint"></i><span>Milk Yield</span></a>
+                <a href="/disease_prediction" class="drawer-item"><i class="fas fa-stethoscope"></i><span>Disease Detection</span></a>
+                <a href="/book_appointment" class="drawer-item"><i class="fas fa-syringe"></i><span>Book Appointment</span></a>
+                <a href="/farmer/treatments" class="drawer-item"><i class="fas fa-history"></i><span>Treatment History</span></a>
+                <a href="/add_geotag" class="drawer-item"><i class="fas fa-map-marker-alt"></i><span>Add Geo Tag</span></a>
+                <a href="/analytics" class="drawer-item"><i class="fas fa-chart-bar"></i><span>Analytics</span></a>
             </div>
-
-            {% if treatments %}
-            <!-- Search Bar -->
-            <div class="search-container">
-                <div class="row">
-                    <div class="col-md-8 mx-auto">
-                        <div class="search-input-group">
-                            <i class="fas fa-search search-icon"></i>
-                            <input type="text" id="treatmentSearch" class="form-control" placeholder="Search treatments by breed, cow ID, veterinarian, diagnosis, medicines, vaccination, or instructions...">
-                        </div>
-                        <small class="text-muted mt-2 d-block">Type anything to filter treatments. Search matches breed, cow ID, vet name, diagnosis, medicines, vaccination details, and instructions.</small>
-                    </div>
-                </div>
+            <div class="drawer-section"><div class="drawer-section-title">Marketplace</div>
+                <a href="/buy_cow" class="drawer-item"><i class="fas fa-shopping-cart"></i><span>Buy Cows</span></a>
+                <a href="/sell_cow" class="drawer-item"><i class="fas fa-hand-holding-usd"></i><span>Sell Cows</span></a>
+                <a href="/sold_cows" class="drawer-item"><i class="fas fa-check-circle"></i><span>Sale History</span></a>
             </div>
-
-            
-
-            <!-- Treatments List -->
-            <div class="card">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <div>
-                        <i class="fas fa-list me-2"></i> All Treatment Records
-                        <span class="badge bg-light text-dark ms-2" id="recordsCount">{{ treatments|length }} records</span>
-                    </div>
-                    <div class="btn-group">
-                        <button class="btn btn-sm btn-outline-success" onclick="window.print()">
-                            <i class="fas fa-print me-1"></i> Print
-                        </button>
-                    </div>
-                </div>
-                <div class="card-body" id="treatmentsContainer">
-                    {% for treatment in treatments %}
-                    <div class="card treatment-card mb-3" data-searchable="{{ treatment['cow_breed']|lower }} {{ treatment['cow_id']|lower }} {{ treatment['vet_name']|lower }} {{ treatment['diagnosis']|lower if treatment['diagnosis'] else '' }} {{ treatment['medicines']|lower if treatment['medicines'] else '' }} {{ treatment['vaccination_details']|lower if treatment['vaccination_details'] else '' }} {{ treatment['instructions']|lower if treatment['instructions'] else '' }}">
-                        <div class="card-body">
-                            <div class="row">
-                                <div class="col-md-9">
-
-                                    <div class="d-flex justify-content-between align-items-start mb-3">
-                                        <div>
-                                            <h5 class="mb-1">
-                                                <i class="fas fa-cow text-success me-2"></i>
-                                                <span class="cow-breed">{{ treatment['cow_breed'] }}</span>
-                                                <small class="text-muted">(<span class="cow-id">{{ treatment['cow_id'] }}</span>)</small>
-                                            </h5>
-                                            <p class="text-muted mb-2">
-                                                <i class="fas fa-calendar me-1"></i>
-                                                Treated on {{ treatment['treatment_date'] }}
-                                                {% if treatment['appointment_date'] %}
-                                                (Appointment: {{ treatment['appointment_date'] }})
-                                                {% endif %}
-                                            </p>
-                                        </div>
-                                        <span class="badge badge-completed">Completed</span>
-                                    </div>
-
-                                    <!-- Veterinarian Info -->
-                                    <div class="vet-info">
-                                        <div class="detail-label">
-                                            <i class="fas fa-user-md me-1"></i>Veterinarian:
-                                        </div>
-                                        <div class="detail-content">
-                                            <strong class="vet-name">Dr. {{ treatment['vet_name'] }}</strong>
-                                            {% if treatment['vet_clinic'] %}
-                                            - <span class="vet-clinic">{{ treatment['vet_clinic'] }}</span>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-
-                                    <!-- Treatment Details -->
-                                    <div class="row">
-                                        {% if treatment['diagnosis'] %}
-                                        <div class="col-md-6 treatment-detail">
-                                            <div class="detail-label">
-                                                <i class="fas fa-stethoscope me-1"></i>Diagnosis:
-                                            </div>
-                                            <div class="detail-content diagnosis">
-                                                {{ treatment['diagnosis'] }}
-                                            </div>
-                                        </div>
-                                        {% endif %}
-
-                                        {% if treatment['medicines'] %}
-                                        <div class="col-md-6 treatment-detail">
-                                            <div class="detail-label">
-                                                <i class="fas fa-pills me-1"></i>Medicines:
-                                            </div>
-                                            <div class="detail-content medicines">
-                                                {{ treatment['medicines'] }}
-                                            </div>
-                                        </div>
-                                        {% endif %}
-
-                                        {% if treatment['vaccination_details'] %}
-                                        <div class="col-md-6 treatment-detail">
-                                            <div class="detail-label">
-                                                <i class="fas fa-syringe me-1"></i>Vaccination:
-                                            </div>
-                                            <div class="detail-content vaccination">
-                                                {{ treatment['vaccination_details'] }}
-                                            </div>
-                                        </div>
-                                        {% endif %}
-
-                                        {% if treatment['instructions'] %}
-                                        <div class="col-md-6 treatment-detail">
-                                            <div class="detail-label">
-                                                <i class="fas fa-info-circle me-1"></i>Instructions:
-                                            </div>
-                                            <div class="detail-content instructions">
-                                                {{ treatment['instructions'] }}
-                                            </div>
-                                        </div>
-                                        {% endif %}
-                                    </div>
-                                </div>
-                                <div class="col-md-3 text-end">
-
-                                    <a href="{{ url_for('farmer_treatment_details', treatment_id=treatment['id']) }}" 
-                                       class="btn btn-outline-primary btn-sm">
-                                        <i class="fas fa-eye me-1"></i> View Details
-                                    </a>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    {% endfor %}
-                </div>
+            <div class="drawer-section"><div class="drawer-section-title">Preferences</div>
+                <div class="drawer-item" onclick="toggleLanguageMenu()" style="cursor:pointer;"><i class="fas fa-globe"></i><span>Language</span><i class="fas fa-chevron-down" id="langArrow" style="font-size:0.6rem;"></i></div>
+                <div id="languageMenu" style="display:none;"><div class="language-submenu">
+                    <a href="#" class="lang-option" onclick="setLanguageFromDrawer('en'); return false;"><i class="fas fa-check-circle" id="enCheck" style="opacity:0;"></i><span>English</span></a>
+                    <a href="#" class="lang-option" onclick="setLanguageFromDrawer('kn'); return false;"><i class="fas fa-check-circle" id="knCheck" style="opacity:0;"></i><span>ಕನ್ನಡ</span></a>
+                </div></div>
             </div>
-            {% else %}
-            <!-- Empty State -->
-            <div class="card">
-                <div class="card-body text-center py-5">
-                    <i class="fas fa-syringe text-muted mb-3" style="font-size: 4rem;"></i>
-                    <h4 class="text-muted">No treatment records yet</h4>
-                    <p class="text-muted mb-4">Your treatment history will appear here after veterinarians complete appointments and record treatments.</p>
-                    <div class="d-flex justify-content-center gap-3">
-                        <a href="{{ url_for('book_appointment') }}" class="btn btn-primary">
-                            <i class="fas fa-calendar-plus me-1"></i> Book Appointment
-                        </a>
-                        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
-                            <i class="fas fa-tachometer-alt me-1"></i> Go to Dashboard
-                        </a>
-                    </div>
-                </div>
+            <div class="drawer-section"><div class="drawer-section-title">Account</div>
+                <a href="#" class="drawer-item" onclick="closeDrawer(); return false;"><i class="fas fa-user-circle"></i><span>Profile</span></a>
+                <a href="{{ url_for('farmer_logout') }}" class="drawer-item"><i class="fas fa-sign-out-alt"></i><span>Logout</span></a>
             </div>
-            {% endif %}
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script>
-        function toggleSubmenu(event) {
-            event.preventDefault();
-            const submenu = event.target.closest("li").querySelector(".submenu");
-            submenu.style.display = submenu.style.display === "block" ? "none" : "block";
+<header class="app-header">
+        <button class="menu-btn" onclick="toggleDrawer()"><i class="fas fa-bars"></i></button>
+        <span class="header-title">Treatment History</span>
+        <div style="width: 36px;"></div>
+    </header>
+
+<!-- Main Content -->
+<main class="app-content">
+    {% if treatments %}
+    <!-- Stats Grid -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-number">{{ treatments|length }}</div>
+            <div class="stat-label">Total</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">
+                {% set unique_animals = [] %}
+                {% for t in treatments %}
+                    {% if t.cow_id not in unique_animals %}
+                        {% set _ = unique_animals.append(t.cow_id) %}
+                    {% endif %}
+                {% endfor %}
+                {{ unique_animals|length }}
+            </div>
+            <div class="stat-label">Animals</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-number">
+                {% set unique_vets = [] %}
+                {% for t in treatments %}
+                    {% if t.vet_name not in unique_vets %}
+                        {% set _ = unique_vets.append(t.vet_name) %}
+                    {% endif %}
+                {% endfor %}
+                {{ unique_vets|length }}
+            </div>
+            <div class="stat-label">Vets</div>
+        </div>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+        <i class="fas fa-search"></i>
+        <input type="text" id="treatmentSearch" placeholder="Search breed, vet, diagnosis...">
+        <button class="clear-btn" onclick="clearSearch()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <!-- Filter Chips -->
+    <div class="filter-chips">
+        <span class="chip active" data-filter="all" onclick="filterTreatments('all')">All</span>
+        <span class="chip" data-filter="recent" onclick="filterTreatments('recent')">Last 30 days</span>
+        <span class="chip" data-filter="vaccination" onclick="filterTreatments('vaccination')">Vaccinations</span>
+        <span class="chip" data-filter="medicines" onclick="filterTreatments('medicines')">Medicines</span>
+    </div>
+
+    <!-- Scrollable Treatments List -->
+    <div class="treatments-scroll">
+        <div class="treatments-list" id="treatmentsContainer">
+            {% for treatment in treatments %}
+            <div class="treatment-card" 
+                 data-searchable="{{ treatment['cow_breed']|lower }} {{ treatment['cow_id']|lower }} {{ treatment['vet_name']|lower }} {{ treatment['diagnosis']|lower if treatment['diagnosis'] else '' }} {{ treatment['medicines']|lower if treatment['medicines'] else '' }} {{ treatment['vaccination_details']|lower if treatment['vaccination_details'] else '' }}"
+                 data-date="{{ treatment['treatment_date'] }}">
+                
+                <div class="card-header">
+                    <div class="header-left">
+                        <i class="fas fa-syringe"></i>
+                        <div>
+                            <div class="animal-info">{{ treatment['cow_breed'] }}</div>
+                            <div class="animal-id">{{ treatment['cow_id'] }}</div>
+                        </div>
+                    </div>
+                    <span class="completed-badge"><i class="fas fa-check-circle"></i> Completed</span>
+                </div>
+
+                <div class="card-body">
+                    <!-- Veterinarian Info -->
+                    <div class="vet-info">
+                        <div class="vet-avatar"><i class="fas fa-user-md"></i></div>
+                        <div class="vet-details">
+                            <div class="vet-name">Dr. {{ treatment['vet_name'] }}</div>
+                            <div class="vet-clinic">{{ treatment['vet_clinic'] or 'Veterinarian' }}</div>
+                        </div>
+                    </div>
+
+                    <!-- Treatment Details Grid -->
+                    <div class="details-grid">
+                        {% if treatment['diagnosis'] %}
+                        <div class="detail-box">
+                            <div class="detail-icon"><i class="fas fa-stethoscope"></i></div>
+                            <div class="detail-label">Diagnosis</div>
+                            <div class="detail-content">{{ treatment['diagnosis']|truncate(40) }}</div>
+                        </div>
+                        {% endif %}
+
+                        {% if treatment['medicines'] %}
+                        <div class="detail-box">
+                            <div class="detail-icon"><i class="fas fa-pills"></i></div>
+                            <div class="detail-label">Medicines</div>
+                            <div class="detail-content">{{ treatment['medicines']|truncate(40) }}</div>
+                        </div>
+                        {% endif %}
+
+                        {% if treatment['vaccination_details'] %}
+                        <div class="detail-box full-width">
+                            <div class="detail-icon"><i class="fas fa-syringe"></i></div>
+                            <div class="detail-label">Vaccination</div>
+                            <div class="detail-content">{{ treatment['vaccination_details']|truncate(70) }}</div>
+                        </div>
+                        {% endif %}
+
+                        {% if treatment['instructions'] %}
+                        <div class="detail-box full-width">
+                            <div class="detail-icon"><i class="fas fa-info-circle"></i></div>
+                            <div class="detail-label">Instructions</div>
+                            <div class="detail-content">{{ treatment['instructions']|truncate(70) }}</div>
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    <!-- Date Information -->
+                    <div class="date-info">
+                        <span><i class="fas fa-calendar-alt"></i> {{ treatment['treatment_date'] }}</span>
+                        {% if treatment['appointment_date'] %}
+                        <span><i class="fas fa-clock"></i> {{ treatment['appointment_date'] }}</span>
+                        {% endif %}
+                    </div>
+
+                    <!-- View Details Button -->
+                    <div class="card-footer">
+                        <a href="{{ url_for('farmer_treatment_details', treatment_id=treatment['id']) }}" class="view-btn">
+                            <i class="fas fa-eye"></i> View Details
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- No Results Message -->
+        <div id="noResults" class="no-results" style="display: none;">
+            <i class="fas fa-search"></i>
+            <h4>No matching treatments</h4>
+            <p>Try different search terms</p>
+        </div>
+    </div>
+
+    {% else %}
+    <!-- Empty State -->
+    <div class="empty-state" style="margin: auto;">
+        <i class="fas fa-syringe"></i>
+        <h4>No Treatment Records Yet</h4>
+        <p>Your treatment history will appear here after veterinarians complete appointments.</p>
+        <div class="action-buttons">
+            <a href="{{ url_for('book_appointment') }}" class="btn btn-primary">
+                <i class="fas fa-calendar-plus"></i> Book Appointment
+            </a>
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-home"></i> Dashboard
+            </a>
+        </div>
+    </div>
+    {% endif %}
+</main>
+
+<!-- Bottom Navigation -->
+<nav class="bottom-nav">
+    <a href="/dashboard" class="nav-item"><i class="fas fa-home"></i><span>Home</span></a>
+    <a href="/cows" class="nav-item"><i class="fas fa-cow"></i><span>My Cows</span></a>
+    <a href="/add_cow" class="nav-item"><i class="fas fa-plus-circle"></i><span>Add</span></a>
+    <a href="/milk_yield" class="nav-item"><i class="fas fa-tint"></i><span>Milk</span></a>
+    <a href="/find_cow" class="nav-item active"><i class="fas fa-search"></i><span>Find</span></a>
+</nav>
+
+
+<div id="google_translate_element" style="display:none;"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+    // ==================== Search & Filter Functions ====================
+    let currentFilter = 'all';
+    // ==================== Drawer Functions ====================
+function toggleDrawer() {
+    const drawer = document.getElementById('drawer');
+    const overlay = document.getElementById('drawerOverlay');
+    drawer.classList.toggle('active');
+    overlay.classList.toggle('active');
+}
+
+function closeDrawer() {
+    const drawer = document.getElementById('drawer');
+    const overlay = document.getElementById('drawerOverlay');
+    drawer.classList.remove('active');
+    overlay.classList.remove('active');
+    // Close language menu when closing drawer
+    const languageMenu = document.getElementById('languageMenu');
+    const langArrow = document.getElementById('langArrow');
+    if (languageMenu) {
+        languageMenu.style.display = 'none';
+    }
+    if (langArrow) {
+        langArrow.classList.remove('fa-chevron-up');
+        langArrow.classList.add('fa-chevron-down');
+    }
+}
+
+// ==================== Language Menu Functions ====================
+function toggleLanguageMenu() {
+    const menu = document.getElementById('languageMenu');
+    const arrow = document.getElementById('langArrow');
+    
+    if (menu.style.display === 'none' || menu.style.display === '') {
+        menu.style.display = 'block';
+        arrow.classList.remove('fa-chevron-down');
+        arrow.classList.add('fa-chevron-up');
+    } else {
+        menu.style.display = 'none';
+        arrow.classList.remove('fa-chevron-up');
+        arrow.classList.add('fa-chevron-down');
+    }
+}
+
+function setLanguageFromDrawer(lang) {
+    // Update checkmarks
+    const enCheck = document.getElementById('enCheck');
+    const knCheck = document.getElementById('knCheck');
+    if (enCheck && knCheck) {
+        enCheck.style.opacity = lang === 'en' ? '1' : '0';
+        knCheck.style.opacity = lang === 'kn' ? '1' : '0';
+    }
+    
+    // Save preference
+    saveLanguagePreference(lang);
+    applyLanguage(lang);
+    
+    // Close language menu
+    const languageMenu = document.getElementById('languageMenu');
+    const langArrow = document.getElementById('langArrow');
+    if (languageMenu) {
+        languageMenu.style.display = 'none';
+    }
+    if (langArrow) {
+        langArrow.classList.remove('fa-chevron-up');
+        langArrow.classList.add('fa-chevron-down');
+    }
+    
+    // Close drawer after selection (optional)
+    setTimeout(closeDrawer, 300);
+}
+
+// ==================== Language Functions ====================
+function saveLanguagePreference(lang) {
+    localStorage.setItem('selectedLanguage', lang);
+    document.cookie = `user_language=${lang}; path=/; max-age=31536000`;
+}
+
+function applyLanguage(lang) {
+    if (lang === 'kn') {
+        window.location.hash = '#googtrans(kn|en)';
+    } else {
+        window.location.hash = '#googtrans(en)';
+    }
+}
+
+function setLanguage(lang) {
+    document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+    event.target.classList.add('active');
+    saveLanguagePreference(lang);
+    applyLanguage(lang);
+}
+
+function googleTranslateElementInit() {
+    new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,kn',
+        autoDisplay: false
+    }, 'google_translate_element');
+}
+
+function loadGoogleTranslate() {
+    if (window.google && google.translate) {
+        googleTranslateElementInit();
+        return;
+    }
+    var script = document.createElement('script');
+    script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+    document.head.appendChild(script);
+}
+
+// ==================== Profile Modal Function ====================
+function openProfileModal() {
+    // Your existing profile modal code here
+    // This is a placeholder - implement your actual profile modal
+    alert('Profile modal - implement your profile functionality here');
+    closeDrawer();
+}
+
+// ==================== Initialize ====================
+document.addEventListener('DOMContentLoaded', function() {
+    loadGoogleTranslate();
+    
+    const savedLang = localStorage.getItem('selectedLanguage') || 'en';
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if ((savedLang === 'en' && btn.classList.contains('english')) || 
+            (savedLang === 'kn' && btn.classList.contains('kannada'))) {
+            btn.classList.add('active');
         }
+    });
+    
+    setTimeout(() => applyLanguage(savedLang), 1000);
+    
+    // Optional: Close drawer when clicking outside
+    const overlay = document.getElementById('drawerOverlay');
+    if (overlay) {
+        overlay.addEventListener('click', closeDrawer);
+    }
+});
+    
+    function clearSearch() {
+        document.getElementById('treatmentSearch').value = '';
+        filterTreatments(currentFilter);
+    }
 
-        // Toggle mobile sidebar
-        const menuToggle = document.getElementById('menuToggle');
-        const sidebar = document.getElementById('sidebar');
-        const mainContent = document.getElementById('mainContent');
-        const overlay = document.getElementById('overlay');
+    function filterTreatments(filterType) {
+        currentFilter = filterType;
         
-        menuToggle.addEventListener('click', function() {
-            sidebar.classList.toggle('active');
-            overlay.classList.toggle('active');
+        // Update active chip
+        document.querySelectorAll('.chip').forEach(chip => {
+            chip.classList.remove('active');
+            if (chip.getAttribute('data-filter') === filterType) {
+                chip.classList.add('active');
+            }
+        });
+
+        const searchTerm = document.getElementById('treatmentSearch').value.toLowerCase().trim();
+        const cards = document.querySelectorAll('.treatment-card');
+        let visibleCount = 0;
+        
+        cards.forEach(card => {
+            const searchableText = card.getAttribute('data-searchable') || '';
+            const cardDate = card.getAttribute('data-date') || '';
             
-            // Change icon based on sidebar state
-            const icon = menuToggle.querySelector('i');
-            if (sidebar.classList.contains('active')) {
-                icon.classList.remove('fa-bars');
-                icon.classList.add('fa-times');
+            let matchesSearch = true;
+            let matchesFilter = true;
+            
+            // Search filter
+            if (searchTerm) {
+                matchesSearch = searchableText.includes(searchTerm);
+            }
+            
+            // Date/type filters
+            if (filterType === 'recent') {
+                const thirtyDaysAgo = new Date();
+                thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+                const treatmentDate = new Date(cardDate);
+                matchesFilter = treatmentDate >= thirtyDaysAgo;
+            } else if (filterType === 'vaccination') {
+                matchesFilter = searchableText.includes('vaccination') || 
+                               searchableText.includes('vaccine');
+            } else if (filterType === 'medicines') {
+                matchesFilter = searchableText.includes('medicine') || 
+                               searchableText.includes('tablet') ||
+                               searchableText.includes('injection') ||
+                               searchableText.includes('medicines');
+            }
+            
+            if (matchesSearch && matchesFilter) {
+                card.style.display = 'block';
+                visibleCount++;
             } else {
-                icon.classList.remove('fa-times');
-                icon.classList.add('fa-bars');
+                card.style.display = 'none';
             }
         });
         
-        // Close sidebar when clicking on overlay
-        overlay.addEventListener('click', function() {
-            sidebar.classList.remove('active');
-            overlay.classList.remove('active');
-            const icon = menuToggle.querySelector('i');
-            icon.classList.remove('fa-times');
-            icon.classList.add('fa-bars');
-        });
-        
-        // Close sidebar when clicking on a nav link (mobile)
-        const navLinks = document.querySelectorAll('.nav-link');
-        navLinks.forEach(link => {
-            link.addEventListener('click', function() {
-                if (window.innerWidth <= 768) {
-                    sidebar.classList.remove('active');
-                    overlay.classList.remove('active');
-                    const icon = menuToggle.querySelector('i');
-                    icon.classList.remove('fa-times');
-                    icon.classList.add('fa-bars');
-                }
-            });
-        });
+        toggleNoResults(visibleCount);
+    }
 
-        // Search functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const searchInput = document.getElementById('treatmentSearch');
-            const treatmentCards = document.querySelectorAll('.treatment-card');
-            const recordsCount = document.getElementById('recordsCount');
-            const totalTreatments = document.getElementById('totalTreatments');
-            
-            searchInput.addEventListener('input', function() {
-                const searchTerm = this.value.toLowerCase().trim();
-                let visibleCount = 0;
-                
-                treatmentCards.forEach(card => {
-                    const searchableText = card.getAttribute('data-searchable');
-                    
-                    if (searchTerm === '' || searchableText.includes(searchTerm)) {
-                        card.style.display = 'block';
-                        visibleCount++;
-                    } else {
-                        card.style.display = 'none';
-                    }
-                });
-                
-                // Update records count
-                recordsCount.textContent = `${visibleCount} records`;
-                
-                // Show no results message if no cards are visible
-                const treatmentsContainer = document.getElementById('treatmentsContainer');
-                let noResultsMessage = treatmentsContainer.querySelector('.no-results');
-                
-                if (visibleCount === 0 && searchTerm !== '') {
-                    if (!noResultsMessage) {
-                        noResultsMessage = document.createElement('div');
-                        noResultsMessage.className = 'no-results';
-                        noResultsMessage.innerHTML = `
-                            <i class="fas fa-search"></i>
-                            <h4>No matching treatments found</h4>
-                            <p>Try searching with different keywords</p>
-                        `;
-                        treatmentsContainer.appendChild(noResultsMessage);
-                    }
-                } else if (noResultsMessage) {
-                    noResultsMessage.remove();
-                }
-            });
-            
-            // Clear search on escape key
-            searchInput.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') {
-                    this.value = '';
-                    this.dispatchEvent(new Event('input'));
-                }
-            });
-        });
-    </script>
-    <script>
-    // Language translation functions
-    function googleTranslateElementInit() {
-        if (typeof google !== 'undefined' && google.translate) {
-            new google.translate.TranslateElement({
-                pageLanguage: 'en',
-                includedLanguages: 'en,kn',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                autoDisplay: false
-            }, 'google_translate_element');
-            
-            const savedLang = localStorage.getItem('selectedLanguage');
-            if(savedLang === 'kn') {
-                setTimeout(() => applyKannada(), 1000);
-            }
+    function toggleNoResults(visibleCount) {
+        const noResults = document.getElementById('noResults');
+        const container = document.getElementById('treatmentsContainer');
+        
+        if (visibleCount === 0 && container && container.children.length > 0) {
+            noResults.style.display = 'block';
+        } else if (noResults) {
+            noResults.style.display = 'none';
         }
     }
 
-    window.onload = function() {
-        if (typeof google !== 'undefined' && google.translate) {
-            googleTranslateElementInit();
-        } else {
-            var script = document.createElement('script');
-            script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-            document.body.appendChild(script);
-        }
+    // Real-time search
+    const searchInput = document.getElementById('treatmentSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', function() {
+            filterTreatments(currentFilter);
+        });
         
-        const savedLang = localStorage.getItem('selectedLanguage');
-        if(savedLang === 'kn') {
-            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelector('.lang-btn.kannada').classList.add('active');
-            setTimeout(() => applyKannada(), 2000);
-        }
-    };
-
-    function applyKannada() {
-        var iframe = document.querySelector('.goog-te-menu-frame');
-        if(iframe && iframe.contentDocument) {
-            var select = iframe.contentDocument.querySelector('.goog-te-menu2-select');
-            if(select) {
-                select.value = 'kn';
-                select.dispatchEvent(new Event('change'));
-                return true;
+        searchInput.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                clearSearch();
             }
+        });
+    }
+
+    // ==================== Language Functions ====================
+    function saveLanguagePreference(lang) {
+        localStorage.setItem('selectedLanguage', lang);
+        document.cookie = `user_language=${lang}; path=/; max-age=31536000`;
+    }
+
+    function applyLanguage(lang) {
+        if (lang === 'kn') {
+            window.location.hash = '#googtrans(kn|en)';
+        } else {
+            window.location.hash = '#googtrans(en)';
         }
-        
-        var elements = document.querySelectorAll('.goog-te-menu2-select');
-        if(elements.length > 0) {
-            elements[0].value = 'kn';
-            elements[0].dispatchEvent(new Event('change'));
-            return true;
-        }
-        
-        return false;
     }
 
     function setLanguage(lang) {
         document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-        event.target.classList.add('active');
-        localStorage.setItem('selectedLanguage', lang);
-        
-        if(lang === 'kn') {
-            window.location.hash = '#googtrans(kn)';
-            if(applyKannada()) {
-                console.log('ಭಾಷೆ ಕನ್ನಡಕ್ಕೆ ಬದಲಾಯಿಸಲಾಗಿದೆ');
-            } else {
-                setTimeout(() => location.reload(), 500);
-            }
+        if (lang === 'en') {
+            document.querySelector('.lang-btn.english').classList.add('active');
         } else {
-            window.location.hash = '#googtrans(en)';
-            var iframe = document.querySelector('.goog-te-menu-frame');
-            if(iframe && iframe.contentDocument) {
-                var select = iframe.contentDocument.querySelector('.goog-te-menu2-select');
-                if(select) {
-                    select.value = 'en';
-                    select.dispatchEvent(new Event('change'));
-                    console.log('Language changed to English');
-                    return;
-                }
-            }
-            setTimeout(() => location.reload(), 500);
+            document.querySelector('.lang-btn.kannada').classList.add('active');
         }
+        saveLanguagePreference(lang);
+        applyLanguage(lang);
     }
+
+    function googleTranslateElementInit() {
+        new google.translate.TranslateElement({
+            pageLanguage: 'en',
+            includedLanguages: 'en,kn',
+            autoDisplay: false
+        }, 'google_translate_element');
+    }
+
+    function loadGoogleTranslate() {
+        if (window.google && google.translate) {
+            googleTranslateElementInit();
+            return;
+        }
+        var script = document.createElement('script');
+        script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+        document.head.appendChild(script);
+    }
+
+    // ==================== Initialize ====================
+    document.addEventListener('DOMContentLoaded', function() {
+        loadGoogleTranslate();
+        
+        // Lock body scroll
+        document.body.style.overflow = 'hidden';
+        document.documentElement.style.overflow = 'hidden';
+        
+        const savedLang = localStorage.getItem('selectedLanguage') || 'en';
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.remove('active');
+            if ((savedLang === 'en' && btn.classList.contains('english')) || 
+                (savedLang === 'kn' && btn.classList.contains('kannada'))) {
+                btn.classList.add('active');
+            }
+        });
+        
+        setTimeout(() => applyLanguage(savedLang), 500);
+    });
 </script>
 </body>
 </html>
