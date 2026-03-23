@@ -46,16 +46,11 @@ app.secret_key = "kamadhenu_secret"
 
 
 
-# Database URL format (works locally and on Render)
-import os
-from urllib.parse import urlparse
-
-# Get database URL from environment variable or use local default
-DATABASE_URL = os.environ.get('DATABASE_URL', 'postgresql://postgres:postgres123@localhost:5432/kamadhenu_db')
-
-# Fix for Render's postgres:// vs postgresql://
-if DATABASE_URL.startswith('postgres://'):
-    DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+DB_NAME = "kamadhenu_db"
+DB_USER = "postgres"
+DB_PASSWORD = "postgres123"
+DB_HOST = "localhost"
+DB_PORT = "5432"
 COW_UPLOAD_FOLDER = os.path.join("static", "uploads", "cow")
 VET_UPLOAD_FOLDER = os.path.join("static", "uploads", "vets")
 
