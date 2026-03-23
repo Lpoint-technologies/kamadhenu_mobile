@@ -744,48 +744,287 @@
             document.getElementById('drawerOverlay').classList.remove('active');
         }
         function openProfileModal() { alert("Profile modal demo (integrate as needed)"); closeDrawer(); }
+let currentLang = document.getElementById('currentLang')?.value || 'en';
+let translationApplied = false;
+console.log("🌐 Initial language from hidden input:", currentLang);
 
-        // Language functions
-        function saveLanguagePreference(lang) { localStorage.setItem('selectedLanguage', lang); document.cookie = `user_language=${lang}; path=/; max-age=31536000`; }
-        function applyLanguage(lang) {
-            if (lang === 'kn') window.location.hash = '#googtrans(kn|en)';
-            else window.location.hash = '#googtrans(en)';
-        }
-        function setLanguage(lang) {
-            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-            event.target.classList.add('active');
-            saveLanguagePreference(lang);
-            applyLanguage(lang);
-        }
-        function googleTranslateElementInit() { new google.translate.TranslateElement({ pageLanguage: 'en', includedLanguages: 'en,kn', autoDisplay: false }, 'google_translate_element'); }
-        function loadGoogleTranslate() {
-            if (window.google && google.translate) { googleTranslateElementInit(); return; }
-            let script = document.createElement('script');
-            script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-            document.head.appendChild(script);
-        }
-        document.addEventListener('DOMContentLoaded', () => {
-            loadGoogleTranslate();
-            let savedLang = localStorage.getItem('selectedLanguage') || 'en';
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.classList.remove('active');
-                if ((savedLang === 'en' && btn.innerText === 'EN') || (savedLang === 'kn' && btn.innerText === 'ಕನ್ನಡ')) btn.classList.add('active');
-            });
-            setTimeout(() => applyLanguage(savedLang), 500);
-            
-            // Additional: if results card exists, ensure it does not overflow main content height
-            // We dynamically adjust app-content to keep scroll minimal but since everything is packed, no extra scroll needed.
-            // Also force form submission to keep behavior identical
-            const form = document.getElementById('uploadForm');
-            if(form) {
-                form.addEventListener('submit', function(e) {
-                    if(document.getElementById('fileInput').files.length === 0) {
-                        e.preventDefault();
-                        alert("Please select an image first");
+function saveLanguagePreference(lang) {
+    // Save to localStorage
+    localStorage.setItem('selectedLanguage', lang);
+    
+    // Save to sessionStorage for current session
+    sessionStorage.setItem('selectedLanguage', lang);
+    
+    // Save to cookie
+    document.cookie = `user_language=${lang}; path=/; max-age=31536000`;
+    
+    // Send to server via fetch
+    fetch('/set_language', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lang: lang })
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log("✅ Language saved to server:", data);
+    })
+    .catch(err => {
+        console.error("❌ Error saving language:", err);
+    });
+    
+    currentLang = lang;
+}
+
+function applyLanguage(lang) {
+    console.log("🔄 Applying language:", lang);
+    
+    if (lang === 'kn') {
+        // Set Google Translate to Kannada
+        window.location.hash = '#googtrans(kn|en)';
+        
+        // Force Google Translate to apply
+        setTimeout(function() {
+            if (window.google && google.translate) {
+                try {
+                    // Find and trigger the Google Translate dropdown
+                    var select = document.querySelector('.goog-te-combo');
+                    if (select) {
+                        select.value = 'kn';
+                        select.dispatchEvent(new Event('change'));
+                        console.log("✅ Google Translate set to Kannada");
+                        translationApplied = true;
+                    } else {
+                        console.log("⚠️ Google Translate dropdown not found yet, retrying...");
+                        // Retry after another second
+                        setTimeout(() => {
+                            var select = document.querySelector('.goog-te-combo');
+                            if (select) {
+                                select.value = 'kn';
+                                select.dispatchEvent(new Event('change'));
+                                console.log("✅ Google Translate set to Kannada (retry)");
+                            }
+                        }, 1000);
                     }
-                });
+                } catch(e) {
+                    console.log('Error applying translation:', e);
+                }
+            } else {
+                console.log("⚠️ Google Translate not loaded yet, waiting...");
+                // Wait for Google Translate to load
+                setTimeout(() => {
+                    if (window.google && google.translate) {
+                        var select = document.querySelector('.goog-te-combo');
+                        if (select) {
+                            select.value = 'kn';
+                            select.dispatchEvent(new Event('change'));
+                            console.log("✅ Google Translate set to Kannada (delayed)");
+                        }
+                    }
+                }, 1500);
             }
-        });
+        }, 500);
+    } else {
+        // Set Google Translate to English
+        window.location.hash = '#googtrans(en)';
+        
+        setTimeout(function() {
+            if (window.google && google.translate) {
+                try {
+                    var select = document.querySelector('.goog-te-combo');
+                    if (select) {
+                        select.value = 'en';
+                        select.dispatchEvent(new Event('change'));
+                        console.log("✅ Google Translate set to English");
+                        translationApplied = true;
+                    }
+                } catch(e) {
+                    console.log('Error applying translation:', e);
+                }
+            }
+        }, 500);
+    }
+}
+
+function setLanguage(lang) {
+    console.log("🎤 Setting language to:", lang);
+    
+    // Update button UI
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    if (lang === 'en') {
+        const enBtn = document.querySelector('.lang-btn.english');
+        if (enBtn) enBtn.classList.add('active');
+    } else {
+        const knBtn = document.querySelector('.lang-btn.kannada');
+        if (knBtn) knBtn.classList.add('active');
+    }
+    
+    // Update drawer checkmarks immediately
+    const enCheck = document.getElementById('enCheck');
+    const knCheck = document.getElementById('knCheck');
+    if (enCheck) enCheck.style.opacity = lang === 'en' ? '1' : '0';
+    if (knCheck) knCheck.style.opacity = lang === 'kn' ? '1' : '0';
+    
+    // Save preference
+    saveLanguagePreference(lang);
+    
+    // Apply language
+    applyLanguage(lang);
+    
+    // Show confirmation
+    if (lang === 'kn') {
+        alert('ಭಾಷೆ ಕನ್ನಡಕ್ಕೆ ಬದಲಾಯಿಸಲಾಗಿದೆ');
+    } else {
+        alert('Language changed to English');
+    }
+    
+    // Reload to ensure all content is translated
+    setTimeout(() => {
+        window.location.reload();
+    }, 1500);
+}
+
+// For drawer language menu
+function setLanguageFromDrawer(lang) {
+    console.log("📱 Setting language from drawer:", lang);
+    
+    // Update checkmarks
+    const enCheck = document.getElementById('enCheck');
+    const knCheck = document.getElementById('knCheck');
+    if (enCheck) enCheck.style.opacity = lang === 'en' ? '1' : '0';
+    if (knCheck) knCheck.style.opacity = lang === 'kn' ? '1' : '0';
+    
+    // Update button UI
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if ((lang === 'en' && btn.classList.contains('english')) || 
+            (lang === 'kn' && btn.classList.contains('kannada'))) {
+            btn.classList.add('active');
+        }
+    });
+    
+    // Save preference
+    saveLanguagePreference(lang);
+    applyLanguage(lang);
+    
+    // Close language menu
+    const languageMenu = document.getElementById('languageMenu');
+    if (languageMenu) languageMenu.style.display = 'none';
+    
+    const langArrow = document.getElementById('langArrow');
+    if (langArrow) {
+        langArrow.classList.remove('fa-chevron-up');
+        langArrow.classList.add('fa-chevron-down');
+    }
+    
+    // Close drawer
+    setTimeout(() => {
+        closeDrawer();
+    }, 300);
+    
+    // Show confirmation
+    if (lang === 'kn') {
+        alert('ಭಾಷೆ ಕನ್ನಡಕ್ಕೆ ಬದಲಾಯಿಸಲಾಗಿದೆ');
+    } else {
+        alert('Language changed to English');
+    }
+    
+    // Reload to ensure all content is translated
+    setTimeout(() => {
+        window.location.reload();
+    }, 1500);
+}
+
+function googleTranslateElementInit() {
+    console.log("🚀 Google Translate initialized");
+    new google.translate.TranslateElement({
+        pageLanguage: 'en',
+        includedLanguages: 'en,kn',
+        autoDisplay: false
+    }, 'google_translate_element');
+}
+
+function loadGoogleTranslate() {
+    if (window.google && google.translate) {
+        console.log("✅ Google Translate already loaded");
+        googleTranslateElementInit();
+        return;
+    }
+    console.log("📥 Loading Google Translate...");
+    var script = document.createElement('script');
+    script.src = 'https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+    document.head.appendChild(script);
+}
+
+// ==================== INITIALIZE ON PAGE LOAD ====================
+
+document.addEventListener('DOMContentLoaded', function() {
+    console.log("📄 Page loaded, initializing language...");
+    
+    // Load Google Translate
+    loadGoogleTranslate();
+    
+    // Get language from hidden input (set by server)
+    let savedLang = document.getElementById('currentLang')?.value || 'en';
+    console.log("📌 Language from hidden input:", savedLang);
+    
+    // Check URL hash for existing translation
+    if (window.location.hash.includes('googtrans')) {
+        if (window.location.hash.includes('kn|en')) {
+            savedLang = 'kn';
+            console.log("📌 Language from URL hash (Kannada)");
+        } else if (window.location.hash.includes('en')) {
+            savedLang = 'en';
+            console.log("📌 Language from URL hash (English)");
+        }
+    }
+    
+    // Also check localStorage for any saved language
+    const localLang = localStorage.getItem('selectedLanguage');
+    if (localLang && (localLang === 'en' || localLang === 'kn')) {
+        savedLang = localLang;
+        console.log("📌 Language from localStorage:", savedLang);
+    }
+    
+    // Also check sessionStorage
+    const sessionLang = sessionStorage.getItem('selectedLanguage');
+    if (sessionLang && (sessionLang === 'en' || sessionLang === 'kn')) {
+        savedLang = sessionLang;
+        console.log("📌 Language from sessionStorage:", savedLang);
+    }
+    
+    console.log("📌 FINAL language to apply:", savedLang);
+    
+    // Set current language
+    currentLang = savedLang;
+    
+    // Update UI buttons
+    document.querySelectorAll('.lang-btn').forEach(btn => {
+        btn.classList.remove('active');
+        if ((savedLang === 'en' && btn.classList.contains('english')) || 
+            (savedLang === 'kn' && btn.classList.contains('kannada'))) {
+            btn.classList.add('active');
+        }
+    });
+    
+    // Update drawer checkmarks
+    const enCheck = document.getElementById('enCheck');
+    const knCheck = document.getElementById('knCheck');
+    if (enCheck) enCheck.style.opacity = savedLang === 'en' ? '1' : '0';
+    if (knCheck) knCheck.style.opacity = savedLang === 'kn' ? '1' : '0';
+    
+    // Save to session storage for other pages
+    sessionStorage.setItem('selectedLanguage', savedLang);
+    localStorage.setItem('selectedLanguage', savedLang);
+    
+    // Wait for Google Translate to load and apply language
+    setTimeout(function() {
+        console.log("🔄 Attempting to apply saved language:", savedLang);
+        applyLanguage(savedLang);
+    }, 1000);
+});
     </script>
 </body>
 </html>
