@@ -54,7 +54,7 @@ DB_HOST = "localhost"
 DB_PORT = "5432"
 COW_UPLOAD_FOLDER = os.path.join("static", "uploads", "cow")
 VET_UPLOAD_FOLDER = os.path.join("static", "uploads", "vets")
-DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+DATABASE_URL = f"postgresql://postgres:postgres123@localhost:5432/kamadhenu_db"
 
 os.makedirs(COW_UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(VET_UPLOAD_FOLDER, exist_ok=True)
