@@ -38,6 +38,7 @@ load_dotenv()
 
 # Get API key from .env
 genai.configure(api_key=os.getenv("api_key"))
+SMS_API_KEY = os.getenv("FAST2SMS_API_KEY")  # Add this line
 
 app = Flask(__name__)
 app.secret_key = "kamadhenu_secret"
@@ -194,25 +195,32 @@ def send_sms(phone, message):
     """Send SMS using Fast2SMS API"""
     
     url = "https://www.fast2sms.com/dev/bulkV2"
+    
+    # Use DLT route instead of q route
+    api_key_sms = os.getenv("FAST2SMS_API_KEY")
+    
+    if not api_key_sms:
+        print("⚠️ SMS API key not found! SMS will not be sent.")
+        return {'success': False, 'error': 'API key not configured'}
 
-    # Clean phone number - remove any non-digit characters
+    # Clean phone number
     phone_clean = ''.join(filter(str.isdigit, str(phone)))
     
-    payload = f"sender_id=LPOINT&message={message}&language=english&route=q&numbers={phone_clean}"
+    # CHANGE THIS LINE: Use route=dlt instead of route=q
+    payload = f"sender_id=LPOINT&message={message}&language=english&route=dlt&numbers={phone_clean}"
+    
     headers = {
-        'authorization': api_key,
+        'authorization': api_key_sms,
         'Content-Type': "application/x-www-form-urlencoded",
         'Cache-Control': "no-cache",
     }
 
     try:
         response = requests.post(url, data=payload, headers=headers)
-        print("📱 SMS Response:", response.text)  # Debug output
+        print("📱 SMS Response:", response.text)
         
-        # Parse response to check if successful
         response_data = response.json()
         
-        # Fast2SMS success response usually has return=True
         if response_data.get('return', False):
             return {'success': True, 'message_id': response_data.get('request_id')}
         else:
@@ -223,8 +231,20 @@ def send_sms(phone, message):
     except Exception as e:
         print(f"❌ SMS Error: {str(e)}")
         return {'success': False, 'error': str(e)}
-
-
+@app.route('/test_sms')
+def test_sms():
+    """Test SMS functionality"""
+    phone = request.args.get('phone', '')  # Get phone from URL
+    if not phone:
+        return "Please provide a phone number: /test_sms?phone=9876543210"
+    
+    message = "This is a test SMS from Kamadhenu system."
+    result = send_sms(phone, message)
+    
+    if result['success']:
+        return f"✅ SMS sent successfully to {phone}! Message ID: {result.get('message_id')}"
+    else:
+        return f"❌ SMS failed: {result.get('error')}"
 def get_db():
     """Return a PostgreSQL database connection with dictionary cursor"""
     import psycopg2
