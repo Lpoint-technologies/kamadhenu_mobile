@@ -46,15 +46,20 @@ app.secret_key = "kamadhenu_secret"
 
 
 
+DATABASE_URL = os.environ.get('DATABASE_URL')
 
-DB_NAME = "kamadhenu_db"
-DB_USER = "postgres"
-DB_PASSWORD = "postgres123"
-DB_HOST = "localhost"
-DB_PORT = "5432"
+# For local development - fallback
+if not DATABASE_URL:
+    DATABASE_URL = "postgresql://postgres:postgres123@localhost:5432/kamadhenu_db"
+    print("📊 Using local database")
+else:
+    # Fix for Render's postgres:// vs postgresql://
+    if DATABASE_URL.startswith('postgres://'):
+        DATABASE_URL = DATABASE_URL.replace('postgres://', 'postgresql://', 1)
+    print("📊 Using Render database")
 COW_UPLOAD_FOLDER = os.path.join("static", "uploads", "cow")
 VET_UPLOAD_FOLDER = os.path.join("static", "uploads", "vets")
-DATABASE_URL = f"postgresql://postgres:postgres123@localhost:5432/kamadhenu_db"
+
 
 os.makedirs(COW_UPLOAD_FOLDER, exist_ok=True)
 os.makedirs(VET_UPLOAD_FOLDER, exist_ok=True)
