@@ -50,7 +50,7 @@ DATABASE_URL = os.environ.get('DATABASE_URL')
 
 # For local development - fallback
 if not DATABASE_URL:
-    DATABASE_URL = "postgresql://postgres:postgres123@localhost:5432/kamadhenu_db"
+    DATABASE_URL = "postgresql://kamadhenu_db_user:QoVh8puq19y4a08uvKDmHXYefE40DWqx@dpg-d6rv77fgi27c73cql7mg-a/kamadhenu_db"
     print("📊 Using local database")
 else:
     # Fix for Render's postgres:// vs postgresql://
